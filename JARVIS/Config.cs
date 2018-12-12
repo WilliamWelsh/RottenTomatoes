@@ -6,11 +6,6 @@ namespace RottenTomatoes
 {
     class Config
     {
-        private const string resourcesFolder = "Resources";
-        private const string resourcesFile = "resources.json";
-
-        private static string GetFilePath(string file) => $"{resourcesFolder}/{file}";
-
         public static RottenTomatoesHandler RT = new RottenTomatoesHandler();
 
         public struct ServerHandler { public ulong serverID; public RottenTomatoesHandler RT; }
@@ -18,24 +13,23 @@ namespace RottenTomatoes
         public static List<ServerHandler> Servers = new List<ServerHandler>();
 
         public static BotResources bot;
+        public struct BotResources { public string botToken { get; set; } }
 
         static Config()
         {
-            if (!Directory.Exists(resourcesFolder))
-                Directory.CreateDirectory(resourcesFolder);
+            if (!Directory.Exists("Resources"))
+                Directory.CreateDirectory("Resources");
 
-            if (!File.Exists(GetFilePath(resourcesFile)))
+            if (!File.Exists("Resources/resources.json"))
             {
                 string json = JsonConvert.SerializeObject(bot, Formatting.Indented);
-                File.WriteAllText(GetFilePath(resourcesFile), json);
+                File.WriteAllText("Resources/resources.json", json);
             }
             else
             {
-                string json = File.ReadAllText(GetFilePath(resourcesFile));
+                string json = File.ReadAllText("Resources/resources.json");
                 bot = JsonConvert.DeserializeObject<BotResources>(json);
             }
         }
-
-        public struct BotResources { public string botToken; }
     }
 }

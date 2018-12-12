@@ -3,11 +3,11 @@ using Discord;
 using System.Net;
 using System.Linq;
 using Newtonsoft.Json;
+using Discord.Commands;
+using Discord.WebSocket;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Discord.WebSocket;
-using Discord.Commands;
 
 namespace RottenTomatoes
 {
@@ -19,19 +19,19 @@ namespace RottenTomatoes
         // Movie item format
         struct Movie
         {
-            public string name;
-            public int year;
-            public string url;
-            public string image;
-            public string meterClass;
-            public int meterScore;
+            public string name { get; set; }
+            public int year { get; set; }
+            public string url { get; set; }
+            public string image { get; set; }
+            public string meterClass { get; set; }
+            public int meterScore { get; set; }
         }
 
         // Box Office Movie Struct
         struct boxOfficeMovie { public string meterClass; public string meterScore; public string title; public string moneyMade; }
 
         // Has to be like this to get the results in a json fromat
-        struct searchResults { public List<Movie> movies; }
+        struct searchResults { public List<Movie> movies { get; set; } }
 
         // This is the new list made with searched movies ordered by newest to oldest for ease of selection
         List<Movie> movies = new List<Movie>();
@@ -90,6 +90,11 @@ namespace RottenTomatoes
                 await DMInviteLink((SocketGuildUser)context.User, context.Channel);
                 return;
             }
+            else if (search == "github")
+            {
+                await context.Channel.SendMessageAsync("", false, embed("Rotten Tomatoes Source Code", "Here is the source code for this bot:\nhttps://github.com/WilliamWelsh/RottenTomatoes", "", ""));
+                return;
+            }
 
             isSelectionBeingMade = true;
 
@@ -98,12 +103,23 @@ namespace RottenTomatoes
 
             // Get the website code and cut everything away that isn't the json we want
             var json = new WebClient().DownloadString($"https://www.rottentomatoes.com/search/?search={search}");
+
+            // If there's no result, tell the user and then stop.
+            if (json.Contains("Sorry, no results found"))
+            {
+                await context.Channel.SendMessageAsync("", false, embed("Rotten Tomatoes Search", $"Sorry, no results were found for \"{search}\"", "", ""));
+                return;
+            }
+
+            // Get that nice json :)
             json = json.Substring(json.IndexOf($"RT.PrivateApiV2FrontendHost, '{search}', ") + 33 + search.Length);
             json = json.Substring(0, json.IndexOf(");"));
 
             // Deserialize the json into our list of movies
             searchResults results;
             results = JsonConvert.DeserializeObject<searchResults>(json);
+
+            //Console.WriteLine(results.movies.ToArray().Length);
 
             // Here we make a list of years so we can order our movies list by release date
             List<int> movieYears = new List<int>();
@@ -164,16 +180,22 @@ namespace RottenTomatoes
             string audienceSuffix = temp.Contains("want to see") ? "want to see" : "liked it";
 
             // Set the audience score/want to see percentage
-            Int32.TryParse(temp.Substring(0, temp.IndexOf("%<")), out audienceScore);
+            int.TryParse(temp.Substring(0, temp.IndexOf("%<")), out audienceScore);
 
             // If it's not the want to see percentage, set which emoji should be used based on the score
             if (audienceEmoji != "<:wanttosee:477141676717113354>")
                 audienceEmoji = audienceScore >= 60 ? "<:audienceliked:477141676478038046>" : "<:audiencedisliked:477141676486295562>";
-
+            
             // Set the critic consensus by scraping the website
-            string criticsConsensus = html.Substring(html.IndexOf("Critics Consensus:</span>") + 25);
-            // Regex is used here to get rid of html elements because RT uses <em> for italics
-            criticsConsensus = Regex.Replace(criticsConsensus.Substring(0, criticsConsensus.IndexOf("</p>")), "<.*?>", String.Empty);
+            string criticsConsensus;
+            if (html.Contains("Critics Consensus:</span>"))
+            {
+                criticsConsensus = html.Substring(html.IndexOf("Critics Consensus:</span>") + 25);
+                // Regex is used here to get rid of html elements because RT uses <em> for italics
+                criticsConsensus = Regex.Replace(criticsConsensus.Substring(0, criticsConsensus.IndexOf("</p>")), "<.*?>", string.Empty);
+            }
+            else
+                criticsConsensus = "No consensus yet.";
 
             // Create a pretty embed
             var Embed = new EmbedBuilder();
@@ -259,7 +281,7 @@ namespace RottenTomatoes
             return "";
         }
 
-        private async Task PrintHelp(ISocketMessageChannel channel) => await channel.SendMessageAsync("", false, embed("Rotten Tomatoes", "Here are the available commands:\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`\n\nTo invite the bot to your server, type `!rt invite`", "", ""));
+        private async Task PrintHelp(ISocketMessageChannel channel) => await channel.SendMessageAsync("", false, embed("Rotten Tomatoes", "Here are the available commands:\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`\n*To cancel a search `!rt cancel`\n\nTo invite the bot to your server, type `!rt invite`\n\nTo view the source code, type `!rt github`", "", "Please report issues and bugs on the Github page."));
 
         private async Task DMInviteLink(SocketGuildUser user, ISocketMessageChannel channel)
         {

@@ -25,6 +25,9 @@ namespace RottenTomatoes
             await Task.Delay(-1);
         }
 
+        // I hate this warning
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         private async Task Log(LogMessage msg) => Console.WriteLine(msg.Message);
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using Discord.Commands;
+﻿using Discord.Commands;
 using System.Threading.Tasks;
 
 namespace RottenTomatoes
@@ -23,7 +22,6 @@ namespace RottenTomatoes
 
             if (!foundServer)
             {
-                Console.WriteLine("didnt find the server");
                 var newServer = new Config.ServerHandler();
                 newServer.serverID = Context.Guild.Id;
                 newServer.RT = new RottenTomatoesHandler();

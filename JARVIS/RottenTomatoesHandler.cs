@@ -203,8 +203,8 @@ namespace RottenTomatoes
             Embed.WithColor(new Color(250, 50, 10));
             Embed.WithThumbnailUrl(movie.image);
 
-            // If the score is 0, it's because it doesn't have a score yet
-            string score = movie.meterScore == 0 ? "No Score Yet" : $"{movie.meterScore}%";
+            // If the score is 0 but doesn't have the rotten emoji, it's because it doesn't have a score yet
+            string score = (movie.meterScore == 0 && movie.meterClass != "rotten") ? "No Score Yet" : $"{movie.meterScore}%";
 
             // Add embed fields
             Embed.AddInlineField("Tomatometer", $"{ClassToEmoji(movie.meterClass)} {score}");

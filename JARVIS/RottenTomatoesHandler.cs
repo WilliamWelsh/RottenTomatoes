@@ -285,7 +285,7 @@ namespace RottenTomatoes
 
         private async Task DMInviteLink(SocketGuildUser user, ISocketMessageChannel channel)
         {
-            await user.SendMessageAsync("https://discordapp.com/oauth2/authorize?client_id=477287091798278145&permissions=347136&scope=bot");
+            await user.SendMessageAsync("https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&permissions=3072");
             await channel.SendMessageAsync("", false, embed("Rotten Tomatoes", $"The invite link has been DMed to you, {user.Mention}!", "", ""));
         }
     }

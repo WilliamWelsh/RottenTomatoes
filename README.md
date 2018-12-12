@@ -3,7 +3,7 @@ A Discord bot that allows you to search movies on Rotten Tomatoes and view the c
 [<img src="https://discordapp.com/api/guilds/294699220743618561/widget.png?style=shield">](https://discord.gg/qsc8YMS) <img src="https://img.shields.io/badge/discord-csharp-blue.svg">
 
 ## Inviting to Your Server
-https://discordapp.com/oauth2/authorize?client_id=477287091798278145&permissions=347136&scope=bot
+https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&permissions=3072
 #### Commands
 `!rt help` View available commands.  
 `!rt (name of movie)` Search for a movie.  

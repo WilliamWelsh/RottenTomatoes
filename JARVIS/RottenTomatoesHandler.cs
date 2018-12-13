@@ -136,7 +136,7 @@ namespace RottenTomatoes
             string selection = "";
             for (int i = 0; i < array.Length; i++)
                 for (int n = 0; n < results.movies.Count; n++)
-                    if (array[i] == results.movies.ElementAt(n).year && !movies.Contains(results.movies.ElementAt(n)))
+                    if (array[i] == results.movies[n].year && !movies.Contains(results.movies.ElementAt(n)))
                         movies.Add(results.movies.ElementAt(n));
 
             // If there's only one movie, go ahead and show that result

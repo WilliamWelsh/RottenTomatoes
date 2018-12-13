@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using System;
+using Discord.Commands;
 using Discord.WebSocket;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -29,6 +30,7 @@ namespace RottenTomatoes
             if (msg.HasStringPrefix("!", ref argPos))
             {
                 if (msg.Author.IsBot) return;
+                Console.WriteLine($"{context.Guild.Name}: {msg.Author}: {msg.Content}");
                 var result = await _service.ExecuteAsync(context, argPos);
                 if (result.IsSuccess)
                 {

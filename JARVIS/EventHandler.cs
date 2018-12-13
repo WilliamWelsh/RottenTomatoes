@@ -28,6 +28,7 @@ namespace RottenTomatoes
             int argPos = 0;
             if (msg.HasStringPrefix("!", ref argPos))
             {
+                if (msg.Author.IsBot) return;
                 var result = await _service.ExecuteAsync(context, argPos);
                 if (result.IsSuccess)
                 {

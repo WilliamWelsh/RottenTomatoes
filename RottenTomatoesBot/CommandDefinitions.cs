@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using System.Threading.Tasks;
 
 namespace RottenTomatoes
@@ -52,6 +53,26 @@ namespace RottenTomatoes
                 await newServer.RT.TryToSelect(selection, Context.Channel);
                 Config.Servers.Add(newServer);
             }
+        }
+
+        [Command("rtstats")]
+        public async Task DisplayStats()
+        {
+            int serverCount = 0, totalMembers = 0;
+            foreach (var guild in Context.Client.Guilds)
+            {
+                serverCount++;
+                totalMembers += guild.MemberCount;
+            }
+
+            string description = $"Total Servers: {serverCount.ToString("#,##0")}\nTotal Members: {totalMembers.ToString("#,##0")}";
+
+            await Context.Channel.SendMessageAsync("", false, new EmbedBuilder()
+                .WithTitle("Bot Stats")
+                .WithThumbnailUrl("https://cdn.discordapp.com/avatars/477287091798278145/11dac188844056c5dbbdef7015bffc8b.png?size=128")
+                .WithDescription(description)
+                .WithColor(new Color(250, 50, 10))
+                .Build());
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Discord.Commands;
 using Discord.WebSocket;
 using System.Reflection;
@@ -10,12 +11,13 @@ namespace RottenTomatoes
     {
         DiscordSocketClient _client;
         CommandService _service;
+        StreamWriter stream = new FileInfo("Resources/log.txt").AppendText();
 
         public async Task InitializeAsync(DiscordSocketClient client)
         {
             _client = client;
             _service = new CommandService();
-            await _service.AddModulesAsync(Assembly.GetEntryAssembly());
+            await _service.AddModulesAsync(Assembly.GetEntryAssembly(), null);
             _client.MessageReceived += HandleCommandAsync;
         }
 
@@ -30,9 +32,12 @@ namespace RottenTomatoes
             if (msg.HasStringPrefix("!", ref argPos))
             {
                 if (msg.Author.IsBot) return;
-                await _service.ExecuteAsync(context, argPos);
+                await _service.ExecuteAsync(context, argPos, null);
                 if (msg.Content.StartsWith("!rt"))
+                {
                     Console.WriteLine($"{context.Guild.Name}: {msg.Author}: {msg.Content}");
+                    using (stream) { stream.WriteLine($"{context.Guild.Name}: {msg.Author}: {msg.Content}"); }
+                }
             }
         }
     }

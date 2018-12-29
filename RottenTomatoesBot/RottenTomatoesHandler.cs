@@ -37,16 +37,13 @@ namespace RottenTomatoes
         List<Movie> movies = new List<Movie>();
 
         // Embed template so we don't have to write it as much
-        private Embed embed(string title, string description, string poster, string footer)
-        {
-            var embed = new EmbedBuilder();
-            embed.WithTitle(title);
-            embed.WithThumbnailUrl(poster);
-            embed.WithDescription(description);
-            embed.WithColor(new Color(250, 50, 10));
-            embed.WithFooter(footer);
-            return embed;
-        }
+        private Embed embed(string title, string description, string poster, string footer) => new EmbedBuilder()
+                .WithTitle(title)
+                .WithThumbnailUrl(poster)
+                .WithDescription(description)
+                .WithColor(new Color(250, 50, 10))
+                .WithFooter(footer)
+                .Build();
 
         // Reset the handler by clearing the movies and saying there is no selection being made
         private void Reset()
@@ -198,21 +195,21 @@ namespace RottenTomatoes
                 criticsConsensus = "No consensus yet.";
 
             // Create a pretty embed
-            var Embed = new EmbedBuilder();
-            Embed.WithTitle($"{movie.name} ({movie.year})");
-            Embed.WithColor(new Color(250, 50, 10));
-            Embed.WithThumbnailUrl(movie.image);
+            var Embed = new EmbedBuilder()
+                .WithTitle($"{movie.name} ({movie.year})")
+                .WithColor(new Color(250, 50, 10))
+                .WithThumbnailUrl(movie.image);
 
             // If the score is 0 but doesn't have the rotten emoji, it's because it doesn't have a score yet
             string score = (movie.meterScore == 0 && movie.meterClass != "rotten") ? "No Score Yet" : $"{movie.meterScore}%";
 
             // Add embed fields
-            Embed.AddInlineField("Tomatometer", $"{ClassToEmoji(movie.meterClass)} {score}");
-            Embed.AddInlineField("Audience Score", $"{audienceEmoji} {audienceScore}% {audienceSuffix}");
-            Embed.AddField("Critics Consensus", criticsConsensus);
-            Embed.WithFooter("Via RottenTomatoes.com");
+            Embed.AddField("Tomatometer", $"{ClassToEmoji(movie.meterClass)} {score}")
+                .AddField("Audience Score", $"{audienceEmoji} {audienceScore}% {audienceSuffix}")
+                .AddField("Critics Consensus", criticsConsensus)
+                .WithFooter("Via RottenTomatoes.com");
 
-            await channel.SendMessageAsync("", false, Embed);
+            await channel.SendMessageAsync("", false, Embed.Build());
         }
 
         private async Task GetTopBoxOffice(ISocketMessageChannel channel)

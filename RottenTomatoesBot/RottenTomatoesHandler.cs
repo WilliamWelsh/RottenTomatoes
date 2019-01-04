@@ -1,6 +1,5 @@
 ﻿using System;
 using Discord;
-using System.Net;
 using System.Text;
 using System.Linq;
 using Newtonsoft.Json;
@@ -20,31 +19,22 @@ namespace RottenTomatoes
         // Movie item format
         struct Movie
         {
-            public string name { get; set; }
-            public int year { get; set; }
+            public string Name { get; set; }
+            public int Year { get; set; }
             public string url { get; set; }
-            public string image { get; set; }
-            public string meterClass { get; set; }
-            public int meterScore { get; set; }
+            public string Image { get; set; }
+            public string MeterClass { get; set; }
+            public int MeterScore { get; set; }
         }
 
         // Box Office Movie Struct
-        struct boxOfficeMovie { public string meterClass; public string meterScore; public string title; public string moneyMade; }
+        struct BoxOfficeMovie { public string meterClass; public string meterScore; public string title; public string moneyMade; }
 
         // Has to be like this to get the results in a json fromat
-        struct searchResults { public List<Movie> movies { get; set; } }
+        struct SearchResults { public List<Movie> movies { get; set; } }
 
         // This is the new list made with searched movies ordered by newest to oldest for ease of selection
         List<Movie> movies = new List<Movie>();
-
-        // Embed template so we don't have to write it as much
-        private Embed embed(string title, string description, string poster, string footer) => new EmbedBuilder()
-                .WithTitle(title)
-                .WithThumbnailUrl(poster)
-                .WithDescription(description)
-                .WithColor(new Color(250, 50, 10))
-                .WithFooter(footer)
-                .Build();
 
         // Reset the handler by clearing the movies and saying there is no selection being made
         private void Reset()
@@ -58,11 +48,11 @@ namespace RottenTomatoes
         {
             if (isSelectionBeingMade)
             {
-                await channel.SendMessageAsync(null, false, embed("Rotten Tomatoes Search", "Selection cancelled.", "", ""));
+                await Utilities.SendEmbed(channel, "Rotten Tomatoes Search", "Selection cancelled.", false);
                 Reset();
             }
             else
-                await channel.SendMessageAsync(null, false, embed("Rotten Tomatoes Search", "There's no active search on this server.\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`", "", ""));
+                await Utilities.SendEmbed(channel, "Rotten Tomatoes Search", "There's no active search on this server.\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`", false);
         }
 
         // Search Rotten Tomatoes for movies and create a selection
@@ -78,7 +68,7 @@ namespace RottenTomatoes
                 await GetTopBoxOffice(context.Channel);
                 return;
             }
-            else if (search == "help")
+            else if (search == "help" || string.IsNullOrEmpty(search))
             {
                 await PrintHelp(context.Channel);
                 return;
@@ -90,7 +80,7 @@ namespace RottenTomatoes
             }
             else if (search == "github")
             {
-                await context.Channel.SendMessageAsync(null, false, embed("Rotten Tomatoes Source Code", "Here is the source code for this bot:\nhttps://github.com/WilliamWelsh/RottenTomatoes", "", ""));
+                await Utilities.SendEmbed(context.Channel, "Rotten Tomatoes Source Code", "Here is the source code for this bot:\nhttps://github.com/WilliamWelsh/RottenTomatoes", false);
                 return;
             }
 
@@ -100,12 +90,12 @@ namespace RottenTomatoes
             movies.Clear();
 
             // Get the website code and cut everything away that isn't the json we want
-            var json = new WebClient().DownloadString($"https://www.rottentomatoes.com/search/?search={search}");
+            string json = Utilities.DownloadString($"https://www.rottentomatoes.com/search/?search={search}");
 
             // If there's no result, tell the user and then stop.
             if (json.Contains("Sorry, no results found"))
             {
-                await context.Channel.SendMessageAsync(null, false, embed("Rotten Tomatoes Search", $"Sorry, no results were found for \"{search}\"", "", ""));
+                await Utilities.SendEmbed(context.Channel, "Rotten Tomatoes Search", $"Sorry, no results were found for \"{search}\"\n\nTry reformatting your search if the title contains colons, hyphens, etc.", false);
                 return;
             }
 
@@ -114,15 +104,12 @@ namespace RottenTomatoes
             json = json.Substring(0, json.IndexOf(");"));
 
             // Deserialize the json into our list of movies
-            searchResults results;
-            results = JsonConvert.DeserializeObject<searchResults>(json);
-
-            //Console.WriteLine(results.movies.ToArray().Length);
+            SearchResults results = JsonConvert.DeserializeObject<SearchResults>(json);
 
             // Here we make a list of years so we can order our movies list by release date
             List<int> movieYears = new List<int>();
             foreach (var m in results.movies)
-                movieYears.Add(m.year);
+                movieYears.Add(m.Year);
 
             // Sort the array, then reverse it so it's highest to lowest (newest movies first)
             int[] array = movieYears.ToArray();
@@ -131,10 +118,9 @@ namespace RottenTomatoes
 
             // Loop through every movie for each year, and if that movie comes out that year,
             // then add that movie to the movies list so they're in order
-            string selection = "";
             for (int i = 0; i < array.Length; i++)
                 for (int n = 0; n < results.movies.Count; n++)
-                    if (array[i] == results.movies[n].year && !movies.Contains(results.movies.ElementAt(n)))
+                    if (array[i] == results.movies[n].Year && !movies.Contains(results.movies.ElementAt(n)))
                         movies.Add(results.movies.ElementAt(n));
 
             // If there's only one movie, go ahead and show that result
@@ -146,11 +132,12 @@ namespace RottenTomatoes
 
             // Create the selection text
             // Example: 1 The Avengers: Infinity War 2018
+            StringBuilder selection = new StringBuilder();
             foreach (var m in movies)
-                selection += $"`{movies.IndexOf(m) + 1}` {m.name} `{m.year}`\n";
+                selection.AppendLine($"`{movies.IndexOf(m) + 1}` {m.Name} `{m.Year}`");
 
             // Print our selection embedded
-            await context.Channel.SendMessageAsync(null, false, embed("Rotten Tomatoes Search", $"{selection}\n**To select**, type `!rt choose <number>`\n\n**To cancel**, type `!rt cancel`.", "", "Via RottenTomatoes.com"));
+            await Utilities.SendEmbed(context.Channel, "Rotten Tomatoes Search", $"{selection}\n**To select**, type `!rt choose <number>`\n\n**To cancel**, type `!rt cancel`.", false, "Via RottenTomatoes.com");
         }
 
         // Attempt to select a movie with !rt choose <number>
@@ -158,18 +145,14 @@ namespace RottenTomatoes
         {
             if (movies.Count == 0 || !isSelectionBeingMade)
             {
-                await channel.SendMessageAsync(null, false, embed("Rotten Tomatoes Search", "There's no active search on this server.\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`", "", ""));
+                await Utilities.SendEmbed(channel, "Rotten Tomatoes Search", "There's no active search on this server.\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`", false);
                 return;
             }
             // because lists start at 0
             var movie = movies.ElementAt(selection - 1);
 
             // Get the website data so we can scrap audience scores and the critic consensus
-            string html;
-            using (WebClient client = new WebClient())
-            {
-                html = client.DownloadString($"https://www.rottentomatoes.com{movie.url}");
-            }
+            string html = Utilities.DownloadString($"https://www.rottentomatoes.com{movie.url}");
 
             int audienceScore = 0;
 
@@ -201,15 +184,15 @@ namespace RottenTomatoes
 
             // Create a pretty embed
             var Embed = new EmbedBuilder()
-                .WithTitle($"{movie.name} ({movie.year})")
-                .WithColor(new Color(250, 50, 10))
-                .WithThumbnailUrl(movie.image);
+                .WithTitle($"{movie.Name} ({movie.Year})")
+                .WithColor(Utilities.embedColor)
+                .WithThumbnailUrl(movie.Image);
 
             // If the score is 0 but doesn't have the rotten emoji, it's because it doesn't have a score yet
-            string score = (movie.meterScore == 0 && movie.meterClass != "rotten") ? "No Score Yet" : $"{movie.meterScore}%";
+            string score = (movie.MeterScore == 0 && movie.MeterClass != "rotten") ? "No Score Yet" : $"{movie.MeterScore}%";
 
             // Add embed fields
-            Embed.AddField("Tomatometer", $"{ClassToEmoji(movie.meterClass)} {score}")
+            Embed.AddField("Tomatometer", $"{ClassToEmoji(movie.MeterClass)} {score}")
                 .AddField("Audience Score", $"{audienceEmoji} {audienceScore}% {audienceSuffix}")
                 .AddField("Critics Consensus", criticsConsensus)
                 .WithFooter("Via RottenTomatoes.com");
@@ -217,25 +200,22 @@ namespace RottenTomatoes
             await channel.SendMessageAsync(null, false, Embed.Build());
         }
 
+        // Display the top 10 movies at the box office provided by Rotten Tomatoes
         private async Task GetTopBoxOffice(ISocketMessageChannel channel)
         {
             // Get the website data
-            string data;
-            using (WebClient client = new WebClient())
-            {
-                data = client.DownloadString("https://www.rottentomatoes.com/");
-            }
+            string data = Utilities.DownloadString("https://www.rottentomatoes.com");
 
             // Scrape everything away except for the top box office information
             data = ScrapeText(ref data, "<h2>Top Box Office</h2>", 0, "</table>");
 
             // We'll add every box office movie's data to this list
-            List<boxOfficeMovie> boxOfficeMovies = new List<boxOfficeMovie>();
+            List<BoxOfficeMovie> boxOfficeMovies = new List<BoxOfficeMovie>();
 
             // For each box office movie, get its data, add it to the list, and then remove it from the site data
             do
             {
-                boxOfficeMovie newMovie = new boxOfficeMovie();
+                BoxOfficeMovie newMovie = new BoxOfficeMovie();
 
                 // Get the meter class
                 newMovie.meterClass = ScrapeText(ref data, "<span class=\"icon tiny", 1, "\"");
@@ -265,7 +245,7 @@ namespace RottenTomatoes
             foreach (var m in boxOfficeMovies)
                 description.AppendLine($"{ClassToEmoji(m.meterClass)} {m.meterScore} **{m.title}** {m.moneyMade}").AppendLine();
 
-            await channel.SendMessageAsync(null, false, embed("Top Box Office", description.ToString(), "", "Via RottenTomatoes.com"));
+            await Utilities.SendEmbed(channel, "Top Box Office", description.ToString(), false, "Via RottenTomatoes.com");
         }
 
         private string ScrapeText(ref string text, string firstTarget, int firstTargetOffset, string lastTarget)
@@ -287,12 +267,13 @@ namespace RottenTomatoes
             return "";
         }
 
-        private async Task PrintHelp(ISocketMessageChannel channel) => await channel.SendMessageAsync(null, false, embed("Rotten Tomatoes", "Here are the available commands:\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`\n*To cancel a search `!rt cancel`\n\nTo invite the bot to your server, type `!rt invite`\n\nTo view the source code, type `!rt github`", "", "Please report issues and bugs on the Github page."));
+        // Print help (available commands and resources)
+        private async Task PrintHelp(ISocketMessageChannel channel) => await Utilities.SendEmbed(channel, "Rotten Tomatoes", "Here are the available commands:\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`\n*To cancel a search `!rt cancel`\n\nTo invite the bot to your server, type `!rt invite`\n\nTo view the source code, type `!rt github`", false, "Please report issues on my Discord server (!rtdiscord)");
 
         private async Task DMInviteLink(SocketGuildUser user, ISocketMessageChannel channel)
         {
             await user.SendMessageAsync("https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&permissions=3072");
-            await channel.SendMessageAsync(null, false, embed("Rotten Tomatoes", $"The invite link has been DMed to you, {user.Mention}!", "", ""));
+            await Utilities.SendEmbed(channel, "Rotten Tomatoes", $"The invite link has been DMed to you, {user.Mention}!", false);
         }
     }
 }

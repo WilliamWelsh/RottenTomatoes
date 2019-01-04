@@ -13,7 +13,7 @@ namespace RottenTomatoes
         public static List<ServerHandler> Servers = new List<ServerHandler>();
 
         public static BotResources bot;
-        public struct BotResources { public string botToken { get; set; } }
+        public struct BotResources { public string BotToken { get; set; } }
 
         static Config()
         {

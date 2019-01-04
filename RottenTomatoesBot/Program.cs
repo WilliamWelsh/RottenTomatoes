@@ -14,20 +14,21 @@ namespace RottenTomatoes
 
         public async Task StartAsync()
         {
-            if (string.IsNullOrEmpty(Config.bot.botToken)) return;
+            if (string.IsNullOrEmpty(Config.bot.BotToken)) return;
             _client = new DiscordSocketClient(new DiscordSocketConfig { LogLevel = LogSeverity.Verbose });
             _client.Log += Log;
-            await _client.LoginAsync(TokenType.Bot, Config.bot.botToken);
+            await _client.LoginAsync(TokenType.Bot, Config.bot.BotToken);
             await _client.StartAsync();
-            await _client.SetGameAsync("!rt help");
+            await _client.SetGameAsync("!rt help", null, ActivityType.Watching);
             _handler = new EventHandler();
             await _handler.InitializeAsync(_client);
             await Task.Delay(-1);
         }
 
-        // I hate this warning
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        private async Task Log(LogMessage msg) => Console.WriteLine(msg.Message);
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+        private Task Log(LogMessage msg)
+        {
+            Console.WriteLine(msg.Message);
+            return Task.CompletedTask;
+        }
     }
 }

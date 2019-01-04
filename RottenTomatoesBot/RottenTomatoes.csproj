@@ -170,12 +170,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandDefinitions.cs" />
+    <Compile Include="Commands.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="EventHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RottenTomatoesHandler.cs" />
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

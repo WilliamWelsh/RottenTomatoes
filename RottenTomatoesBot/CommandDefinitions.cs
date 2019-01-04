@@ -67,7 +67,7 @@ namespace RottenTomatoes
 
             string description = $"Total Servers: {serverCount.ToString("#,##0")}\nTotal Members: {totalMembers.ToString("#,##0")}";
 
-            await Context.Channel.SendMessageAsync("", false, new EmbedBuilder()
+            await Context.Channel.SendMessageAsync(null, false, new EmbedBuilder()
                 .WithTitle("Bot Stats")
                 .WithThumbnailUrl("https://cdn.discordapp.com/avatars/477287091798278145/11dac188844056c5dbbdef7015bffc8b.png?size=128")
                 .WithDescription(description)

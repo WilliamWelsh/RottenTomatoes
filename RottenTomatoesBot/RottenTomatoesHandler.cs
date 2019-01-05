@@ -27,9 +27,6 @@ namespace RottenTomatoes
             public int MeterScore { get; set; }
         }
 
-        // Box Office Movie Struct
-        struct BoxOfficeMovie { public string meterClass; public string meterScore; public string title; public string moneyMade; }
-
         // Has to be like this to get the results in a json fromat
         struct SearchResults { public List<Movie> movies { get; set; } }
 
@@ -56,31 +53,46 @@ namespace RottenTomatoes
         }
 
         // Search Rotten Tomatoes for movies and create a selection
-        public async Task SearchRottenTomatoes(string search, SocketCommandContext context)
+        public async Task SearchRottenTomatoes(string search, SocketCommandContext Context)
         {
             if (search == "cancel")
             {
-                await RTCancel(context.Channel);
+                await RTCancel(Context.Channel);
                 return;
             }
             else if (search == "box office")
             {
-                await GetTopBoxOffice(context.Channel);
+                await Listings.SendTopBoxOffice(Context.Channel);
                 return;
             }
             else if (search == "help" || string.IsNullOrEmpty(search))
             {
-                await PrintHelp(context.Channel);
+                await Utilities.PrintHelp(Context.Channel);
                 return;
             }
             else if (search == "invite")
             {
-                await DMInviteLink((SocketGuildUser)context.User, context.Channel);
+                await Utilities.DMInviteLink((SocketGuildUser)Context.User, Context.Channel);
                 return;
             }
             else if (search == "github")
             {
-                await Utilities.SendEmbed(context.Channel, "Rotten Tomatoes Source Code", "Here is the source code for this bot:\nhttps://github.com/WilliamWelsh/RottenTomatoes", false);
+                await Utilities.SendEmbed(Context.Channel, "Rotten Tomatoes Source Code", "Here is the source code for this bot:\nhttps://github.com/WilliamWelsh/RottenTomatoes", false);
+                return;
+            }
+            else if (search == "upcoming" || search == "upcoming movies")
+            {
+                await Utilities.SendUpcomingHelp(Context.Channel);
+                return;
+            }
+            else if (search == "comingsoon" || search == "coming soon")
+            {
+                await Listings.SendUpcomingMovies(Context.Channel);
+                return;
+            }
+            else if (search == "opening" || search == "opening this week")
+            {
+                await Listings.SendUpcomingMoviesThisWeek(Context.Channel);
                 return;
             }
 
@@ -95,7 +107,7 @@ namespace RottenTomatoes
             // If there's no result, tell the user and then stop.
             if (json.Contains("Sorry, no results found"))
             {
-                await Utilities.SendEmbed(context.Channel, "Rotten Tomatoes Search", $"Sorry, no results were found for \"{search}\"\n\nTry reformatting your search if the title contains colons, hyphens, etc.", false);
+                await Utilities.SendEmbed(Context.Channel, "Rotten Tomatoes Search", $"Sorry, no results were found for \"{search}\"\n\nTry reformatting your search if the title contains colons, hyphens, etc.", false);
                 return;
             }
 
@@ -126,7 +138,7 @@ namespace RottenTomatoes
             // If there's only one movie, go ahead and show that result
             if (movies.Count == 1)
             {
-                await TryToSelect(1, context.Channel);
+                await TryToSelect(1, Context.Channel);
                 return;
             }
 
@@ -137,7 +149,7 @@ namespace RottenTomatoes
                 selection.AppendLine($"`{movies.IndexOf(m) + 1}` {m.Name} `{m.Year}`");
 
             // Print our selection embedded
-            await Utilities.SendEmbed(context.Channel, "Rotten Tomatoes Search", $"{selection}\n**To select**, type `!rt choose <number>`\n\n**To cancel**, type `!rt cancel`.", false, "Via RottenTomatoes.com");
+            await Utilities.SendEmbed(Context.Channel, "Rotten Tomatoes Search", $"{selection}\n**To select**, type `!rt choose <number>`\n\n**To cancel**, type `!rt cancel`.", false, "Via RottenTomatoes.com");
         }
 
         // Attempt to select a movie with !rt choose <number>
@@ -192,88 +204,12 @@ namespace RottenTomatoes
             string score = (movie.MeterScore == 0 && movie.MeterClass != "rotten") ? "No Score Yet" : $"{movie.MeterScore}%";
 
             // Add embed fields
-            Embed.AddField("Tomatometer", $"{ClassToEmoji(movie.MeterClass)} {score}")
+            Embed.AddField("Tomatometer", $"{Utilities.IconToEmoji(movie.MeterClass)} {score}")
                 .AddField("Audience Score", $"{audienceEmoji} {audienceScore}% {audienceSuffix}")
                 .AddField("Critics Consensus", criticsConsensus)
                 .WithFooter("Via RottenTomatoes.com");
 
             await channel.SendMessageAsync(null, false, Embed.Build());
-        }
-
-        // Display the top 10 movies at the box office provided by Rotten Tomatoes
-        private async Task GetTopBoxOffice(ISocketMessageChannel channel)
-        {
-            // Get the website data
-            string data = Utilities.DownloadString("https://www.rottentomatoes.com");
-
-            // Scrape everything away except for the top box office information
-            data = ScrapeText(ref data, "<h2>Top Box Office</h2>", 0, "</table>");
-
-            // We'll add every box office movie's data to this list
-            List<BoxOfficeMovie> boxOfficeMovies = new List<BoxOfficeMovie>();
-
-            // For each box office movie, get its data, add it to the list, and then remove it from the site data
-            do
-            {
-                BoxOfficeMovie newMovie = new BoxOfficeMovie();
-
-                // Get the meter class
-                newMovie.meterClass = ScrapeText(ref data, "<span class=\"icon tiny", 1, "\"");
-
-                // Get the meter score
-                newMovie.meterScore = ScrapeText(ref data, "tMeterScore\">", 0, "<");
-
-                // Get the movie title
-                data = data.Substring(data.IndexOf("\">") + 2);
-                data = data.Substring(data.IndexOf("\">") + 2);
-                newMovie.title = data.Substring(0, data.IndexOf("<"));
-
-                // Get the money made
-                data = data.Substring(data.IndexOf("\">") + 2);
-                data = data.Substring(data.IndexOf("\">") + 2);
-                newMovie.moneyMade = data.Substring(0, data.IndexOf("<"));
-
-                boxOfficeMovies.Add(newMovie);
-
-                // Get rid of this movies' row from the html data
-                data = data.Substring(data.IndexOf("</tr>") + 4);
-            }
-            while (data.Contains("sidebarInTheaterOpening"));
-
-            // Print all the movies in order
-            StringBuilder description = new StringBuilder();
-            foreach (var m in boxOfficeMovies)
-                description.AppendLine($"{ClassToEmoji(m.meterClass)} {m.meterScore} **{m.title}** {m.moneyMade}").AppendLine();
-
-            await Utilities.SendEmbed(channel, "Top Box Office", description.ToString(), false, "Via RottenTomatoes.com");
-        }
-
-        private string ScrapeText(ref string text, string firstTarget, int firstTargetOffset, string lastTarget)
-        {
-            // The offset integer is for when the first target string has an escape character in it, causing an extra character
-            text = text.Substring(text.IndexOf(firstTarget) + firstTarget.Length + firstTargetOffset);
-            return text.Substring(0, text.IndexOf(lastTarget));
-        }
-
-        // Get the Discord emoji based on the meter class
-        private string ClassToEmoji(string meterClass)
-        {
-            if (meterClass == "rotten")
-                return "<:rotten:477137965672431628>";
-            else if (meterClass == "certified_fresh")
-                return "<:certifiedfresh:477137965848723477>";
-            else if (meterClass == "fresh")
-                return "<:tomato:477141676650004481>";
-            return "";
-        }
-
-        // Print help (available commands and resources)
-        private async Task PrintHelp(ISocketMessageChannel channel) => await Utilities.SendEmbed(channel, "Rotten Tomatoes", "Here are the available commands:\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`\n*To cancel a search `!rt cancel`\n\nTo invite the bot to your server, type `!rt invite`\n\nTo view the source code, type `!rt github`", false, "Please report issues on my Discord server (!rtdiscord)");
-
-        private async Task DMInviteLink(SocketGuildUser user, ISocketMessageChannel channel)
-        {
-            await user.SendMessageAsync("https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&permissions=3072");
-            await Utilities.SendEmbed(channel, "Rotten Tomatoes", $"The invite link has been DMed to you, {user.Mention}!", false);
         }
     }
 }

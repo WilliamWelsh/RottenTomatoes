@@ -33,4 +33,4 @@ A Discord bot that allows you to search movies on Rotten Tomatoes and view the c
 Please report bugs or issues here.  
 [Issues page](https://github.com/WilliamWelsh/RottenTomatoes/issues)
 #### To-Do List (?)
-  - Add TV related commands
+	- Add TV related commands

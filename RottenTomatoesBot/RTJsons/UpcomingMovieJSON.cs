@@ -141,7 +141,6 @@ namespace UpcomingMovieJSON
             }
             var value = (long)untypedValue;
             serializer.Serialize(writer, value.ToString());
-            return;
         }
 
         public static readonly ParseStringConverter Singleton = new ParseStringConverter();
@@ -250,13 +249,10 @@ namespace UpcomingMovieJSON
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<string>(reader);
-            switch (value)
-            {
-                case "consensus":
-                    return SynopsisType.Consensus;
-                case "synopsis":
-                    return SynopsisType.Synopsis;
-            }
+            if (value == "consensus")
+                return SynopsisType.Consensus;
+            else if (value == "synopsis")
+                return SynopsisType.Synopsis;
             throw new ArgumentException("Cannot unmarshal type SynopsisType");
         }
 
@@ -329,6 +325,9 @@ namespace UpcomingMovieJSON
                     return;
                 case TomatoIcon.Rotten:
                     serializer.Serialize(writer, "rotten");
+                    return;
+                default:
+                    serializer.Serialize(writer, "unknown");
                     return;
             }
             throw new ArgumentException("Cannot marshal type TomatoIcon");

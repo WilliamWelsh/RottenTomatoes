@@ -62,7 +62,7 @@ namespace OpeningThisWeekJSON
         public string DvdReleaseDate { get; set; }
     }
 
-    public partial class MainTrailer
+    public class MainTrailer
     {
         [JsonProperty("sourceId")]
         public Uri SourceId { get; set; }
@@ -72,7 +72,7 @@ namespace OpeningThisWeekJSON
         public long Id { get; set; }
     }
 
-    public partial class Posters
+    public class Posters
     {
         [JsonProperty("thumborId")]
         public string ThumborId { get; set; }
@@ -129,7 +129,6 @@ namespace OpeningThisWeekJSON
             }
             var value = (long)untypedValue;
             serializer.Serialize(writer, value.ToString());
-            return;
         }
 
         public static readonly ParseStringConverter Singleton = new ParseStringConverter();

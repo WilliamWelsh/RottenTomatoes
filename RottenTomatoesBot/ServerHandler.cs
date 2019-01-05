@@ -22,12 +22,12 @@ namespace RottenTomatoes
 
         public override bool Equals(object obj)
         {
-            return base.Equals(obj as ServerHandler);
+            return Equals(obj as ServerHandler);
         }
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return GetHashCode();
         }
     }
 }

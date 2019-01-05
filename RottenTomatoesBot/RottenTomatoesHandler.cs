@@ -14,7 +14,7 @@ namespace RottenTomatoes
     public class RottenTomatoesHandler
     {
         // To see if it's possible to cancel the selection
-        bool isSelectionBeingMade = false;
+        bool isSelectionBeingMade;
 
         // Movie item format
         struct Movie
@@ -138,7 +138,7 @@ namespace RottenTomatoes
             // If there's only one movie, go ahead and show that result
             if (movies.Count == 1)
             {
-                await TryToSelect(1, Context.Channel);
+                await TryToSelect(1, Context.Channel).ConfigureAwait(false);
                 return;
             }
 

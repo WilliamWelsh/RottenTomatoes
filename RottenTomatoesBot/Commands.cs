@@ -12,38 +12,34 @@ namespace RottenTomatoes
         [Command("rt")]
         public async Task SearchRottenTomatoes([Remainder]string search)
         {
-            foreach (var s in Config.Servers)
+            foreach (var Server in Config.Servers)
             {
-                if (s.serverID == Context.Guild.Id)
+                if (Server.GuildID == Context.Guild.Id)
                 {
-                    await s.RT.SearchRottenTomatoes(search, Context);
+                    await Server.Handler.SearchRottenTomatoes(search, Context);
                     return;
                 }
             }
 
-            var newServer = new Config.ServerHandler();
-            newServer.serverID = Context.Guild.Id;
-            newServer.RT = new RottenTomatoesHandler();
-            await newServer.RT.SearchRottenTomatoes(search, Context);
+            var newServer = new ServerHandler(Context.Guild.Id, new RottenTomatoesHandler());
+            await newServer.Handler.SearchRottenTomatoes(search, Context);
             Config.Servers.Add(newServer);
         }
 
         [Command("rt choose")]
         public async Task SelectRottenTomatoes(int selection)
         {
-            foreach (var s in Config.Servers)
+            foreach (var Server in Config.Servers)
             {
-                if (s.serverID == Context.Guild.Id)
+                if (Server.GuildID == Context.Guild.Id)
                 {
-                    await s.RT.TryToSelect(selection, Context.Channel);
+                    await Server.Handler.TryToSelect(selection, Context.Channel);
                     return;
                 }
             }
 
-            var newServer = new Config.ServerHandler();
-            newServer.serverID = Context.Guild.Id;
-            newServer.RT = new RottenTomatoesHandler();
-            await newServer.RT.TryToSelect(selection, Context.Channel);
+            var newServer = new ServerHandler(Context.Guild.Id, new RottenTomatoesHandler());
+            await newServer.Handler.TryToSelect(selection, Context.Channel);
             Config.Servers.Add(newServer);
         }
 

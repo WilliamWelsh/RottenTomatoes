@@ -4,11 +4,9 @@ using System.Collections.Generic;
 
 namespace RottenTomatoes
 {
-    class Config
+    public class Config
     {
-        public struct ServerHandler { public ulong serverID; public RottenTomatoesHandler RT; }
-
-        public static readonly List<ServerHandler> Servers = new List<ServerHandler>();
+        public static List<ServerHandler> Servers = new List<ServerHandler>();
 
         public static readonly BotResources bot;
         public struct BotResources { public string BotToken { get; set; } }

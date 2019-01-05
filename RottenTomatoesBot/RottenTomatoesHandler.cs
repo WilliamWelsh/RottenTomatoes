@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace RottenTomatoes
 {
-    class RottenTomatoesHandler
+    public class RottenTomatoesHandler
     {
         // To see if it's possible to cancel the selection
         bool isSelectionBeingMade = false;

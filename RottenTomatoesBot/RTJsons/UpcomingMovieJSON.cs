@@ -129,7 +129,7 @@ namespace UpcomingMovieJSON
             {
                 return l;
             }
-            throw new Exception("Cannot unmarshal type long");
+            throw new ArgumentException("Cannot unmarshal type long");
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -166,7 +166,7 @@ namespace UpcomingMovieJSON
                 case "R":
                     return MpaaRating.R;
             }
-            throw new Exception("Cannot unmarshal type MpaaRating");
+            throw new ArgumentException("Cannot unmarshal type MpaaRating");
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -192,7 +192,7 @@ namespace UpcomingMovieJSON
                     serializer.Serialize(writer, "R");
                     return;
             }
-            throw new Exception("Cannot marshal type MpaaRating");
+            throw new ArgumentException("Cannot marshal type MpaaRating");
         }
 
         public static readonly MpaaRatingConverter Singleton = new MpaaRatingConverter();
@@ -213,7 +213,7 @@ namespace UpcomingMovieJSON
                 case "anticipated":
                     return PopcornIcon.Anticipated;
             }
-            throw new Exception("Cannot unmarshal type PopcornIcon");
+            throw new ArgumentException("Cannot unmarshal type PopcornIcon");
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -232,8 +232,11 @@ namespace UpcomingMovieJSON
                 case PopcornIcon.Anticipated:
                     serializer.Serialize(writer, "anticipated");
                     return;
+                default:
+                    serializer.Serialize(writer, "unknown");
+                    return;
             }
-            throw new Exception("Cannot marshal type PopcornIcon");
+            throw new ArgumentException("Cannot marshal type PopcornIcon");
         }
 
         public static readonly PopcornIconConverter Singleton = new PopcornIconConverter();
@@ -254,7 +257,7 @@ namespace UpcomingMovieJSON
                 case "synopsis":
                     return SynopsisType.Synopsis;
             }
-            throw new Exception("Cannot unmarshal type SynopsisType");
+            throw new ArgumentException("Cannot unmarshal type SynopsisType");
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -274,7 +277,7 @@ namespace UpcomingMovieJSON
                     serializer.Serialize(writer, "synopsis");
                     return;
             }
-            throw new Exception("Cannot marshal type SynopsisType");
+            throw new ArgumentException("Cannot marshal type SynopsisType");
         }
 
         public static readonly SynopsisTypeConverter Singleton = new SynopsisTypeConverter();
@@ -299,7 +302,7 @@ namespace UpcomingMovieJSON
                 case "rotten":
                     return TomatoIcon.Rotten;
             }
-            throw new Exception("Cannot unmarshal type TomatoIcon");
+            throw new ArgumentException("Cannot unmarshal type TomatoIcon");
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -325,7 +328,7 @@ namespace UpcomingMovieJSON
                     serializer.Serialize(writer, "rotten");
                     return;
             }
-            throw new Exception("Cannot marshal type TomatoIcon");
+            throw new ArgumentException("Cannot marshal type TomatoIcon");
         }
 
         public static readonly TomatoIconConverter Singleton = new TomatoIconConverter();

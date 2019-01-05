@@ -180,6 +180,7 @@
     <Compile Include="RTJsons\OpeningThisWeekJSON.cs" />
     <Compile Include="RTJsons\UpcomingMovieJSON.cs" />
     <Compile Include="RottenTomatoesHandler.cs" />
+    <Compile Include="ServerHandler.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>

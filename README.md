@@ -2,7 +2,6 @@
 A Discord bot that allows you to search movies on Rotten Tomatoes and view the critic score, audience score, and consensus. You can also view the current top box office, movies opening this week, and movies coming soon to theaters. If you search a movie, and it's the only result, it will automatically display that movie.  
 [<img src="https://discordapp.com/api/guilds/294699220743618561/widget.png?style=shield">](https://discord.gg/qsc8YMS)
 <img src="https://img.shields.io/badge/discord-csharp-blue.svg">
-[![Open Source Love svg2](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ad7ae4f9435b492db63c5f79be8cafa6)](https://www.codacy.com/app/WilliamWelsh/RottenTomatoes?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=WilliamWelsh/RottenTomatoes&amp;utm_campaign=Badge_Grade)
 [![Build status](https://ci.appveyor.com/api/projects/status/y2uo269b2i1ipv95?svg=true)](https://ci.appveyor.com/project/WilliamWelsh/rottentomatoes)
 

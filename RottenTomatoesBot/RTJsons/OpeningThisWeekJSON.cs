@@ -117,7 +117,7 @@ namespace OpeningThisWeekJSON
             {
                 return l;
             }
-            throw new Exception("Cannot unmarshal type long");
+            throw new ArgumentNullException("Cannot unmarshal type long");
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)

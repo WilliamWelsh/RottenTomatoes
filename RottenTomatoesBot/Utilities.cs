@@ -69,7 +69,7 @@ namespace RottenTomatoes
                 .AppendLine("To invite the bot to your server, type `!rt invite`")
                 .AppendLine()
                 .AppendLine("To view the source code, type `!rt github`");
-            await SendEmbed(channel, "Rotten Tomatoes", text.ToString(), false, "Please report issues on my Discord server (!rtdiscord)");
+            await SendEmbed(channel, "Rotten Tomatoes", text.ToString(), false, "Please report issues on my Discord server (!rtdiscord)").ConfigureAwait(false);
         }
 
         // Print help for how to use the !rt opening and !rt coming soon commands
@@ -89,7 +89,7 @@ namespace RottenTomatoes
         public static async Task DMInviteLink(SocketGuildUser user, ISocketMessageChannel channel)
         {
             await user.SendMessageAsync("https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&permissions=3072");
-            await SendEmbed(channel, "Rotten Tomatoes", $"The invite link has been DMed to you, {user.Mention}!", false);
+            await SendEmbed(channel, "Rotten Tomatoes", $"The invite link has been DMed to you, {user.Mention}!", false).ConfigureAwait(false)
         }
     }
 }

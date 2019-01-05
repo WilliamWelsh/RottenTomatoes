@@ -19,5 +19,15 @@ namespace RottenTomatoes
                 return true;
             return false;
         }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj as ServerHandler);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace RottenTomatoes
 {
-    class Listings
+    static class Listings
     {
         // Print the top 10 movies at the box office: 
         public static async Task SendTopBoxOffice(ISocketMessageChannel Channel) => await TopBoxOffice.SendTopBoxOffice(Channel);

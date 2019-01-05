@@ -276,6 +276,9 @@ namespace UpcomingMovieJSON
                 case SynopsisType.Synopsis:
                     serializer.Serialize(writer, "synopsis");
                     return;
+                default:
+                    serializer.Serialize(writer, "unknown");
+                    return;
             }
             throw new ArgumentException("Cannot marshal type SynopsisType");
         }

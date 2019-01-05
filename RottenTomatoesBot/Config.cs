@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace RottenTomatoes
 {
-    public class Config
+    static class Config
     {
         public static List<ServerHandler> Servers = new List<ServerHandler>();
 

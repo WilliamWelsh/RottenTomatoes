@@ -57,7 +57,7 @@ namespace RottenTomatoes
         {
             if (search == "cancel")
             {
-                await RTCancel(Context.Channel);
+                await RTCancel(Context.Channel).ConfigureAwait(false);
                 return;
             }
             else if (search == "box office")

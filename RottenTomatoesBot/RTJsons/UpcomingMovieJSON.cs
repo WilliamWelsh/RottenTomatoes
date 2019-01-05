@@ -72,7 +72,7 @@ namespace UpcomingMovieJSON
         public long Id { get; set; }
     }
 
-    public partial class Posters
+    public class Posters
     {
         [JsonProperty("thumborId")]
         public string ThumborId { get; set; }

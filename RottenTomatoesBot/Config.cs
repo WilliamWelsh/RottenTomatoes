@@ -6,13 +6,11 @@ namespace RottenTomatoes
 {
     class Config
     {
-        public static RottenTomatoesHandler RT = new RottenTomatoesHandler();
-
         public struct ServerHandler { public ulong serverID; public RottenTomatoesHandler RT; }
 
-        public static List<ServerHandler> Servers = new List<ServerHandler>();
+        public static readonly List<ServerHandler> Servers = new List<ServerHandler>();
 
-        public static BotResources bot;
+        public static readonly BotResources bot;
         public struct BotResources { public string BotToken { get; set; } }
 
         static Config()

@@ -7,7 +7,10 @@ namespace RottenTomatoes
     public class CommandDefinitons : ModuleBase<SocketCommandContext>
     {
         [Command("rt")]
-        public async Task SearchRottenTomatoes([Remainder]string search = null)
+        public async Task RTHelp() => await Utilities.PrintHelp(Context.Channel);
+
+        [Command("rt")]
+        public async Task SearchRottenTomatoes([Remainder]string search)
         {
             foreach (var s in Config.Servers)
             {

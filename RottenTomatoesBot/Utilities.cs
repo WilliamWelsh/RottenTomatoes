@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace RottenTomatoes
 {
-    class Utilities
+    static class Utilities
     {
         // Red color for all embeds
-        public static Color embedColor = new Color(250, 50, 10);
+        public static readonly Color embedColor = new Color(250, 50, 10);
 
         // RT Logo
         private const string logo = "https://cdn.discordapp.com/avatars/477287091798278145/11dac188844056c5dbbdef7015bffc8b.png?size=128";
@@ -38,7 +38,7 @@ namespace RottenTomatoes
         // Get the (custom) Discord emoji based on the meter class
         public static string IconToEmoji(string meterClass)
         {
-            meterClass = meterClass.ToLower();
+            meterClass = meterClass.ToLowerInvariant();
             if (meterClass == "rotten")
                 return "<:rotten:477137965672431628>";
             else if (meterClass == "certified_fresh")
@@ -82,7 +82,7 @@ namespace RottenTomatoes
                 .AppendLine()
                 .AppendLine("To view movies **coming soon to theaters**...")
                 .AppendLine("*Type `!rt coming soon`");
-            await SendEmbed(Channel, "Upcoming Movies", text.ToString(), false);
+            await SendEmbed(Channel, "Upcoming Movies", text.ToString(), false).ConfigureAwait(false);
         }
 
         // DM the invite link to a user

@@ -6,7 +6,7 @@ A Discord bot that allows you to search movies on Rotten Tomatoes and view the c
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ad7ae4f9435b492db63c5f79be8cafa6)](https://www.codacy.com/app/WilliamWelsh/RottenTomatoes?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=WilliamWelsh/RottenTomatoes&amp;utm_campaign=Badge_Grade)
 
 ## Inviting to Your Server
-https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&permissions=3072
+[Click me to invite the bot to your server.](https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&permissions=3072)
 #### Commands
 `!rt help` View available commands.  
 `!rt (name of movie)` Search for a movie.  
@@ -31,6 +31,6 @@ https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&p
 ![Screenshot](https://i.imgur.com/ZmG16fb.png)  
 #### Bugs and Issues
 Please report bugs or issues here.  
-https://github.com/WilliamWelsh/RottenTomatoes/issues
+[Issues page](https://github.com/WilliamWelsh/RottenTomatoes/issues)
 #### To-Do List (?)
-- Add TV related commands
+  - Add TV related commands

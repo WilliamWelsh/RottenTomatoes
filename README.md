@@ -4,6 +4,7 @@ A Discord bot that allows you to search movies on Rotten Tomatoes and view the c
 <img src="https://img.shields.io/badge/discord-csharp-blue.svg">
 [![Open Source Love svg2](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ad7ae4f9435b492db63c5f79be8cafa6)](https://www.codacy.com/app/WilliamWelsh/RottenTomatoes?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=WilliamWelsh/RottenTomatoes&amp;utm_campaign=Badge_Grade)
+[![Build status](https://ci.appveyor.com/api/projects/status/y2uo269b2i1ipv95?svg=true)](https://ci.appveyor.com/project/WilliamWelsh/rottentomatoes)
 
 ## Inviting to Your Server
 [Click me to invite the bot to your server.](https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&permissions=3072)

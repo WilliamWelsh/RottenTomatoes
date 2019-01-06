@@ -190,6 +190,9 @@ namespace UpcomingMovieJSON
                 case MpaaRating.R:
                     serializer.Serialize(writer, "R");
                     return;
+                default:
+                    serializer.Serialize(writer, "N/A");
+                    return;
             }
             throw new ArgumentException("Cannot marshal type MpaaRating");
         }

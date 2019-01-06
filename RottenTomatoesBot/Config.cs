@@ -7,7 +7,7 @@ namespace RottenTomatoes
 {
     static class Config
     {
-        public static List<ServerHandler> Servers = new List<ServerHandler>();
+        public static readonly List<ServerHandler> Servers = new List<ServerHandler>();
 
         public static readonly BotResources bot;
 

@@ -287,17 +287,14 @@ namespace UpcomingMovieJSON
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<string>(reader);
-            switch (value)
-            {
-                case "NA":
-                    return TomatoIcon.Na;
-                case "certified_fresh":
-                    return TomatoIcon.CertifiedFresh;
-                case "fresh":
-                    return TomatoIcon.Fresh;
-                case "rotten":
-                    return TomatoIcon.Rotten;
-            }
+            if (value == "NA")
+                return TomatoIcon.Na;
+            else if (value == "certified_fresh")
+                return TomatoIcon.CertifiedFresh;
+            else if (value == "fresh")
+                return TomatoIcon.Fresh;
+            else if (value == "rotten")
+                return TomatoIcon.Rotten;
             throw new ArgumentException("Cannot unmarshal type TomatoIcon");
         }
 

@@ -59,7 +59,6 @@ namespace RottenTomatoes
                 if (result.Error == CommandError.UnknownCommand)
                 {
                     string search = msg.Content.Substring(4, msg.Content.Length-4); // Remove "!rt "
-                    Console.WriteLine(search);
                     foreach (var Server in Config.Servers)
                     {
                         if (Server.GuildID == Context.Guild.Id)

@@ -10,9 +10,8 @@ namespace RottenTomatoes
         public static List<ServerHandler> Servers = new List<ServerHandler>();
 
         public static readonly BotResources bot;
-        public struct BotResources { public string BotToken { get; set; } public string BotsListToken { get; set; } }
 
-        public static AuthDiscordBotListApi DblAPI;
+        public static readonly AuthDiscordBotListApi DblAPI;
 
         static Config()
         {
@@ -27,7 +26,7 @@ namespace RottenTomatoes
             else
             {
                 string json = File.ReadAllText("Resources/resources.json");
-                bot = JsonConvert.DeserializeObject<BotResources>(json);
+                bot = BotResources.FromJson(json);
             }
 
             DblAPI = new AuthDiscordBotListApi(477287091798278145, bot.BotsListToken);

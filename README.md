@@ -14,14 +14,14 @@ A Discord bot that allows you to search movies on Rotten Tomatoes and view the c
 `!rt cancel` Cancel the current search.  
 `!rt box office` View the current top box office.  
 `!rt upcoming` View upcoming movies.  
-`!rt opening` View movies opening this week.  
-`!rt opening this week` View movies opening this week.  
+`!rt opening` or `!rt opening this week` View movies opening this week.  
 `!rt coming soon` View movies coming soon to theaters.  
 #### Misc Commands
+`!rt info` or `!rt stats` View various stats.  
 `!rt invite`  Get the invite link to add the bot to your server.  
-`!rt cancel` Cancel the current search.  
 `!rt github` View the source code for this bot.  
-`!rtdiscord` Invite link to my server if you have a feature request, bug issue, or something else.  
+`!rt discord` Invite link to my server if you have a feature request, bug issue, or something else.  
+
 #### Image Examples
 ![Screenshot](https://i.imgur.com/pe0yCAx.png)  
 ![Screenshot](https://i.imgur.com/5AHSNfU.png)  

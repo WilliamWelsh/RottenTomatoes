@@ -62,7 +62,7 @@ namespace UpcomingMovieJSON
         public string DvdReleaseDate { get; set; }
     }
 
-    public partial class MainTrailer
+    public class MainTrailer
     {
         [JsonProperty("sourceId")]
         public Uri SourceId { get; set; }
@@ -205,13 +205,10 @@ namespace UpcomingMovieJSON
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<string>(reader);
-            switch (value)
-            {
-                case "NA":
-                    return PopcornIcon.Na;
-                case "anticipated":
-                    return PopcornIcon.Anticipated;
-            }
+            if (value == "NA")
+                return PopcornIcon.Na;
+            else if (value == "anticipated")
+                return PopcornIcon.Anticipated;
             throw new ArgumentException("Cannot unmarshal type PopcornIcon");
         }
 

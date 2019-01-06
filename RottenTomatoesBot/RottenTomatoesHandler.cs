@@ -16,7 +16,7 @@ namespace RottenTomatoes
         bool isSelectionBeingMade;
 
         // This is the new list made with searched movies ordered by newest to oldest for ease of selection
-        List<SearchResultsJSON.Movie> Movies = new List<SearchResultsJSON.Movie>();
+        readonly List<SearchResultsJSON.Movie> Movies = new List<SearchResultsJSON.Movie>();
 
         // Reset the handler by clearing the movies and saying there is no selection being made
         private void Reset()

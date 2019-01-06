@@ -179,13 +179,14 @@
     <Compile Include="Commands.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="EventHandler.cs" />
+    <Compile Include="JSONs\BotResources.cs" />
     <Compile Include="Listings\Listings.cs" />
     <Compile Include="Listings\TopBoxOffice.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RTJsons\OpeningThisWeekJSON.cs" />
-    <Compile Include="RTJsons\SearchResultsJSON.cs" />
-    <Compile Include="RTJsons\UpcomingMovieJSON.cs" />
+    <Compile Include="JSONs\OpeningThisWeekJSON.cs" />
+    <Compile Include="JSONs\SearchResultsJSON.cs" />
+    <Compile Include="JSONs\UpcomingMovieJSON.cs" />
     <Compile Include="RottenTomatoesHandler.cs" />
     <Compile Include="ServerHandler.cs" />
     <Compile Include="Utilities.cs" />

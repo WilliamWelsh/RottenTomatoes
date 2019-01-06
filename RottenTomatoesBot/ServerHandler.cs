@@ -27,7 +27,7 @@ namespace RottenTomatoes
 
         public override int GetHashCode()
         {
-            return GetHashCode();
+            return 0;
         }
     }
 }

@@ -38,7 +38,7 @@ namespace SearchResultsJSON
         public TvSery[] TvSeries { get; set; }
     }
 
-    public partial class Franchise
+    public class Franchise
     {
         [JsonProperty("title")]
         public string Title { get; set; }
@@ -50,7 +50,7 @@ namespace SearchResultsJSON
         public Uri Image { get; set; }
     }
 
-    public partial class Movie
+    public class Movie
     {
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -77,7 +77,7 @@ namespace SearchResultsJSON
         public string Subline { get; set; }
     }
 
-    public partial class CastItem
+    public class CastItem
     {
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -86,7 +86,7 @@ namespace SearchResultsJSON
         public string Url { get; set; }
     }
 
-    public partial class TvSery
+    public class TvSery
     {
         [JsonProperty("title")]
         public string Title { get; set; }

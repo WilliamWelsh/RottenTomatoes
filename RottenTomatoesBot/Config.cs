@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Newtonsoft.Json;
+using DiscordBotsList.Api;
 using System.Collections.Generic;
 
 namespace RottenTomatoes
@@ -9,7 +10,9 @@ namespace RottenTomatoes
         public static List<ServerHandler> Servers = new List<ServerHandler>();
 
         public static readonly BotResources bot;
-        public struct BotResources { public string BotToken { get; set; } }
+        public struct BotResources { public string BotToken { get; set; } public string BotsListToken { get; set; } }
+
+        public static AuthDiscordBotListApi DblAPI;
 
         static Config()
         {
@@ -26,6 +29,8 @@ namespace RottenTomatoes
                 string json = File.ReadAllText("Resources/resources.json");
                 bot = JsonConvert.DeserializeObject<BotResources>(json);
             }
+
+            DblAPI = new AuthDiscordBotListApi(477287091798278145, bot.BotsListToken);
         }
     }
 }

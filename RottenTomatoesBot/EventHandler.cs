@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using System.Reflection;
 using System.Threading.Tasks;
+using DiscordBotsList.Api.Objects;
 
 namespace RottenTomatoes
 {
@@ -17,6 +18,17 @@ namespace RottenTomatoes
             _service = new CommandService();
             await _service.AddModulesAsync(Assembly.GetEntryAssembly(), null);
             _client.MessageReceived += HandleCommandAsync;
+
+            _client.JoinedGuild += UpdateDBlStatsASync;
+            _client.LeftGuild += UpdateDBlStatsASync;
+        }
+
+        // Update the server list on https://discordbots.org/bot/477287091798278145
+        private async Task UpdateDBlStatsASync(SocketGuild arg)
+        {
+            IDblSelfBot me = await Config.DblAPI.GetMeAsync();
+            Console.WriteLine(_client.Guilds.Count);
+            await me.UpdateStatsAsync(_client.Guilds.Count);
         }
 
         private async Task HandleCommandAsync(SocketMessage s)
@@ -24,15 +36,42 @@ namespace RottenTomatoes
             var msg = s as SocketUserMessage;
             if (msg == null || msg.Author.IsBot) return;
 
-            var context = new SocketCommandContext(_client, msg);
+            var Context = new SocketCommandContext(_client, msg);
+
+            // If the user just mentions the bot or says !rt, print help, they might need help
+            if (msg.Content == "!rt" || msg.Content.StartsWith("<@477287091798278145>"))
+            {
+                await Utilities.PrintHelp(Context.Channel);
+                return;
+            }
 
             int argPos = 0;
-            if (msg.HasStringPrefix("!", ref argPos))
+            if (msg.HasStringPrefix("!rt ", ref argPos))
             {
-                await _service.ExecuteAsync(context, argPos, null);
+                var result = await _service.ExecuteAsync(Context, argPos, null);
                 if (msg.Content.StartsWith("!rt"))
                 {
-                    Console.WriteLine($"{context.Guild.Name}: {msg.Author}: {msg.Content}");
+                    Console.WriteLine($"{Context.Guild.Name}: {msg.Author}: {msg.Content}");
+                }
+
+                // Search rotten tomatoes
+                // Example: !rt avengers
+                if (result.Error == CommandError.UnknownCommand)
+                {
+                    string search = msg.Content.Substring(4, msg.Content.Length-4); // Remove "!rt "
+                    Console.WriteLine(search);
+                    foreach (var Server in Config.Servers)
+                    {
+                        if (Server.GuildID == Context.Guild.Id)
+                        {
+                            await Server.Handler.SearchRottenTomatoes(search, Context);
+                            return;
+                        }
+                    }
+
+                    var newServer = new ServerHandler(Context.Guild.Id, new RottenTomatoesHandler());
+                    await newServer.Handler.SearchRottenTomatoes(search, Context);
+                    Config.Servers.Add(newServer);
                 }
             }
         }

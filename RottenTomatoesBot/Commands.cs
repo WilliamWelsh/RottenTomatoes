@@ -1,4 +1,5 @@
 ﻿using Discord.Commands;
+using Discord.WebSocket;
 using System.Threading.Tasks;
 
 namespace RottenTomatoes
@@ -6,27 +7,31 @@ namespace RottenTomatoes
     [RequireContext(ContextType.Guild)]
     public class CommandDefinitons : ModuleBase<SocketCommandContext>
     {
-        [Command("rt")]
-        public async Task RTHelp() => await Utilities.PrintHelp(Context.Channel);
+        [Command("github")]
+        public async Task PrintGitHubLink() => await Utilities.SendEmbed(Context.Channel, "Rotten Tomatoes Source Code", "Here is the source code for this bot:\nhttps://github.com/WilliamWelsh/RottenTomatoes", false);
 
-        [Command("rt")]
-        public async Task SearchRottenTomatoes([Remainder]string search)
-        {
-            foreach (var Server in Config.Servers)
-            {
-                if (Server.GuildID == Context.Guild.Id)
-                {
-                    await Server.Handler.SearchRottenTomatoes(search, Context);
-                    return;
-                }
-            }
+        [Command("invite")]
+        public async Task DMInvite() => await Utilities.DMInviteLink((SocketGuildUser)Context.User, Context.Channel);
 
-            var newServer = new ServerHandler(Context.Guild.Id, new RottenTomatoesHandler());
-            await newServer.Handler.SearchRottenTomatoes(search, Context);
-            Config.Servers.Add(newServer);
-        }
+        [Command("help")]
+        public async Task PrintHelp() => await Utilities.PrintHelp(Context.Channel);
 
-        [Command("rt choose")]
+        [Command("box office")]
+        public async Task PrintTopBoxOffice() => await Listings.SendTopBoxOffice(Context.Channel);
+
+        [Command("upcoming")]
+        [Alias("upcoming movies")]
+        public async Task SendUpComingHelp() => await Utilities.SendUpcomingHelp(Context.Channel);
+
+        [Command("comingsoon")]
+        [Alias("coming soon")]
+        public async Task SendUpcomingMovies() => await Listings.SendUpcomingMovies(Context.Channel);
+
+        [Command("opening")]
+        [Alias("opening this week")]
+        public async Task SendUpcomingMoviesThisWeek() => await Listings.SendUpcomingMoviesThisWeek(Context.Channel);
+
+        [Command("choose")]
         public async Task SelectRottenTomatoes(int selection)
         {
             foreach (var Server in Config.Servers)
@@ -43,29 +48,22 @@ namespace RottenTomatoes
             Config.Servers.Add(newServer);
         }
 
-        // Display how many servers the bot is on, and total amount of users
-        // This is pretty much just for me
-        [Command("rtstats")]
-        public async Task DisplayStats()
-        {
-            int serverCount = 0, totalMembers = 0;
-            foreach (var guild in Context.Client.Guilds)
-            {
-                serverCount++;
-                totalMembers += guild.MemberCount;
-            }
-
-            string description = $"Total Servers: {serverCount.ToString("#,##0")}\nTotal Members: {totalMembers.ToString("#,##0")}";
-
-            await Utilities.SendEmbed(Context.Channel, "Bot Stats", description, true);
-        }
+        [Command("stats")]
+        [Alias("info")]
+        public async Task DisplayStats() => await Utilities.PrintBotInfo(Context.Client, Context.Channel);
 
         // Prints a link to my Discord
         // This is so a user can report something to me, or ask for a new feature
-        [Command("rtdiscord")]
-        public async Task RTDiscord()
+        [Command("discord")]
+        public async Task RTDiscord() => await Utilities.SendEmbed(Context.Channel, "RT Help", "Hello, if you need help with the bot, or need to report a bug, or request a new feature, please join my server and contact me\n(My name is Reverse)\nhttps://discord.gg/qsc8YMS", true);
+
+        [Command("vote")]
+        public async Task TryToVote()
         {
-            await Utilities.SendEmbed(Context.Channel, "RT Help", "Hello, if you need help with the bot, or need to report a bug, or request a new feature, please join my server and contact me\n(My name is Reverse)\nhttps://discord.gg/qsc8YMS", true);
+            if (await Config.DblAPI.HasVoted(Context.User.Id))
+                await Utilities.SendEmbed(Context.Channel, "Bot Voting", "You have voted within this 12 hour period. Thank you!\n\nhttps://discordbots.org/bot/477287091798278145/vote", false);
+            else
+                await Utilities.SendEmbed(Context.Channel, "Bot Voting", "You have not voted within this period. Please vote.\n\nhttps://discordbots.org/bot/477287091798278145/vote", false);
         }
     }
 }

@@ -113,8 +113,11 @@ namespace RottenTomatoes
             // because lists start at 0
             var Movie = Movies.ElementAt(selection - 1);
 
+            // The movie URL
+            string url = $"https://www.rottentomatoes.com{Movie.Url}";
+
             // Get the website data so we can scrap audience scores and the critic consensus
-            string html = Utilities.DownloadString($"https://www.rottentomatoes.com{Movie.Url}");
+            string html = Utilities.DownloadString(url);
 
             // Cut everything except the audience score information
             string temp = html.Substring(html.IndexOf("#audience_reviews") + 17);
@@ -156,6 +159,7 @@ namespace RottenTomatoes
             Embed.AddField("Tomatometer", $"{Utilities.IconToEmoji(Movie.MeterClass)} {score}")
                 .AddField("Audience Score", $"{audienceEmoji} {audienceScore}% {audienceSuffix}")
                 .AddField("Critics Consensus", criticsConsensus)
+                .AddField("Link", $"[View full page on Rotten Tomatoes]({url})")
                 .WithFooter("Via RottenTomatoes.com");
 
             await channel.SendMessageAsync(null, false, Embed.Build());

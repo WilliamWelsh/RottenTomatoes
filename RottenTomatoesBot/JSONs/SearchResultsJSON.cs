@@ -16,6 +16,9 @@ namespace SearchResultsJSON
         [JsonProperty("actorCount")]
         public long ActorCount { get; set; }
 
+        [JsonProperty("actors")]
+        public Actor[] Actors { get; set; }
+
         [JsonProperty("criticCount")]
         public long CriticCount { get; set; }
 
@@ -36,6 +39,18 @@ namespace SearchResultsJSON
 
         [JsonProperty("tvSeries")]
         public TvSery[] TvSeries { get; set; }
+    }
+
+    public partial class Actor
+    {
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("url")]
+        public string Url { get; set; }
+
+        [JsonProperty("image")]
+        public Uri Image { get; set; }
     }
 
     public class Franchise

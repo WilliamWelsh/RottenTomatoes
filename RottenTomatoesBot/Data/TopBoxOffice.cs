@@ -18,7 +18,7 @@ namespace RottenTomatoes
             string data = Utilities.DownloadString("https://www.rottentomatoes.com");
 
             // Scrape everything away except for the top box office information
-            data = ScrapeText(ref data, "<h2>Top Box Office</h2>", 0, "</table>");
+            data = Utilities.ScrapeText(ref data, "<h2>Top Box Office</h2>", 0, "</table>");
 
             // We'll add every box office movie's data to this list
             List<BoxOfficeMovie> boxOfficeMovies = new List<BoxOfficeMovie>();
@@ -29,10 +29,10 @@ namespace RottenTomatoes
                 BoxOfficeMovie newMovie = new BoxOfficeMovie
                 {
                     // Get the meter class
-                    meterClass = ScrapeText(ref data, "<span class=\"icon tiny", 1, "\""),
+                    meterClass = Utilities.ScrapeText(ref data, "<span class=\"icon tiny", 1, "\""),
 
                     // Get the meter score
-                    meterScore = ScrapeText(ref data, "tMeterScore\">", 0, "<")
+                    meterScore = Utilities.ScrapeText(ref data, "tMeterScore\">", 0, "<")
                 };
 
                 // Get the movie title
@@ -60,13 +60,6 @@ namespace RottenTomatoes
 
             // Send the results
             await Utilities.SendEmbed(Channel, "Top Box Office", description.ToString(), false, "Via RottenTomatoes.com");
-        }
-
-        private static string ScrapeText(ref string text, string firstTarget, int firstTargetOffset, string lastTarget)
-        {
-            // The offset integer is for when the first target string has an escape character in it, causing an extra character
-            text = text.Substring(text.IndexOf(firstTarget) + firstTarget.Length + firstTargetOffset);
-            return text.Substring(0, text.IndexOf(lastTarget));
         }
     }
 }

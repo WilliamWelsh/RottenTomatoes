@@ -9,12 +9,17 @@ namespace RottenTomatoes
     {
         static void Main(string[] args) => new Program().StartAsync().GetAwaiter().GetResult();
 
+        private const bool testMode = false;
+
         public async Task StartAsync()
         {
             if (string.IsNullOrEmpty(Config.bot.BotToken)) return;
             DiscordSocketClient _client = new DiscordSocketClient(new DiscordSocketConfig { LogLevel = LogSeverity.Verbose });
             _client.Log += Log;
-            await _client.LoginAsync(TokenType.Bot, Config.bot.BotToken);
+            if (testMode)
+                await _client.LoginAsync(TokenType.Bot, System.IO.File.ReadAllText("C:/Users/willi/Documents/repos/testBotToken.txt"));
+            else
+                await _client.LoginAsync(TokenType.Bot, Config.bot.BotToken);
             await _client.StartAsync();
             await _client.SetGameAsync("!rt help", null, ActivityType.Watching);
             EventHandler _handler = new EventHandler();

@@ -55,7 +55,7 @@ namespace RottenTomatoes
         // Prints a link to my Discord
         // This is so a user can report something to me, or ask for a new feature
         [Command("discord")]
-        public async Task RTDiscord() => await Utilities.SendEmbed(Context.Channel, "RT Help", "Hello, if you need help with the bot, or need to report a bug, or request a new feature, please join my server and contact me\n(My name is Reverse)\nhttps://discord.gg/qsc8YMS", true);
+        public async Task RTDiscord() => await Utilities.SendEmbed(Context.Channel, "Bot Help", "Hello, if you need help with the bot, or need to report a bug, or request a new feature, please join my server and contact me\n(My name is Reverse)\nhttps://discord.gg/qsc8YMS", true);
 
         [Command("vote")]
         public async Task TryToVote()

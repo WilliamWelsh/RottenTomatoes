@@ -10,7 +10,7 @@ namespace RottenTomatoes
     static class Utilities
     {
         // Red color for all embeds
-        public static readonly Color embedColor = new Color(250, 50, 10);
+        public static readonly Color red = new Color(250, 50, 10);
 
         // RT Logo
         private const string logo = "https://cdn.discordapp.com/avatars/477287091798278145/11dac188844056c5dbbdef7015bffc8b.png?size=128";
@@ -22,7 +22,7 @@ namespace RottenTomatoes
                 .WithTitle(title)
                 .WithThumbnailUrl(showLogo ? logo : "")
                 .WithDescription(description)
-                .WithColor(embedColor)
+                .WithColor(red)
                 .WithFooter(footer)
                 .Build());
         }
@@ -103,7 +103,7 @@ namespace RottenTomatoes
         {
             await Channel.SendMessageAsync(null, false, new EmbedBuilder()
                 .WithTitle("Bot Info")
-                .WithColor(embedColor)
+                .WithColor(red)
                 .WithThumbnailUrl(logo)
                 .AddField("Library", "Discord.Net")
                 .AddField("Servers", Client.Guilds.Count)
@@ -121,6 +121,13 @@ namespace RottenTomatoes
             foreach (var Guild in Guilds)
                 total += Guild.MemberCount;
             return total;
+        }
+
+        public static string ScrapeText(ref string text, string firstTarget, int firstTargetOffset, string lastTarget)
+        {
+            // The offset integer is for when the first target string has an escape character in it, causing an extra character
+            text = text.Substring(text.IndexOf(firstTarget) + firstTarget.Length + firstTargetOffset);
+            return text.Substring(0, text.IndexOf(lastTarget));
         }
     }
 }

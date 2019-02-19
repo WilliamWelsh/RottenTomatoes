@@ -178,10 +178,12 @@
   <ItemGroup>
     <Compile Include="Commands.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Data\Actors.cs" />
+    <Compile Include="Data\Movies.cs" />
     <Compile Include="EventHandler.cs" />
     <Compile Include="JSONs\BotResources.cs" />
-    <Compile Include="Listings\Listings.cs" />
-    <Compile Include="Listings\TopBoxOffice.cs" />
+    <Compile Include="Data\Listings.cs" />
+    <Compile Include="Data\TopBoxOffice.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="JSONs\OpeningThisWeekJSON.cs" />

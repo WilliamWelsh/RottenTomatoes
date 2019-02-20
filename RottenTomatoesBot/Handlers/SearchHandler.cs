@@ -14,24 +14,25 @@ namespace RottenTomatoes
     // A result item
     public class ResultItem : IEquatable<ResultItem>
     {
-        public uint resultNumber { get; }
+        public uint ResultNumber { get; }
 
-        public Movie movie { get; set; }
-        public Actor actor { get; set; }
+        public Movie Movie { get; set; }
+        public Celebrity Celeb { get; set; }
 
-        public ResultItem(uint ResultNumber, Movie Movie, Actor Actor)
+        public ResultItem(uint ResultNumber, Movie Movie, Celebrity Celebrity)
         {
-            resultNumber = ResultNumber;
-            movie = Movie;
-            actor = Actor;
+            this.ResultNumber = ResultNumber;
+            this.Movie = Movie;
+            Celeb = Celebrity;
         }
 
-        public bool Equals(ResultItem other) => resultNumber == other.resultNumber;
+        public bool Equals(ResultItem other) => ResultNumber == other.ResultNumber;
         public override bool Equals(object obj) => Equals(obj as ResultItem);
         public override int GetHashCode() => 0; // idk
     }
 
-    public class RottenTomatoesHandler
+    // Search Rotten Tomatoes
+    public class SearchHandler
     {
         // To see if it's possible to cancel the selection
         bool isSelectionBeingMade;
@@ -69,7 +70,7 @@ namespace RottenTomatoes
 
             isSelectionBeingMade = true;
 
-            // Clear the lists to rewrite current selection
+            // Clear the list to rewrite current selection
             resultItems.Clear();
 
             // Get the website html
@@ -133,28 +134,28 @@ namespace RottenTomatoes
                 // Example: 1 The Avengers: Infinity War 2018
                 StringBuilder selection = new StringBuilder();
                 foreach (var m in resultItems)
-                    selection.AppendLine($"`{resultItems.IndexOf(m) + 1}` {m.movie.Name} `{m.movie.Year}`");
+                    selection.AppendLine($"`{resultItems.IndexOf(m) + 1}` {m.Movie.Name} `{m.Movie.Year}`");
 
                 embed.AddField("Movies", selection);
             }
             #endregion
 
-            #region Actor Results
+            #region Celebrity Results
             if (results.ActorCount > 0)
             {
-                var actorResults = results.Actors;
-                foreach (var actor in actorResults)
+                var celebResults = results.Actors;
+                foreach (var celebrity in celebResults)
                 {
                     resultCount++;
-                    resultItems.Add(new ResultItem(resultCount, null, actor));
+                    resultItems.Add(new ResultItem(resultCount, null, celebrity));
                 }
 
                 StringBuilder selection = new StringBuilder();
                 foreach (var result in resultItems)
-                    if (result.actor != null)
-                        selection.AppendLine($"`{resultItems.IndexOf(result) + 1}` {result.actor.Name}");
+                    if (result.Celeb != null)
+                        selection.AppendLine($"`{resultItems.IndexOf(result) + 1}` {result.Celeb.Name}");
 
-                embed.AddField("Actors", selection.ToString());
+                embed.AddField("Celebrities", selection.ToString());
             }
 
             #endregion
@@ -162,10 +163,10 @@ namespace RottenTomatoes
             // If there is only one result, then display it
             if (resultItems.Count == 1)
             {
-                if (resultItems.ElementAt(0).movie != null)
-                    await Data.Movies.PrintMovie(context.Channel, resultItems.ElementAt(0).movie);
+                if (resultItems.ElementAt(0).Movie != null)
+                    await Data.Movies.PrintMovie(context.Channel, resultItems.ElementAt(0).Movie);
                 else
-                    await Data.Actors.PrintActor(context.Channel, resultItems.ElementAt(0).actor);
+                    await Data.Celebrities.PrintCeleb(context.Channel, resultItems.ElementAt(0).Celeb);
             }
             else // Otherwise, send all the results
                 await context.Channel.SendMessageAsync(null, false, embed.Build());
@@ -179,16 +180,17 @@ namespace RottenTomatoes
                 await Utilities.SendEmbed(channel, "Rotten Tomatoes Search", "There's no active search on this server.\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`", false);
                 return;
             }
+
             // because lists start at 0
             var result = resultItems.ElementAt(selection - 1);
 
-            if (result.movie != null)
+            if (result.Movie != null)
             {
-                await Data.Movies.PrintMovie(channel, result.movie);
+                await Data.Movies.PrintMovie(channel, result.Movie);
             }
-            else if (result.actor != null)
+            else if (result.Celeb != null)
             {
-                await Data.Actors.PrintActor(channel, result.actor);
+                await Data.Celebrities.PrintCeleb(channel, result.Celeb);
             }
         }
     }

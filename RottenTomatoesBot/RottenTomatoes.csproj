@@ -178,9 +178,9 @@
   <ItemGroup>
     <Compile Include="Commands.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="Data\Actors.cs" />
+    <Compile Include="Data\Celebrities.cs" />
     <Compile Include="Data\Movies.cs" />
-    <Compile Include="EventHandler.cs" />
+    <Compile Include="Handlers\EventHandler.cs" />
     <Compile Include="JSONs\BotResources.cs" />
     <Compile Include="Data\Listings.cs" />
     <Compile Include="Data\TopBoxOffice.cs" />
@@ -189,8 +189,8 @@
     <Compile Include="JSONs\OpeningThisWeekJSON.cs" />
     <Compile Include="JSONs\SearchResultsJSON.cs" />
     <Compile Include="JSONs\UpcomingMovieJSON.cs" />
-    <Compile Include="RottenTomatoesHandler.cs" />
-    <Compile Include="ServerHandler.cs" />
+    <Compile Include="Handlers\SearchHandler.cs" />
+    <Compile Include="Handlers\ServerHandler.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>

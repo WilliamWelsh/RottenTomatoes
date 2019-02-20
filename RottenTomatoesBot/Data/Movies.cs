@@ -46,7 +46,6 @@ namespace RottenTomatoes.Data
 
             // Set the audience score/want to see percentage
             movie.audienceScore = int.Parse(temp.Substring(0, temp.IndexOf("%<")));
-            //int.TryParse(temp.Substring(0, temp.IndexOf("%<")), out movie.audienceScore);
 
             // If it's not the want to see percentage, set which emoji should be used based on the score
             if (movie.audienceEmoji != "<:wanttosee:477141676717113354>")

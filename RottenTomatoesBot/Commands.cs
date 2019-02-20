@@ -38,13 +38,13 @@ namespace RottenTomatoes
             {
                 if (Server.GuildID == Context.Guild.Id)
                 {
-                    await Server.Handler.TryToSelect(selection, Context.Channel);
+                    await Server.SearchHandler.TryToSelect(selection, Context.Channel);
                     return;
                 }
             }
 
-            var newServer = new ServerHandler(Context.Guild.Id, new RottenTomatoesHandler());
-            await newServer.Handler.TryToSelect(selection, Context.Channel);
+            var newServer = new ServerHandler(Context.Guild.Id, new SearchHandler());
+            await newServer.SearchHandler.TryToSelect(selection, Context.Channel);
             Config.Servers.Add(newServer);
         }
 

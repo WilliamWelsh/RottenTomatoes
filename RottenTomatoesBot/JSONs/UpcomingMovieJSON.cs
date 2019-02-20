@@ -154,17 +154,14 @@ namespace UpcomingMovieJSON
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<string>(reader);
-            switch (value)
-            {
-                case "NR":
-                    return MpaaRating.Nr;
-                case "PG":
-                    return MpaaRating.Pg;
-                case "PG13":
-                    return MpaaRating.Pg13;
-                case "R":
-                    return MpaaRating.R;
-            }
+            if (value == "NR")
+                return MpaaRating.Nr;
+            else if (value == "PG")
+                return MpaaRating.Pg;
+            else if (value == "PG13")
+                return MpaaRating.Pg13;
+            else if (value == "R")
+                return MpaaRating.R;
             throw new ArgumentException("Cannot unmarshal type MpaaRating");
         }
 

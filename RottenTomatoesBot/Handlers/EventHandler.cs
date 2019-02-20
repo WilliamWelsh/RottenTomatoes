@@ -9,8 +9,8 @@ namespace RottenTomatoes
 {
     class EventHandler
     {
-        DiscordSocketClient _client;
-        CommandService _service;
+        private DiscordSocketClient _client;
+        private CommandService _service;
 
         public async Task InitializeAsync(DiscordSocketClient client)
         {
@@ -63,13 +63,13 @@ namespace RottenTomatoes
                     {
                         if (Server.GuildID == Context.Guild.Id)
                         {
-                            await Server.Handler.SearchRottenTomatoes(search, Context);
+                            await Server.SearchHandler.SearchRottenTomatoes(search, Context);
                             return;
                         }
                     }
 
-                    var newServer = new ServerHandler(Context.Guild.Id, new RottenTomatoesHandler());
-                    await newServer.Handler.SearchRottenTomatoes(search, Context);
+                    var newServer = new ServerHandler(Context.Guild.Id, new SearchHandler());
+                    await newServer.SearchHandler.SearchRottenTomatoes(search, Context);
                     Config.Servers.Add(newServer);
                 }
             }

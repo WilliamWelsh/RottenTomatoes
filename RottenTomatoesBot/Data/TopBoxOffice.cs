@@ -1,4 +1,4 @@
-﻿// The reason I don't use JSON for this is because the JSON does not contain how much money the movie has made
+﻿using System;
 using System.Text;
 using Discord.WebSocket;
 using System.Threading.Tasks;
@@ -8,9 +8,6 @@ namespace RottenTomatoes
 {
     class TopBoxOffice
     {
-        // Box Office Movie Struct
-        struct BoxOfficeMovie { public string meterClass; public string meterScore; public string title; public string moneyMade; }
-
         // Display the top 10 movies at the box office provided by Rotten Tomatoes
         public static async Task SendTopBoxOffice(ISocketMessageChannel Channel)
         {
@@ -29,21 +26,21 @@ namespace RottenTomatoes
                 BoxOfficeMovie newMovie = new BoxOfficeMovie
                 {
                     // Get the meter class
-                    meterClass = Utilities.ScrapeText(ref data, "<span class=\"icon tiny", 1, "\""),
+                    MeterClass = Utilities.ScrapeText(ref data, "<span class=\"icon tiny", 1, "\""),
 
                     // Get the meter score
-                    meterScore = Utilities.ScrapeText(ref data, "tMeterScore\">", 0, "<")
+                    MeterScore = Utilities.ScrapeText(ref data, "tMeterScore\">", 0, "<")
                 };
 
                 // Get the movie title
                 data = data.Substring(data.IndexOf("\">") + 2);
                 data = data.Substring(data.IndexOf("\">") + 2);
-                newMovie.title = data.Substring(0, data.IndexOf("<"));
+                newMovie.Title = data.Substring(0, data.IndexOf("<"));
 
                 // Get the money made
                 data = data.Substring(data.IndexOf("\">") + 2);
                 data = data.Substring(data.IndexOf("\">") + 2);
-                newMovie.moneyMade = data.Substring(0, data.IndexOf("<"));
+                newMovie.MoneyMade = data.Substring(0, data.IndexOf("<"));
 
                 // Add the new movie to the list
                 boxOfficeMovies.Add(newMovie);
@@ -56,10 +53,23 @@ namespace RottenTomatoes
             // Format the list
             StringBuilder description = new StringBuilder();
             foreach (var m in boxOfficeMovies)
-                description.AppendLine($"{Utilities.IconToEmoji(m.meterClass)} {m.meterScore} **{m.title}** {m.moneyMade}").AppendLine();
+                description.AppendLine($"{Utilities.IconToEmoji(m.MeterClass)} {m.MeterScore} **{m.Title}** {m.MoneyMade}").AppendLine();
 
             // Send the results
             await Utilities.SendEmbed(Channel, "Top Box Office", description.ToString(), false, "Via RottenTomatoes.com");
         }
+    }
+
+    // Movie data for a single movie on the top box office list
+    public class BoxOfficeMovie : IEquatable<BoxOfficeMovie>
+    {
+        public string MeterClass { get; set; }
+        public string MeterScore { get; set; }
+        public string Title { get; set; }
+        public string MoneyMade { get; set; }
+
+        public bool Equals(BoxOfficeMovie other) => Title == other.Title;
+        public override bool Equals(object obj) => Equals(obj as BoxOfficeMovie);
+        public override int GetHashCode() => 0; // idk
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using Newtonsoft.Json;
 using DiscordBotsList.Api;
+using RottenTomatoes.JSONs;
 using System.Collections.Generic;
 
 namespace RottenTomatoes
@@ -8,6 +9,7 @@ namespace RottenTomatoes
     static class Config
     {
         public static readonly List<ServerHandler> Servers = new List<ServerHandler>();
+        public static readonly Handlers.WatchlistHandler WatchListHandler = new Handlers.WatchlistHandler();
 
         public static readonly BotResources bot;
 

@@ -33,6 +33,7 @@ namespace RottenTomatoes.Data
 
         private static MovieData ScrapeSomeData(MovieData movie)
         {
+            Console.WriteLine(movie.url);
             // Get the website data so we can scrap audience scores and the critic consensus
             string html = Utilities.DownloadString(movie.url);
 

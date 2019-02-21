@@ -65,5 +65,8 @@ namespace RottenTomatoes
             else
                 await Utilities.SendEmbed(Context.Channel, "Bot Voting", "You have not voted within this period. Please vote.\n\nhttps://discordbots.org/bot/477287091798278145/vote", false);
         }
+
+        [Command("watch")]
+        public async Task WatchScore(string URL) => await Config.WatchListHandler.AddToWatchlist(Context, URL);
     }
 }

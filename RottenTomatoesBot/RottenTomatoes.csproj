@@ -56,6 +56,9 @@
     <Reference Include="DiscordBotsList.Api, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\DiscordBotsList.Api.1.3.0\lib\netstandard1.6\DiscordBotsList.Api.dll</HintPath>
     </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.9.0.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.9.0\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.2.2.0\lib\net461\Microsoft.Extensions.DependencyInjection.dll</HintPath>
     </Reference>
@@ -181,9 +184,12 @@
     <Compile Include="Data\Celebrities.cs" />
     <Compile Include="Data\Movies.cs" />
     <Compile Include="Handlers\EventHandler.cs" />
+    <Compile Include="Handlers\WatchlistHandler.cs" />
     <Compile Include="JSONs\BotResources.cs" />
     <Compile Include="Data\Listings.cs" />
     <Compile Include="Data\TopBoxOffice.cs" />
+    <Compile Include="JSONs\Converter.cs" />
+    <Compile Include="JSONs\Watchlist.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="JSONs\OpeningThisWeekJSON.cs" />

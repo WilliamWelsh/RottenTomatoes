@@ -1,7 +1,4 @@
-﻿// Massive respect to https://quicktype.io/
-// Auto generated with https://quicktype.io/
-
-// This is used for movies that are under search results
+﻿// This is used for movies that are under search results
 // https://www.rottentomatoes.com/search/?search=avengers
 
 namespace SearchResultsJSON
@@ -84,12 +81,6 @@ namespace SearchResultsJSON
 
         [JsonProperty("meterScore", NullValueHandling = NullValueHandling.Ignore)]
         public long? MeterScore { get; set; }
-
-        [JsonProperty("castItems", NullValueHandling = NullValueHandling.Ignore)]
-        public CastItem[] CastItems { get; set; }
-
-        [JsonProperty("subline")]
-        public string Subline { get; set; }
     }
 
     public class CastItem

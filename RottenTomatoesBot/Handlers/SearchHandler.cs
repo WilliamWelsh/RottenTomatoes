@@ -193,5 +193,28 @@ namespace RottenTomatoes
                 await Data.Celebrities.PrintCeleb(channel, result.Celeb);
             }
         }
+
+        // Watch a score to see if it gets updated, or released
+        public async Task WatchScore(int selection, ISocketMessageChannel channel)
+        {
+            if (resultItems.Count == 0 || !isSelectionBeingMade)
+            {
+                await Utilities.SendEmbed(channel, "Rotten Tomatoes Search", "There's no active search on this server.\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`", false);
+                return;
+            }
+
+            // because lists start at 0
+            var result = resultItems.ElementAt(selection - 1);
+
+            if (result.Movie != null)
+            {
+                await Data.Movies.PrintMovie(channel, result.Movie);
+            }
+            else if (result.Celeb != null)
+            {
+                await Utilities.SendEmbed(channel, "Rotten Tomatoes Search", "You cannot watch a score on a celebrity.", false);
+                return;
+            }
+        }
     }
 }

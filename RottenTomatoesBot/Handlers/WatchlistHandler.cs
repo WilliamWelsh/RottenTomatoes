@@ -98,7 +98,7 @@ namespace RottenTomatoes.Handlers
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
 
-            var Movie = new SearchResultsJSON.Movie();
+            var Movie = new MovieResult();
 
             // Name and Year
             string NameAndYear = doc.DocumentNode.SelectSingleNode("//meta[@property='og:title']").Attributes["content"].Value;

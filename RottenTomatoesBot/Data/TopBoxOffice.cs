@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace RottenTomatoes
 {
-    class TopBoxOffice
+    static class TopBoxOffice
     {
         // Display the top 10 movies at the box office provided by Rotten Tomatoes
         public static async Task SendTopBoxOffice(ISocketMessageChannel Channel)

@@ -16,9 +16,4 @@ namespace RottenTomatoes.JSONs
     {
         public static BotResources FromJson(string json) => JsonConvert.DeserializeObject<BotResources>(json, Converter.Settings);
     }
-
-    public static class SerializeBot
-    {
-        public static string ToJson(this BotResources self) => JsonConvert.SerializeObject(self, Converter.Settings);
-    }
 }

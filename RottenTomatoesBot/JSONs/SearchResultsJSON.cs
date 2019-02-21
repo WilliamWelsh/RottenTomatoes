@@ -1,12 +1,10 @@
 ﻿// This is used for movies that are under search results
 // https://www.rottentomatoes.com/search/?search=avengers
 
-namespace SearchResultsJSON
+namespace RottenTomatoes.JSONs
 {
     using System;
-    using System.Globalization;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
 
     public partial class SearchResults
     {
@@ -14,31 +12,22 @@ namespace SearchResultsJSON
         public long ActorCount { get; set; }
 
         [JsonProperty("actors")]
-        public Celebrity[] Actors { get; set; }
-
-        [JsonProperty("criticCount")]
-        public long CriticCount { get; set; }
-
-        [JsonProperty("franchiseCount")]
-        public long FranchiseCount { get; set; }
-
-        [JsonProperty("franchises")]
-        public Franchise[] Franchises { get; set; }
+        public CelebResult[] Actors { get; set; }
 
         [JsonProperty("movieCount")]
         public long MovieCount { get; set; }
 
         [JsonProperty("movies")]
-        public Movie[] Movies { get; set; }
+        public MovieResult[] Movies { get; set; }
 
         [JsonProperty("tvCount")]
         public long TvCount { get; set; }
 
         [JsonProperty("tvSeries")]
-        public TvSery[] TvSeries { get; set; }
+        public TVResult[] TvSeries { get; set; }
     }
 
-    public class Celebrity
+    public class CelebResult
     {
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -50,19 +39,7 @@ namespace SearchResultsJSON
         public Uri Image { get; set; }
     }
 
-    public class Franchise
-    {
-        [JsonProperty("title")]
-        public string Title { get; set; }
-
-        [JsonProperty("url")]
-        public string Url { get; set; }
-
-        [JsonProperty("image")]
-        public Uri Image { get; set; }
-    }
-
-    public class Movie
+    public class MovieResult
     {
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -83,16 +60,7 @@ namespace SearchResultsJSON
         public long? MeterScore { get; set; }
     }
 
-    public class CastItem
-    {
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("url")]
-        public string Url { get; set; }
-    }
-
-    public class TvSery
+    public class TVResult
     {
         [JsonProperty("title")]
         public string Title { get; set; }
@@ -119,23 +87,5 @@ namespace SearchResultsJSON
     public partial class SearchResults
     {
         public static SearchResults FromJson(string json) => JsonConvert.DeserializeObject<SearchResults>(json, Converter.Settings);
-    }
-
-    public static class Serialize
-    {
-        public static string ToJson(this SearchResults self) => JsonConvert.SerializeObject(self, Converter.Settings);
-    }
-
-    internal static class Converter
-    {
-        public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
-        {
-            MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
-            DateParseHandling = DateParseHandling.None,
-            Converters =
-            {
-                new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
-            },
-        };
     }
 }

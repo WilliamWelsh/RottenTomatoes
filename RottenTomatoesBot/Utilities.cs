@@ -123,6 +123,7 @@ namespace RottenTomatoes
             return total;
         }
 
+        // Scrape Text from before and after
         public static string ScrapeText(ref string text, string firstTarget, int firstTargetOffset, string lastTarget)
         {
             // The offset integer is for when the first target string has an escape character in it, causing an extra character

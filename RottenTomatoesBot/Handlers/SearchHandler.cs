@@ -4,10 +4,9 @@ using System.Text;
 using System.Linq;
 using Discord.Commands;
 using Discord.WebSocket;
-using SearchResultsJSON;
+using RottenTomatoes.JSONs;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace RottenTomatoes
 {
@@ -16,10 +15,10 @@ namespace RottenTomatoes
     {
         public uint ResultNumber { get; }
 
-        public Movie Movie { get; set; }
-        public Celebrity Celeb { get; set; }
+        public MovieResult Movie { get; set; }
+        public CelebResult Celeb { get; set; }
 
-        public ResultItem(uint ResultNumber, Movie Movie, Celebrity Celebrity)
+        public ResultItem(uint ResultNumber, MovieResult Movie, CelebResult Celebrity)
         {
             this.ResultNumber = ResultNumber;
             this.Movie = Movie;
@@ -111,7 +110,7 @@ namespace RottenTomatoes
                 Array.Sort(array);
                 Array.Reverse(array);
 
-                var Movies = new List<Movie>();
+                var Movies = new List<MovieResult>();
                 // Loop through every movie for each year, and if that movie comes out that year,
                 // then add that movie to the movies list so they're in order
                 for (int i = 0; i < array.Length; i++)
@@ -185,13 +184,9 @@ namespace RottenTomatoes
             var result = resultItems.ElementAt(selection - 1);
 
             if (result.Movie != null)
-            {
                 await Data.Movies.PrintMovie(channel, result.Movie);
-            }
             else if (result.Celeb != null)
-            {
                 await Data.Celebrities.PrintCeleb(channel, result.Celeb);
-            }
         }
 
         // Watch a score to see if it gets updated, or released

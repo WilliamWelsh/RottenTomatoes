@@ -27,14 +27,12 @@ namespace RottenTomatoes
         private async Task UpdateDBlStatsASync(SocketGuild arg)
         {
             IDblSelfBot me = await Config.DblAPI.GetMeAsync();
-            Console.WriteLine(_client.Guilds.Count);
             await me.UpdateStatsAsync(_client.Guilds.Count);
         }
 
         private async Task HandleCommandAsync(SocketMessage s)
         {
-            var msg = s as SocketUserMessage;
-            if (msg == null || msg.Author.IsBot) return;
+            if (!(s is SocketUserMessage msg) || msg.Author.IsBot) return;
 
             var Context = new SocketCommandContext(_client, msg);
 
@@ -50,9 +48,7 @@ namespace RottenTomatoes
             {
                 var result = await _service.ExecuteAsync(Context, argPos, null);
                 if (msg.Content.StartsWith("!rt"))
-                {
                     Console.WriteLine($"{Context.Guild.Name}: {msg.Author}: {msg.Content}");
-                }
 
                 // Search rotten tomatoes
                 // Example: !rt avengers

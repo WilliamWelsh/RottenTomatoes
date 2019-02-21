@@ -1,29 +1,30 @@
-﻿using Discord;
-using System;
+﻿using System;
+using Discord;
 using Discord.WebSocket;
 using System.Threading.Tasks;
+using RottenTomatoes.JSONs;
 using System.Text.RegularExpressions;
 
 namespace RottenTomatoes.Data
 {
     static class Movies
     {
-        public static async Task PrintMovie(ISocketMessageChannel channel, SearchResultsJSON.Movie movieToPrint)
+        public static async Task PrintMovie(ISocketMessageChannel channel, MovieResult movieToPrint)
         {
             var movie = ScrapeSomeData(new MovieData(movieToPrint));
 
             // Create a pretty embed
             var embed = new EmbedBuilder()
-                .WithTitle($"{movie.data.Name} ({movie.data.Year})")
+                .WithTitle($"{movie.Data.Name} ({movie.Data.Year})")
                 .WithColor(Utilities.red)
-                .WithThumbnailUrl(movie.data.Image.ToString());
+                .WithThumbnailUrl(movie.Data.Image.ToString());
 
             // If the score is 0 but doesn't have the rotten emoji, it's because it doesn't have a score yet
-            string score = (movie.data.MeterScore == null && movie.data.MeterClass == "N/A") ? "No Score Yet" : $"{movie.data.MeterScore}%";
+            string score = (movie.Data.MeterScore == null && movie.Data.MeterClass == "N/A") ? "No Score Yet" : $"{movie.Data.MeterScore}%";
 
             // Add embed fields
-            embed.AddField("Tomatometer", $"{Utilities.IconToEmoji(movie.data.MeterClass)} {score}")
-                .AddField("Audience Score", $"{movie.audienceEmoji} {movie.audienceScore}% {movie.audienceSuffix}")
+            embed.AddField("Tomatometer", $"{Utilities.IconToEmoji(movie.Data.MeterClass)} {score}")
+                .AddField("Audience Score", $"{movie.AudienceEmoji} {movie.AudienceScore}% {movie.AudienceSuffix}")
                 .AddField("Critics Consensus", movie.criticsConsensus)
                 .AddField("Link", $"[View full page on Rotten Tomatoes]({movie.url})")
                 .WithFooter("Via RottenTomatoes.com");
@@ -42,15 +43,15 @@ namespace RottenTomatoes.Data
             temp = temp.Substring(temp.IndexOf("vertical-align:top") + 20);
 
             // Check to see if it's the score or the "want to see" part and set the suffix
-            movie.audienceEmoji = temp.Contains("want to see") ? "<:wanttosee:477141676717113354>" : "";
-            movie.audienceSuffix = temp.Contains("want to see") ? "want to see" : "liked it";
+            movie.AudienceEmoji = temp.Contains("want to see") ? "<:wanttosee:477141676717113354>" : "";
+            movie.AudienceSuffix = temp.Contains("want to see") ? "want to see" : "liked it";
 
             // Set the audience score/want to see percentage
-            movie.audienceScore = int.Parse(temp.Substring(0, temp.IndexOf("%<")));
+            movie.AudienceScore = int.Parse(temp.Substring(0, temp.IndexOf("%<")));
 
             // If it's not the want to see percentage, set which emoji should be used based on the score
-            if (movie.audienceEmoji != "<:wanttosee:477141676717113354>")
-                movie.audienceEmoji = movie.audienceScore >= 60 ? "<:audienceliked:477141676478038046>" : "<:audiencedisliked:477141676486295562>";
+            if (movie.AudienceEmoji != "<:wanttosee:477141676717113354>")
+                movie.AudienceEmoji = movie.AudienceScore >= 60 ? "<:audienceliked:477141676478038046>" : "<:audiencedisliked:477141676486295562>";
 
             // Set the critic consensus by scraping the website
             if (html.Contains("Critics Consensus:</span>"))
@@ -69,25 +70,25 @@ namespace RottenTomatoes.Data
     // Movie data
     public class MovieData : IEquatable<MovieData>
     {
-        public SearchResultsJSON.Movie data { get; }
+        public MovieResult Data { get; }
 
-        public string score { get; set; }
+        public string Score { get; set; }
 
-        public int audienceScore { get; set; }
-        public string audienceEmoji { get; set; }
-        public string audienceSuffix { get; set; }
+        public int AudienceScore { get; set; }
+        public string AudienceEmoji { get; set; }
+        public string AudienceSuffix { get; set; }
 
         public string criticsConsensus { get; set; }
 
         public string url { get; set; }
 
-        public MovieData(SearchResultsJSON.Movie Data)
+        public MovieData(MovieResult data)
         {
-            data = Data;
-            url = $"https://www.rottentomatoes.com{data.Url}";
+            Data = data;
+            url = $"https://www.rottentomatoes.com{Data.Url}";
         }
 
-        public bool Equals(MovieData other) => data == other.data;
+        public bool Equals(MovieData other) => Data == other.Data;
         public override bool Equals(object obj) => Equals(obj as MovieData);
         public override int GetHashCode() => 0; // idk
     }

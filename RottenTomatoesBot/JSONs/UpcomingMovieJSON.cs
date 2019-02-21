@@ -1,7 +1,4 @@
-﻿// Massive respect to https://quicktype.io/
-// Auto generated with https://quicktype.io/
-
-// This is used for movies that are under "Coming Soon to Theaters"
+﻿// This is used for movies that are under "Coming Soon to Theaters"
 // https://www.rottentomatoes.com/browse/upcoming/
 
 namespace UpcomingMovieJSON

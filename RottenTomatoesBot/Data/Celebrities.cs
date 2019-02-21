@@ -2,13 +2,14 @@
 using Discord;
 using System.Text;
 using Discord.WebSocket;
+using RottenTomatoes.JSONs;
 using System.Threading.Tasks;
 
 namespace RottenTomatoes.Data
 {
     static class Celebrities
     {
-        public static async Task PrintCeleb(ISocketMessageChannel channel, SearchResultsJSON.Celebrity actorToPrint)
+        public static async Task PrintCeleb(ISocketMessageChannel channel, CelebResult actorToPrint)
         {
             var celeb = ScrapeData(new Celebrity(actorToPrint));
 
@@ -105,7 +106,7 @@ namespace RottenTomatoes.Data
     // A celebrity stats
     public class Celebrity : IEquatable<Celebrity>
     {
-        public SearchResultsJSON.Celebrity ActorData { get; }
+        public CelebResult ActorData { get; }
 
         public string URL { get; set; }
 
@@ -121,7 +122,7 @@ namespace RottenTomatoes.Data
         public uint RottenCount { get; set; }
         public uint NoScoreCount { get; set; }
 
-        public Celebrity(SearchResultsJSON.Celebrity ActorData)
+        public Celebrity(CelebResult ActorData)
         {
             this.ActorData = ActorData;
             URL = $"https://www.rottentomatoes.com{this.ActorData.Url}";

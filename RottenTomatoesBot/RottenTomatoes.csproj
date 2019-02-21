@@ -192,7 +192,7 @@
     <Compile Include="JSONs\Watchlist.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="JSONs\OpeningThisWeekJSON.cs" />
+    <Compile Include="JSONs\OpeningThisWeek.cs" />
     <Compile Include="JSONs\SearchResultsJSON.cs" />
     <Compile Include="JSONs\UpcomingMovieJSON.cs" />
     <Compile Include="Handlers\SearchHandler.cs" />

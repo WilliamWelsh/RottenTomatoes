@@ -19,7 +19,7 @@ namespace RottenTomatoes
             data = data.Substring(data.IndexOf("[{\"id\":"));
             data = data.Substring(0, data.IndexOf("]}]") + 3);
 
-            var Movies = OpeningThisWeekJSON.MoviesOpeningThisWeek.FromJson(data);
+            var Movies = JSONs.MoviesOpeningThisWeek.FromJson(data);
 
             // Format the results (only show the first 10)
             int amount = Movies.Length > 10 ? 10 : Movies.Length;
@@ -38,7 +38,7 @@ namespace RottenTomatoes
         {
             // Get the website data
             string data = Utilities.DownloadString("https://www.rottentomatoes.com/browse/upcoming");
-
+            
             // Scrape everyting away except for the JSON
             data = data.Substring(data.IndexOf("[{\"id\":"));
             data = data.Substring(0, data.IndexOf("]}]") + 3);

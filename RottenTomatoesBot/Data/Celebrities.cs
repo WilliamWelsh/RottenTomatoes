@@ -22,9 +22,9 @@ namespace RottenTomatoes.Data
                 .AppendLine($"**Average Score**: {celeb.AverageScore}%");
 
             var embed = new EmbedBuilder()
-                .WithTitle(celeb.ActorData.Name)
+                .WithTitle(celeb.Data.Name)
                 .WithDescription("")
-                .WithThumbnailUrl(celeb.ActorData.Image.ToString())
+                .WithThumbnailUrl(celeb.Data.Image.ToString())
                 .WithColor(Utilities.red)
                 .AddField("Highest Rated Movie", celeb.HighestMovie)
                 .AddField("Lowest Rated Movie", celeb.LowestMovie)
@@ -106,7 +106,7 @@ namespace RottenTomatoes.Data
     // A celebrity stats
     public class Celebrity : IEquatable<Celebrity>
     {
-        public CelebResult ActorData { get; }
+        public CelebResult Data { get; }
 
         public string URL { get; set; }
 
@@ -124,8 +124,8 @@ namespace RottenTomatoes.Data
 
         public Celebrity(CelebResult ActorData)
         {
-            this.ActorData = ActorData;
-            URL = $"https://www.rottentomatoes.com{this.ActorData.Url}";
+            this.Data = ActorData;
+            URL = $"https://www.rottentomatoes.com{this.Data.Url}";
             MovieCredits = 0;
             CertifiedCount = 0;
             FreshCount  = 0;
@@ -133,7 +133,7 @@ namespace RottenTomatoes.Data
             NoScoreCount = 0;
         }
 
-        public bool Equals(Celebrity other) => ActorData == other.ActorData;
+        public bool Equals(Celebrity other) => Data == other.Data;
         public override bool Equals(object obj) => Equals(obj as Celebrity);
         public override int GetHashCode() => 0; // idk
     }

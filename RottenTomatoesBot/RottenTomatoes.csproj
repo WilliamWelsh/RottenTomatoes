@@ -187,6 +187,8 @@
     <Compile Include="Config.cs" />
     <Compile Include="Data\Celebrities.cs" />
     <Compile Include="Data\Movies.cs" />
+    <Compile Include="Data\TVSeason.cs" />
+    <Compile Include="Data\TVShows.cs" />
     <Compile Include="Handlers\EventHandler.cs" />
     <Compile Include="Handlers\WatchlistHandler.cs" />
     <Compile Include="JSONs\BotResources.cs" />

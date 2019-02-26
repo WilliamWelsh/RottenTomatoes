@@ -15,13 +15,15 @@ namespace RottenTomatoes
     {
         public uint ResultNumber { get; }
 
-        public MovieResult Movie { get; set; }
-        public CelebResult Celeb { get; set; }
+        public MovieResult Movie { get;}
+        public TVResult TVShow { get;}
+        public CelebResult Celeb { get;}
 
-        public ResultItem(uint ResultNumber, MovieResult Movie, CelebResult Celebrity)
+        public ResultItem(uint ResultNumber, MovieResult Movie, TVResult TVShow, CelebResult Celebrity)
         {
             this.ResultNumber = ResultNumber;
             this.Movie = Movie;
+            this.TVShow = TVShow;
             Celeb = Celebrity;
         }
 
@@ -88,7 +90,7 @@ namespace RottenTomatoes
 
             var results = SearchResults.FromJson(json);
             uint resultCount = 0;
-
+            //Console.WriteLine(results.TvCount);
             var embed = new EmbedBuilder()
                 .WithTitle("Rotten Tomatoes Search")
                 .WithColor(Utilities.red)
@@ -118,7 +120,7 @@ namespace RottenTomatoes
                         if (array[i] == movieResults[n].Year && !Movies.Contains(movieResults.ElementAt(n)))
                         {
                             resultCount++;
-                            resultItems.Add(new ResultItem(resultCount, movieResults.ElementAt(n), null));
+                            resultItems.Add(new ResultItem(resultCount, movieResults.ElementAt(n), null, null));
                             Movies.Add(movieResults.ElementAt(n));
                         }
 
@@ -139,6 +141,25 @@ namespace RottenTomatoes
             }
             #endregion
 
+            //#region TV Show Results
+            //if (results.TvCount > 0)
+            //{
+            //    var tvResults = results.TvSeries;
+            //    foreach (var tvResult in tvResults)
+            //    {
+            //        resultCount++;
+            //        resultItems.Add(new ResultItem(resultCount, null, tvResult, null));
+            //    }
+
+            //    StringBuilder selection = new StringBuilder();
+            //    foreach (var result in resultItems)
+            //        if (result.TVShow != null)
+            //            selection.AppendLine($"`{resultItems.IndexOf(result) + 1}` {result.TVShow.Title} `{result.TVShow.StartYear} - {(result.TVShow.EndYear == 0 ? "" : result.TVShow.EndYear.ToString())}`");
+
+            //    embed.AddField("TV Shows", selection.ToString());
+            //}
+            //#endregion
+
             #region Celebrity Results
             if (results.ActorCount > 0)
             {
@@ -146,7 +167,7 @@ namespace RottenTomatoes
                 foreach (var celebrity in celebResults)
                 {
                     resultCount++;
-                    resultItems.Add(new ResultItem(resultCount, null, celebrity));
+                    resultItems.Add(new ResultItem(resultCount, null, null, celebrity));
                 }
 
                 StringBuilder selection = new StringBuilder();
@@ -156,17 +177,11 @@ namespace RottenTomatoes
 
                 embed.AddField("Celebrities", selection.ToString());
             }
-
             #endregion
 
             // If there is only one result, then display it
             if (resultItems.Count == 1)
-            {
-                if (resultItems.ElementAt(0).Movie != null)
-                    await Data.Movies.PrintMovie(context.Channel, resultItems.ElementAt(0).Movie);
-                else
-                    await Data.Celebrities.PrintCeleb(context.Channel, resultItems.ElementAt(0).Celeb);
-            }
+                await PrintResult(context.Channel, resultItems.ElementAt(0)).ConfigureAwait(false);
             else // Otherwise, send all the results
                 await context.Channel.SendMessageAsync(null, false, embed.Build());
         }
@@ -181,12 +196,7 @@ namespace RottenTomatoes
             }
 
             // because lists start at 0
-            var result = resultItems.ElementAt(selection - 1);
-
-            if (result.Movie != null)
-                await Data.Movies.PrintMovie(channel, result.Movie);
-            else if (result.Celeb != null)
-                await Data.Celebrities.PrintCeleb(channel, result.Celeb);
+            await PrintResult(channel, resultItems.ElementAt(selection - 1)).ConfigureAwait(false);
         }
 
         // Watch a score to see if it gets updated, or released
@@ -210,6 +220,17 @@ namespace RottenTomatoes
                 await Utilities.SendEmbed(channel, "Rotten Tomatoes Search", "You cannot watch a score on a celebrity.", false);
                 return;
             }
+        }
+
+        // Print a result
+        public async Task PrintResult(ISocketMessageChannel channel, ResultItem result)
+        {
+            if (result.Movie != null)
+                await Data.Movies.PrintMovie(channel, result.Movie);
+            else if (result.TVShow != null)
+                await Data.TVShows.PrintTVShow(channel, result.TVShow);
+            else if (result.Celeb != null)
+                await Data.Celebrities.PrintCeleb(channel, result.Celeb);
         }
     }
 }

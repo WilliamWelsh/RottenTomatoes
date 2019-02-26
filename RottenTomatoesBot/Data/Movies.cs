@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using System.Threading.Tasks;
 using RottenTomatoes.JSONs;
 using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 
 namespace RottenTomatoes.Data
 {
@@ -21,10 +22,10 @@ namespace RottenTomatoes.Data
 
             // If the score is 0 but doesn't have the rotten emoji, it's because it doesn't have a score yet
             string score = (movie.Data.MeterScore == null && movie.Data.MeterClass == "N/A") ? "No Score Yet" : $"{movie.Data.MeterScore}%";
-
+            
             // Add embed fields
             embed.AddField("Tomatometer", $"{Utilities.IconToEmoji(movie.Data.MeterClass)} {score}")
-                .AddField("Audience Score", $"{movie.AudienceEmoji} {movie.AudienceScore}% {movie.AudienceSuffix}")
+                .AddField("Audience Score", $"{movie.AudienceText}")
                 .AddField("Critics Consensus", movie.criticsConsensus)
                 .AddField("Link", $"[View full page on Rotten Tomatoes]({movie.url})")
                 .WithFooter("Via RottenTomatoes.com");
@@ -32,36 +33,35 @@ namespace RottenTomatoes.Data
             await channel.SendMessageAsync(null, false, embed.Build());
         }
 
+        // Scrape movie data
         private static MovieData ScrapeSomeData(MovieData movie)
         {
-            Console.WriteLine(movie.url);
-            // Get the website data so we can scrap audience scores and the critic consensus
             string html = Utilities.DownloadString(movie.url);
 
-            // Cut everything except the audience score information
-            string temp = html.Substring(html.IndexOf("#audience_reviews") + 17);
-            temp = temp.Substring(temp.IndexOf("vertical-align:top") + 20);
+            var doc = new HtmlDocument();
+            doc.LoadHtml(html);
 
-            // Check to see if it's the score or the "want to see" part and set the suffix
-            movie.AudienceEmoji = temp.Contains("want to see") ? "<:wanttosee:477141676717113354>" : "";
-            movie.AudienceSuffix = temp.Contains("want to see") ? "want to see" : "liked it";
-
-            // Set the audience score/want to see percentage
-            movie.AudienceScore = int.Parse(temp.Substring(0, temp.IndexOf("%<")));
-
-            // If it's not the want to see percentage, set which emoji should be used based on the score
-            if (movie.AudienceEmoji != "<:wanttosee:477141676717113354>")
-                movie.AudienceEmoji = movie.AudienceScore >= 60 ? "<:audienceliked:477141676478038046>" : "<:audiencedisliked:477141676486295562>";
-
-            // Set the critic consensus by scraping the website
-            if (html.Contains("Critics Consensus:</span>"))
+            if (html.Contains("Audience Score <br /> Not Available"))
             {
-                movie.criticsConsensus = html.Substring(html.IndexOf("Critics Consensus:</span>") + 25);
-                // Regex is used here to get rid of html elements because RT uses <em> for italics
-                movie.criticsConsensus = Regex.Replace(movie.criticsConsensus.Substring(0, movie.criticsConsensus.IndexOf("</p>")), "<.*?>", string.Empty);
+                movie.AudienceText = "No Score Yet";
             }
             else
-                movie.criticsConsensus = "No consensus yet.";
+            {
+                // Check to see if it's the score or the "want to see" part and set the suffix
+                movie.AudienceSuffix = doc.DocumentNode.SelectNodes("//strong[contains(@class, 'mop-ratings-wrap__text--small')]")[1].InnerText;
+
+                // Set the audience score/want to see percentage
+                movie.AudienceScore = int.Parse(doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'mop-ratings-wrap__percentage mop-ratings-wrap__percentage--audience mop-ratings-wrap__percentage--small')]").InnerText.Replace("%", ""));
+
+                // If it's not the want to see percentage, set which emoji should be used based on the score
+                if (movie.AudienceEmoji != "<:wanttosee:477141676717113354>")
+                    movie.AudienceEmoji = movie.AudienceScore >= 60 ? "<:audienceliked:477141676478038046>" : "<:audiencedisliked:477141676486295562>";
+
+                movie.AudienceText = $"{movie.AudienceEmoji} {movie.AudienceScore}% {movie.AudienceSuffix}";
+            }
+
+            movie.criticsConsensus = doc.DocumentNode.SelectSingleNode("//p[contains(@class, 'mop-ratings-wrap__text mop-ratings-wrap__text--concensus')]").InnerText;
+            movie.criticsConsensus = Regex.Replace(movie.criticsConsensus, "<.*?>", string.Empty);
 
             return movie;
         }
@@ -77,6 +77,7 @@ namespace RottenTomatoes.Data
         public int AudienceScore { get; set; }
         public string AudienceEmoji { get; set; }
         public string AudienceSuffix { get; set; }
+        public string AudienceText { get; set; }
 
         public string criticsConsensus { get; set; }
 

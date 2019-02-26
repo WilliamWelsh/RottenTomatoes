@@ -7,7 +7,6 @@ namespace RottenTomatoes
 {
     class Program
     {
-        private DiscordSocketClient _client;
         static void Main(string[] args) => new Program().StartAsync().GetAwaiter().GetResult();
 
         private const bool testMode = false;
@@ -15,7 +14,7 @@ namespace RottenTomatoes
         public async Task StartAsync()
         {
             if (string.IsNullOrEmpty(Config.bot.BotToken)) return;
-            _client = new DiscordSocketClient(new DiscordSocketConfig { LogLevel = LogSeverity.Verbose });
+            var _client = new DiscordSocketClient(new DiscordSocketConfig { LogLevel = LogSeverity.Verbose });
             _client.Log += Log;
 
             if (testMode)
@@ -29,7 +28,7 @@ namespace RottenTomatoes
             EventHandler _handler = new EventHandler();
             await _handler.InitializeAsync(_client);
 
-            await Task.Delay(10000); // 10 seconds, time to log in to fill the client with guilds
+            await Task.Delay(10000).ConfigureAwait(false); // 10 seconds, time to log in to fill the client with guilds
             await Config.WatchListHandler.SetUp(_client).ConfigureAwait(false);
 
             await Task.Delay(-1).ConfigureAwait(false);

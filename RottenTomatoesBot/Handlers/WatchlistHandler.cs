@@ -11,18 +11,16 @@ namespace RottenTomatoes.Handlers
 {
     class WatchlistHandler
     {
-        private Timer Timer;
-
         private DiscordSocketClient Client;
 
-        private Watchlist Watchlist;
+        private WatchlistJSON Watchlist;
 
         // Set up the timer and start checking for movies
         public async Task SetUp(DiscordSocketClient client)
         {
             Client = client;
-            Watchlist = Watchlist.FromJson(File.ReadAllText("Resources/watchlist.json"));
-            Timer = new Timer()
+            Watchlist = WatchlistJSON.FromJson(File.ReadAllText("Resources/watchlist.json"));
+            var Timer = new Timer
             {
                 Interval = 60000, // Once a minute
                 AutoReset = true,
@@ -51,7 +49,7 @@ namespace RottenTomatoes.Handlers
         // Add a movie to the watchlist
         public async Task AddToWatchlist(SocketCommandContext Context, string URL)
         {
-            var newMovie = new WatchlistMovie()
+            var newMovie = new WatchlistMovie
             {
                 GuildId = Context.Guild.Id,
                 ChannelId = Context.Channel.Id,
@@ -76,7 +74,7 @@ namespace RottenTomatoes.Handlers
         private void UpdateWatchList()
         {
             File.WriteAllText("Resources/watchlist.json", Watchlist.ToJson());
-            Watchlist = Watchlist.FromJson(File.ReadAllText("Resources/watchlist.json"));
+            Watchlist = WatchlistJSON.FromJson(File.ReadAllText("Resources/watchlist.json"));
         }
 
         // Determine if the movie has a score

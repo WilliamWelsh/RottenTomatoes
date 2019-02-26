@@ -90,7 +90,7 @@ namespace RottenTomatoes
 
             var results = SearchResults.FromJson(json);
             uint resultCount = 0;
-            //Console.WriteLine(results.TvCount);
+
             var embed = new EmbedBuilder()
                 .WithTitle("Rotten Tomatoes Search")
                 .WithColor(Utilities.red)
@@ -141,24 +141,24 @@ namespace RottenTomatoes
             }
             #endregion
 
-            //#region TV Show Results
-            //if (results.TvCount > 0)
-            //{
-            //    var tvResults = results.TvSeries;
-            //    foreach (var tvResult in tvResults)
-            //    {
-            //        resultCount++;
-            //        resultItems.Add(new ResultItem(resultCount, null, tvResult, null));
-            //    }
+            #region TV Show Results
+            if (results.TvCount > 0)
+            {
+                var tvResults = results.TvSeries;
+                foreach (var tvResult in tvResults)
+                {
+                    resultCount++;
+                    resultItems.Add(new ResultItem(resultCount, null, tvResult, null));
+                }
 
-            //    StringBuilder selection = new StringBuilder();
-            //    foreach (var result in resultItems)
-            //        if (result.TVShow != null)
-            //            selection.AppendLine($"`{resultItems.IndexOf(result) + 1}` {result.TVShow.Title} `{result.TVShow.StartYear} - {(result.TVShow.EndYear == 0 ? "" : result.TVShow.EndYear.ToString())}`");
+                StringBuilder selection = new StringBuilder();
+                foreach (var result in resultItems)
+                    if (result.TVShow != null)
+                        selection.AppendLine($"`{resultItems.IndexOf(result) + 1}` {result.TVShow.Title} `{result.TVShow.StartYear} - {(result.TVShow.EndYear == 0 ? "" : result.TVShow.EndYear.ToString())}`");
 
-            //    embed.AddField("TV Shows", selection.ToString());
-            //}
-            //#endregion
+                embed.AddField("TV Shows", selection.ToString());
+            }
+            #endregion
 
             #region Celebrity Results
             if (results.ActorCount > 0)
@@ -218,7 +218,6 @@ namespace RottenTomatoes
             else if (result.Celeb != null)
             {
                 await Utilities.SendEmbed(channel, "Rotten Tomatoes Search", "You cannot watch a score on a celebrity.", false);
-                return;
             }
         }
 

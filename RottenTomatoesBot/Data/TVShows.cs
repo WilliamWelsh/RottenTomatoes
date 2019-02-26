@@ -1,12 +1,12 @@
 ﻿using System;
 using Discord;
+using System.Text;
+using Newtonsoft.Json;
 using HtmlAgilityPack;
 using Discord.WebSocket;
 using RottenTomatoes.JSONs;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Text;
 
 namespace RottenTomatoes.Data
 {
@@ -19,18 +19,14 @@ namespace RottenTomatoes.Data
             string endYear = show.Data.EndYear == 0 ? "" : show.Data.EndYear.ToString();
             string score = show.Data.MeterScore == null ? "No Score Yet" : $"{show.Data.MeterScore}%";
 
-            StringBuilder seasonDescription = new StringBuilder();
-            for (int i = 0; i < show.Seasons.Count; i++)
-                seasonDescription.AppendLine($"`{i+1}` {show.Seasons[i].Name}");
-
             var embed = new EmbedBuilder()
                 .WithTitle($"{show.Data.Title} ({show.Data.StartYear} - {endYear})")
                 .WithColor(Utilities.red)
                 .WithThumbnailUrl(show.Data.Image.ToString())
                 .AddField("Average Tomatometer", $"{Utilities.IconToEmoji(show.Data.MeterClass)} {score}")
                 .AddField("Average Audience Score", show.AverageAudienceScore)
+                .AddField("Seasons", $"There are {show.Seasons.Count} seasons.\nType `!rt season <number>` to view details on a season.")
                 .AddField("Series Info", show.SeriesInfo)
-                .AddField("Seasons", seasonDescription.ToString())
                 .AddField("Link", $"[View Full Page]({show.URL})");
 
             await channel.SendMessageAsync(null, false, embed.Build());
@@ -58,20 +54,18 @@ namespace RottenTomatoes.Data
                 show.AverageAudienceScore = "No Score Yet";
             }
 
-            show.SeriesInfo = doc.GetElementbyId("movieSynopsis").InnerText;
+            show.SeriesInfo = Utilities.DecodeHTMLStuff(doc.GetElementbyId("movieSynopsis").InnerText);
 
             #region Seasons
             dynamic seasons = html.Substring(html.IndexOf("<script type=\"application/ld+json\">") + 45);
             seasons = seasons.Substring(0, seasons.IndexOf("<"));
             seasons = JsonConvert.DeserializeObject(seasons);
-            Console.WriteLine(seasons.ToString());
             seasons = seasons.containsSeason;
             foreach (var season in seasons)
             {
-                Console.WriteLine("there's a season");
                 string name = season.name;
                 string url = season.url;
-                show.Seasons.Add(new TVSeason(name, url));
+                show.Seasons.Add(new TVSeasonItem(name, url)); // dynamic doesn't like putting season.name here :(
             }
             show.Seasons.Reverse();
             #endregion
@@ -91,13 +85,15 @@ namespace RottenTomatoes.Data
 
         public string SeriesInfo { get; set; }
 
-        public List<TVSeason> Seasons { get; set; }
+        public List<TVSeasonItem> Seasons { get; set; }
 
         public TVShow(TVResult ShowData)
         {
             Data = ShowData;
             URL = $"https://www.rottentomatoes.com{Data.Url}";
-            Seasons = new List<TVSeason>();
+            if (URL.EndsWith("/s01"))
+                URL = URL.Replace("/s01", "");
+            Seasons = new List<TVSeasonItem>();
         }
 
         public bool Equals(TVShow other) => Data == other.Data;

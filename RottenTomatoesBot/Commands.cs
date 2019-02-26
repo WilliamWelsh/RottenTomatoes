@@ -48,6 +48,12 @@ namespace RottenTomatoes
             Config.Servers.Add(newServer);
         }
 
+        [Command("season")]
+        public async Task ChooseSeason(int selection)
+        {
+            await Utilities.SendEmbed(Context.Channel, "Error", "Sorry, this command is not done being developed. If you need help please [join my server](https://discord.gg/qsc8YMS).", false).ConfigureAwait(false);
+        }
+
         [Command("stats")]
         [Alias("info")]
         public async Task DisplayStats() => await Utilities.PrintBotInfo(Context.Client, Context.Channel);

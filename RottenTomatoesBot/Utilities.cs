@@ -130,5 +130,8 @@ namespace RottenTomatoes
             text = text.Substring(text.IndexOf(firstTarget) + firstTarget.Length + firstTargetOffset);
             return text.Substring(0, text.IndexOf(lastTarget));
         }
+
+        // Convert that stuff to actual characters
+        public static string DecodeHTMLStuff(string text) => WebUtility.HtmlDecode(text);
     }
 }

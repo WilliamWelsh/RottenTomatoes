@@ -1,10 +1,9 @@
 ﻿using System;
 using Discord;
-using Discord.WebSocket;
-using System.Threading.Tasks;
-using RottenTomatoes.JSONs;
-using System.Text.RegularExpressions;
 using HtmlAgilityPack;
+using Discord.WebSocket;
+using RottenTomatoes.JSONs;
+using System.Threading.Tasks;
 
 namespace RottenTomatoes.Data
 {
@@ -26,8 +25,8 @@ namespace RottenTomatoes.Data
             // Add embed fields
             embed.AddField("Tomatometer", $"{Utilities.IconToEmoji(movie.Data.MeterClass)} {score}")
                 .AddField("Audience Score", $"{movie.AudienceText}")
-                .AddField("Critics Consensus", movie.criticsConsensus)
-                .AddField("Link", $"[View full page on Rotten Tomatoes]({movie.url})")
+                .AddField("Critics Consensus", movie.CriticsConsensus)
+                .AddField("Link", $"[View full page on Rotten Tomatoes]({movie.Url})")
                 .WithFooter("Via RottenTomatoes.com");
 
             await channel.SendMessageAsync(null, false, embed.Build());
@@ -36,7 +35,7 @@ namespace RottenTomatoes.Data
         // Scrape movie data
         private static MovieData ScrapeSomeData(MovieData movie)
         {
-            string html = Utilities.DownloadString(movie.url);
+            string html = Utilities.DownloadString(movie.Url);
 
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
@@ -48,20 +47,19 @@ namespace RottenTomatoes.Data
             else
             {
                 // Check to see if it's the score or the "want to see" part and set the suffix
-                movie.AudienceSuffix = doc.DocumentNode.SelectNodes("//strong[contains(@class, 'mop-ratings-wrap__text--small')]")[1].InnerText;
+                string audienceSuffix = doc.DocumentNode.SelectNodes("//strong[contains(@class, 'mop-ratings-wrap__text--small')]")[1].InnerText;
 
                 // Set the audience score/want to see percentage
-                movie.AudienceScore = int.Parse(doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'mop-ratings-wrap__percentage mop-ratings-wrap__percentage--audience mop-ratings-wrap__percentage--small')]").InnerText.Replace("%", ""));
+                int audienceScore = int.Parse(doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'mop-ratings-wrap__percentage mop-ratings-wrap__percentage--audience mop-ratings-wrap__percentage--small')]").InnerText.Replace("%", ""));
 
-                // If it's not the want to see percentage, set which emoji should be used based on the score
-                if (movie.AudienceEmoji != "<:wanttosee:477141676717113354>")
-                    movie.AudienceEmoji = movie.AudienceScore >= 60 ? "<:audienceliked:477141676478038046>" : "<:audiencedisliked:477141676486295562>";
+                // I think they completely remove the "want to see" related stuff
+                string audienceEmoji = audienceScore >= 60 ? "<:audienceliked:477141676478038046>" : "<:audiencedisliked:477141676486295562>";
 
-                movie.AudienceText = $"{movie.AudienceEmoji} {movie.AudienceScore}% {movie.AudienceSuffix}";
+                movie.AudienceText = $"{audienceEmoji} {audienceScore}% {audienceSuffix}";
             }
 
-            movie.criticsConsensus = doc.DocumentNode.SelectSingleNode("//p[contains(@class, 'mop-ratings-wrap__text mop-ratings-wrap__text--concensus')]").InnerText;
-            movie.criticsConsensus = Regex.Replace(movie.criticsConsensus, "<.*?>", string.Empty);
+            movie.CriticsConsensus = doc.DocumentNode.SelectSingleNode("//p[contains(@class, 'mop-ratings-wrap__text mop-ratings-wrap__text--concensus')]").InnerText;
+            movie.CriticsConsensus = Utilities.DecodeHTMLStuff(movie.CriticsConsensus);
 
             return movie;
         }
@@ -74,19 +72,16 @@ namespace RottenTomatoes.Data
 
         public string Score { get; set; }
 
-        public int AudienceScore { get; set; }
-        public string AudienceEmoji { get; set; }
-        public string AudienceSuffix { get; set; }
         public string AudienceText { get; set; }
 
-        public string criticsConsensus { get; set; }
+        public string CriticsConsensus { get; set; }
 
-        public string url { get; set; }
+        public string Url { get; set; }
 
         public MovieData(MovieResult data)
         {
             Data = data;
-            url = $"https://www.rottentomatoes.com{Data.Url}";
+            Url = $"https://www.rottentomatoes.com{Data.Url}";
         }
 
         public bool Equals(MovieData other) => Data == other.Data;

@@ -43,7 +43,7 @@ namespace RottenTomatoes
             data = data.Substring(data.IndexOf("[{\"id\":"));
             data = data.Substring(0, data.IndexOf("]}]") + 3);
 
-            var Movies = UpcomingMovieJSON.UpComingMovies.FromJson(data);
+            var Movies = JSONs.UpComingMovies.FromJson(data);
 
             // Format the results (only show the first 10)
             StringBuilder results = new StringBuilder();

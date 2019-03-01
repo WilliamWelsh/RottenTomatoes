@@ -12,13 +12,13 @@ namespace RottenTomatoes.Data
         public static async Task PrintMovie(ISocketMessageChannel channel, MovieResult movieToPrint)
         {
             var movie = ScrapeSomeData(new MovieData(movieToPrint));
-
+            
             // Create a pretty embed
             var embed = new EmbedBuilder()
                 .WithTitle($"{movie.Data.Name} ({movie.Data.Year})")
                 .WithColor(Utilities.red)
                 .WithThumbnailUrl(movie.Data.Image.ToString());
-
+            
             // If the score is 0 but doesn't have the rotten emoji, it's because it doesn't have a score yet
             string score = (movie.Data.MeterScore == null && movie.Data.MeterClass == "N/A") ? "No Score Yet" : $"{movie.Data.MeterScore}%";
             
@@ -40,7 +40,7 @@ namespace RottenTomatoes.Data
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
 
-            if (html.Contains("Audience Score <br /> Not Available"))
+            if (html.Contains("Audience Score <br /> Not Yet Available"))
             {
                 movie.AudienceText = "No Score Yet";
             }

@@ -128,7 +128,7 @@ namespace RottenTomatoes.Handlers
                 if (Movie.MeterClass == "NA")
                     Movie.MeterClass = "N/A";
             }
-
+            
             var Guild = Client.GetGuild(WatchlistMovie.GuildId);
             await Data.Movies.PrintMovie(Guild.GetTextChannel(WatchlistMovie.ChannelId), Movie);
         }

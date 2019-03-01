@@ -1,6 +1,5 @@
 ﻿using System;
 using Discord;
-using System.Text;
 using Newtonsoft.Json;
 using HtmlAgilityPack;
 using Discord.WebSocket;
@@ -25,7 +24,7 @@ namespace RottenTomatoes.Data
                 .WithThumbnailUrl(show.Data.Image.ToString())
                 .AddField("Average Tomatometer", $"{Utilities.IconToEmoji(show.Data.MeterClass)} {score}")
                 .AddField("Average Audience Score", show.AverageAudienceScore)
-                .AddField("Seasons", $"There are {show.Seasons.Count} seasons.\nType `!rt season <number>` to view details on a season.")
+                .AddField($"Seasons ({show.Seasons.Count})", $"Type `!rt season <number>` to view details on a season.")
                 .AddField("Series Info", show.SeriesInfo)
                 .AddField("Link", $"[View Full Page]({show.URL})");
 
@@ -57,8 +56,9 @@ namespace RottenTomatoes.Data
             show.SeriesInfo = Utilities.DecodeHTMLStuff(doc.GetElementbyId("movieSynopsis").InnerText);
 
             #region Seasons
-            dynamic seasons = html.Substring(html.IndexOf("<script type=\"application/ld+json\">") + 45);
-            seasons = seasons.Substring(0, seasons.IndexOf("<"));
+            //dynamic seasons = html.Substring(html.IndexOf("<script type=\"application/ld+json\">") + 45);
+            //seasons = seasons.Substring(0, seasons.IndexOf("<"));
+            dynamic seasons = doc.DocumentNode.SelectSingleNode("//script[contains(@type, 'application/ld+json')]").InnerText;
             seasons = JsonConvert.DeserializeObject(seasons);
             seasons = seasons.containsSeason;
             foreach (var season in seasons)
@@ -90,9 +90,7 @@ namespace RottenTomatoes.Data
         public TVShow(TVResult ShowData)
         {
             Data = ShowData;
-            URL = $"https://www.rottentomatoes.com{Data.Url}";
-            if (URL.EndsWith("/s01"))
-                URL = URL.Replace("/s01", "");
+            URL = $"https://www.rottentomatoes.com{Data.Url.Replace("/s01", "")}";
             Seasons = new List<TVSeasonItem>();
         }
 

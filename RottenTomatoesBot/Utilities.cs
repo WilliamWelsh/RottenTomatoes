@@ -9,13 +9,19 @@ namespace RottenTomatoes
 {
     static class Utilities
     {
-        // Red color for all embeds
+        /// <summary>
+        /// The color red (for embeds).
+        /// </summary>
         public static readonly Color red = new Color(250, 50, 10);
 
-        // RT Logo
+        /// <summary>
+        /// The Rotten Tomatoes logo.
+        /// </summary>
         private const string logo = "https://cdn.discordapp.com/avatars/477287091798278145/11dac188844056c5dbbdef7015bffc8b.png?size=128";
 
-        // Send an embed
+        /// <summary>
+        /// Print an embed
+        /// </summary>
         public static async Task SendEmbed(ISocketMessageChannel channel, string title, string description, bool showLogo, string footer = null)
         {
             await channel.SendMessageAsync(null, false, new EmbedBuilder()
@@ -27,7 +33,9 @@ namespace RottenTomatoes
                 .Build());
         }
 
-        // Download a url into a string and then dispose the web client
+        /// <summary>
+        /// Download a website's HTML as a string
+        /// </summary>
         public static string DownloadString(string URL)
         {
             using (WebClient client = new WebClient())
@@ -36,7 +44,11 @@ namespace RottenTomatoes
             }
         }
 
-        // Get the (custom) Discord emoji based on the meter class
+        /// <summary>
+        /// Get the (custom) Discord emoji based on the meter class
+        /// </summary>
+        /// <param name="meterClass">The type of score</param>
+        /// <returns></returns>
         public static string IconToEmoji(string meterClass)
         {
             meterClass = meterClass.ToLowerInvariant();
@@ -131,7 +143,11 @@ namespace RottenTomatoes
             return text.Substring(0, text.IndexOf(lastTarget));
         }
 
-        // Convert that stuff to actual characters
+        /// <summary>
+        /// Convert that stuff to actual characters
+        /// </summary>
+        /// <param name="text">Text containing HTML entities</param>
+        /// <returns></returns>
         public static string DecodeHTMLStuff(string text) => WebUtility.HtmlDecode(text);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Discord;
+using System.IO;
 using Discord.WebSocket;
 using System.Threading.Tasks;
 
@@ -17,10 +18,8 @@ namespace RottenTomatoes
             var _client = new DiscordSocketClient(new DiscordSocketConfig { LogLevel = LogSeverity.Verbose });
             _client.Log += Log;
 
-            if (testMode)
-                await _client.LoginAsync(TokenType.Bot, System.IO.File.ReadAllText("C:/Users/willi/Documents/repos/testBotToken.txt"));
-            else
-                await _client.LoginAsync(TokenType.Bot, Config.bot.BotToken);
+            // I use test mode so I don't have to connect to all those servers for when I'm developing/fixing/testing/whatever
+            await _client.LoginAsync(TokenType.Bot, testMode ? File.ReadAllText("C:/Users/willi/Documents/repos/testBotToken.txt") : Config.bot.BotToken);
 
             await _client.StartAsync();
             await _client.SetGameAsync("!rt help", null, ActivityType.Watching);

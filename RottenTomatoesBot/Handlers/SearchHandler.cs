@@ -10,7 +10,9 @@ using System.Collections.Generic;
 
 namespace RottenTomatoes
 {
-    // A result item
+    /// <summary>
+    /// A result that may be a movie, show, or person.
+    /// </summary>
     public class ResultItem : IEquatable<ResultItem>
     {
         public uint ResultNumber { get; }
@@ -32,14 +34,16 @@ namespace RottenTomatoes
         public override int GetHashCode() => 0; // idk
     }
 
-    // Search Rotten Tomatoes
+    /// <summary>
+    /// Handle searching Rotten Tomatoes.
+    /// </summary>
     public class SearchHandler
     {
         // To see if it's possible to cancel the selection
         bool isSelectionBeingMade;
 
         // This is the new list made with searched movies ordered by newest to oldest for ease of selection
-       readonly List<ResultItem> resultItems = new List<ResultItem>();
+        readonly List<ResultItem> resultItems = new List<ResultItem>();
 
         // Reset the handler by clearing the movies and saying there is no selection being made
         private void Reset()
@@ -48,7 +52,11 @@ namespace RottenTomatoes
             isSelectionBeingMade = false;
         }
 
-        // !rt cancel (to cancel the current selection)
+        /// <summary>
+        /// Cancel the current selection
+        /// </summary>
+        /// <param name="channel">The channel to send the cancel message to.</param>
+        /// <returns></returns>
         private async Task RTCancel(ISocketMessageChannel channel)
         {
             if (isSelectionBeingMade)

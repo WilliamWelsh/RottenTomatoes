@@ -9,7 +9,10 @@ using System.Threading.Tasks;
 
 namespace RottenTomatoes.Handlers
 {
-    class WatchlistHandler
+    /// <summary>
+    /// Check for unreleased movie scores.
+    /// </summary>
+    public class WatchlistHandler
     {
         private DiscordSocketClient Client;
 

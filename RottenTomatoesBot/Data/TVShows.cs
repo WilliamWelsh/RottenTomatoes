@@ -39,6 +39,7 @@ namespace RottenTomatoes.Data
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
 
+            // Set the audience score
             if (doc.DocumentNode.InnerHtml.Contains("superPageFontColor audience-score-align"))
             {
                 show.AverageAudienceScore = doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'superPageFontColor audience-score-align')]").InnerText;
@@ -56,8 +57,6 @@ namespace RottenTomatoes.Data
             show.SeriesInfo = Utilities.DecodeHTMLStuff(doc.GetElementbyId("movieSynopsis").InnerText);
 
             #region Seasons
-            //dynamic seasons = html.Substring(html.IndexOf("<script type=\"application/ld+json\">") + 45);
-            //seasons = seasons.Substring(0, seasons.IndexOf("<"));
             dynamic seasons = doc.DocumentNode.SelectSingleNode("//script[contains(@type, 'application/ld+json')]").InnerText;
             seasons = JsonConvert.DeserializeObject(seasons);
             seasons = seasons.containsSeason;

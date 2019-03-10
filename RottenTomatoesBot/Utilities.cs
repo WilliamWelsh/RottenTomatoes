@@ -122,7 +122,7 @@ namespace RottenTomatoes
                 .AddField("Members", TotalMemberCount(Client.Guilds).ToString("#,##0"))
                 .AddField("Owner", "Reverse#0666")
                 .AddField("Total Votes", (await Config.DblAPI.GetMeAsync()).Points)
-                .AddField("Links", "[Invite](https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&permissions=3072) | [Vote](\n\nhttps://discordbots.org/bot/477287091798278145/vote) | [GitHub](https://github.com/WilliamWelsh/RottenTomatoes) | [Support Server](https://discord.gg/qsc8YMS) ")
+                .AddField("Links", "[Invite](https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&permissions=3072) | [Vote](\n\nhttps://discordbots.org/bot/477287091798278145/vote) | [GitHub](https://github.com/WilliamWelsh/RottenTomatoes) | [Support Server](https://discord.gg/6z377m5) ")
                 .Build()).ConfigureAwait(false);
         }
 

@@ -24,7 +24,7 @@ namespace RottenTomatoes.Data
             
             // Add embed fields
             embed.AddField("Tomatometer", $"{Utilities.IconToEmoji(movie.Data.MeterClass)} {score}")
-                .AddField("Audience Score", $"{movie.AudienceText}")
+                //.AddField("Audience Score", $"{movie.AudienceText}") // TODO: The audience score is loaded with java now, so figure out how to get it
                 .AddField("Critics Consensus", movie.CriticsConsensus)
                 .AddField("Link", $"[View full page on Rotten Tomatoes]({movie.Url})")
                 .WithFooter("Via RottenTomatoes.com");
@@ -40,25 +40,28 @@ namespace RottenTomatoes.Data
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
 
-            if (html.Contains("Audience Score <br /> Not Yet Available"))
-            {
-                movie.AudienceText = "No Score Yet";
-            }
+            //if (html.Contains("Audience Score <br /> Not Yet Available"))
+            //{
+            //    movie.AudienceText = "No Score Yet";
+            //}
+            //else
+            //{
+            //    // Check to see if it's the score or the "want to see" part and set the suffix
+            //    string audienceSuffix = doc.DocumentNode.SelectNodes("//strong[contains(@class, 'mop-ratings-wrap__text--small')]")[1].InnerText;
+                
+            //    // Set the audience score/want to see percentage
+            //    int audienceScore = int.Parse(doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'mop-ratings-wrap__percentage mop-ratings-wrap__percentage--audience mop-ratings-wrap__percentage--small')]").InnerText.Replace("%", ""));
+                
+            //    // I think they completely remove the "want to see" related stuff
+            //    string audienceEmoji = audienceScore >= 60 ? "<:audienceliked:477141676478038046>" : "<:audiencedisliked:477141676486295562>";
+
+            //    movie.AudienceText = $"{audienceEmoji} {audienceScore}% {audienceSuffix}";
+            //}
+
+            if (html.Contains("No consensus yet."))
+                movie.CriticsConsensus = "No consensus yet.";
             else
-            {
-                // Check to see if it's the score or the "want to see" part and set the suffix
-                string audienceSuffix = doc.DocumentNode.SelectNodes("//strong[contains(@class, 'mop-ratings-wrap__text--small')]")[1].InnerText;
-
-                // Set the audience score/want to see percentage
-                int audienceScore = int.Parse(doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'mop-ratings-wrap__percentage mop-ratings-wrap__percentage--audience mop-ratings-wrap__percentage--small')]").InnerText.Replace("%", ""));
-
-                // I think they completely remove the "want to see" related stuff
-                string audienceEmoji = audienceScore >= 60 ? "<:audienceliked:477141676478038046>" : "<:audiencedisliked:477141676486295562>";
-
-                movie.AudienceText = $"{audienceEmoji} {audienceScore}% {audienceSuffix}";
-            }
-
-            movie.CriticsConsensus = doc.DocumentNode.SelectSingleNode("//p[contains(@class, 'mop-ratings-wrap__text mop-ratings-wrap__text--concensus')]").InnerText;
+                movie.CriticsConsensus = doc.DocumentNode.SelectSingleNode("//p[contains(@class, 'mop-ratings-wrap__text mop-ratings-wrap__text--concensus')]").InnerText;
             movie.CriticsConsensus = Utilities.DecodeHTMLStuff(movie.CriticsConsensus);
 
             return movie;

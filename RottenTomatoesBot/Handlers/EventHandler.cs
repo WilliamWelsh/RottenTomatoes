@@ -46,10 +46,17 @@ namespace RottenTomatoes
                 return;
             }
 
+            if (msg.Content == "!rt info")
+            {
+                await Utilities.PrintBotInfo(_client, msg.Channel);
+                return;
+            }
+
             int argPos = 0;
             if (msg.HasStringPrefix("!rt ", ref argPos))
             {
                 var result = await _service.ExecuteAsync(Context, argPos, null);
+
                 if (msg.Content.StartsWith("!rt"))
                     Console.WriteLine($"{Context.Guild.Name}: {msg.Author}: {msg.Content}");
 

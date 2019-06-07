@@ -10,6 +10,12 @@ namespace RottenTomatoes.JSONs
 
         [JsonProperty("BotsListToken")]
         public string BotsListToken { get; set; }
+
+        [JsonProperty("pushToken")]
+        public string PushToken { get; set; }
+
+        [JsonProperty("pushUser")]
+        public string PushUser { get; set; }
     }
 
     public partial class BotResources

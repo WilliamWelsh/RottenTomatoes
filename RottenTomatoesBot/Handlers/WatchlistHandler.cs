@@ -1,11 +1,20 @@
-﻿using System;
+﻿//  This file handles movies that are on the watchlist.
+//  Movies on the watchlist are constantly checked to see
+//  if the critic score for that movie has come out. Movies are
+//  only on the watchlist if they are coming out soon. If the movie
+//  is checked and it has a score, it will be printed out in a discord
+//  channel on the server.
+
+using System;
 using System.IO;
+using System.Net;
 using System.Timers;
 using HtmlAgilityPack;
 using Discord.Commands;
 using Discord.WebSocket;
 using RottenTomatoes.JSONs;
 using System.Threading.Tasks;
+using System.Collections.Specialized;
 
 namespace RottenTomatoes.Handlers
 {
@@ -84,7 +93,7 @@ namespace RottenTomatoes.Handlers
         private bool CheckForScore(string URL)
         {
             string html = Utilities.DownloadString(URL);
-
+            
             // Meter Score
             string meterScore = Utilities.ScrapeText(ref html, "\"cag[score]\":\"", 0, "\",");
 
@@ -106,8 +115,10 @@ namespace RottenTomatoes.Handlers
             Movie.Name = NameAndYear.Substring(0, NameAndYear.Length-7);
             Movie.Year = long.Parse(NameAndYear.Replace(Movie.Name, "").Replace(" ", "").Replace("(", "").Replace(")", ""));
 
+            // URL
             Movie.Url = WatchlistMovie.MovieLink.Replace("https://www.rottentomatoes.com", "");
 
+            // Poster
             Movie.Image = new Uri(doc.DocumentNode.SelectSingleNode("//meta[@property='og:image']").Attributes["content"].Value);
 
             html = Utilities.ScrapeText(ref html, "window.mpscall = ", 0, ";");
@@ -131,7 +142,19 @@ namespace RottenTomatoes.Handlers
                 if (Movie.MeterClass == "NA")
                     Movie.MeterClass = "N/A";
             }
-            
+
+            // Create a notification to be sent to my phone (this is just for me)
+            var parameters = new NameValueCollection {
+                { "token", Config.bot.PushToken },
+                { "user", Config.bot.PushUser },
+                { "url", WatchlistMovie.MovieLink },
+                { "message", $"{Movie.Name}: {Movie.MeterScore}% ({Movie.MeterClass})" }
+            };
+            using (var client = new WebClient())
+            {
+                client.UploadValues("https://api.pushover.net/1/messages.json", parameters);
+            }
+
             var Guild = Client.GetGuild(WatchlistMovie.GuildId);
             await Data.Movies.PrintMovie(Guild.GetTextChannel(WatchlistMovie.ChannelId), Movie);
         }

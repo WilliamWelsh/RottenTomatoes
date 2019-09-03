@@ -4,8 +4,6 @@ using System.Text;
 using Discord.WebSocket;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Threading;
-using System.IO;
 
 namespace RottenTomatoes
 {

@@ -113,7 +113,6 @@ namespace RottenTomatoes
         // Print bot info
         public static async Task PrintBotInfo(DiscordSocketClient Client, ISocketMessageChannel Channel)
         {
-            System.Console.WriteLine("hi");
             await Channel.SendMessageAsync(null, false, new EmbedBuilder()
                 .WithTitle("Bot Info")
                 .WithColor(red)

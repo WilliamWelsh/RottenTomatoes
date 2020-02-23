@@ -25,7 +25,7 @@ namespace RottenTomatoes
 
             await _client.StartAsync();
             await _client.SetGameAsync("!rt help", null, ActivityType.Watching);
-            _client.Ready += OnReady;
+            //_client.Ready += OnReady;
 
             EventHandler _handler = new EventHandler();
             await _handler.InitializeAsync(_client);

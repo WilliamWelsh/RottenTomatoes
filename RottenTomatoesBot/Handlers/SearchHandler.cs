@@ -2,18 +2,16 @@
 using Discord;
 using System.Text;
 using System.Linq;
+using HtmlAgilityPack;
 using Discord.Commands;
 using Discord.WebSocket;
 using RottenTomatoes.JSONs;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using HtmlAgilityPack;
 
 namespace RottenTomatoes
 {
-    /// <summary>
-    /// A result that may be a movie, show, or person.
-    /// </summary>
+    // A result that may be a movie, show, or person.
     public class ResultItem : IEquatable<ResultItem>
     {
         public MovieResult Movie { get;}
@@ -28,9 +26,7 @@ namespace RottenTomatoes
         public override int GetHashCode() => 0; // idk
     }
 
-    /// <summary>
-    /// Handle searching Rotten Tomatoes.
-    /// </summary>
+    // Handle searching Rotten Tomatoes.
     public class SearchHandler
     {
         // To see if it's possible to cancel the selection
@@ -46,11 +42,7 @@ namespace RottenTomatoes
             isSelectionBeingMade = false;
         }
 
-        /// <summary>
-        /// Cancel the current selection
-        /// </summary>
-        /// <param name="channel">The channel to send the cancel message to.</param>
-        /// <returns></returns>
+        // Cancel the current selection
         private async Task RTCancel(ISocketMessageChannel channel)
         {
             if (isSelectionBeingMade)
@@ -88,9 +80,8 @@ namespace RottenTomatoes
             }
 
             // Get that nice json :)
-            json = json.Substring(json.IndexOf("<ul class=\"results\">") + 20);
-            json = json.Substring(json.IndexOf("<li> ") + 5);
-            json = json.Substring(0, json.IndexOf("</ul>"));
+            json = Utilities.CutBefore(json, "<ul class=\"results\">");
+            json = Utilities.CutBeforeAndAfter(json, "<li> ", "</ul>");
 
             HtmlDocument html = new HtmlDocument();
             html.LoadHtml(json);
@@ -99,7 +90,7 @@ namespace RottenTomatoes
 
             var embed = new EmbedBuilder()
                 .WithTitle("Rotten Tomatoes Search")
-                .WithColor(Utilities.red)
+                .WithColor(Utilities.Red)
                 .WithFooter("Via RottenTomatoes.com");
 
             foreach (var result in results)
@@ -122,9 +113,7 @@ namespace RottenTomatoes
 
             var text = new StringBuilder();
             for (int i = 0; i < resultItems.Count; i++)
-            {
                 text.AppendLine($"`{i+1}` {resultItems[i].Movie.Name} {(resultItems[i].Movie.Year == 0 ? "" : "`" + resultItems[i].Movie.Year + "`")}");
-            }
 
             embed.AddField("Movies", text.ToString());
 

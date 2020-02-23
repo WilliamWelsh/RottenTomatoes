@@ -1,11 +1,10 @@
 ﻿using System;
 using Discord;
 using HtmlAgilityPack;
+using Newtonsoft.Json;
 using Discord.WebSocket;
 using RottenTomatoes.JSONs;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.Linq;
 
 namespace RottenTomatoes.Data
 {
@@ -24,57 +23,10 @@ namespace RottenTomatoes.Data
 
             var movie = new MovieData(movieToPrint);
 
-            string rawHTML = Utilities.DownloadString(movieToPrint.Url);
-
-            var html = new HtmlDocument();
-            html.LoadHtml(rawHTML);
-
-            // Critic Score
-            var score = html.DocumentNode.SelectSingleNode("//div[contains(@class, 'col-sm-17 col-xs-24 score-panel-wrap')]");
-            movie.CriticScore = score.SelectSingleNode("//span[contains(@class, 'mop-ratings-wrap__percentage')]").InnerText.Trim();
-
-            // Critic Score Icon
-            if (score.InnerHtml.Contains("certified_fresh"))
-                movie.CriticScoreIcon = "<:certifiedfresh:477137965848723477>";
-            else if (score.InnerHtml.Contains("rotten"))
-                movie.CriticScoreIcon = "<:rotten:477137965672431628>";
-            else if (score.InnerHtml.Contains("fresh"))
-                movie.CriticScoreIcon = "<:tomato:477141676650004481>";
-
-            // Audience Score
-            var audienceScore = html.DocumentNode.SelectSingleNode("//div[contains(@class, 'mop-ratings-wrap__half audience-score')]");
-
-            Console.WriteLine("0");
-            movie.AudienceScore = rawHTML.Substring(rawHTML.IndexOf("mop-ratings-wrap__half audience-score\">"));
-            movie.AudienceScore = movie.AudienceScore.Substring(movie.AudienceScore.IndexOf("mop-ratings-wrap__percentage\">") + 30);
-            movie.AudienceScore = movie.AudienceScore.Substring(0, movie.AudienceScore.IndexOf("<"));
-            movie.AudienceScore = movie.AudienceScore.Replace("\n", "");
-
-
-            // Audience Score Icon
-            if (audienceScore.InnerHtml.Contains("upright"))
-                movie.AudienceIcon = "<:audienceliked:477141676478038046>";
-            else if (audienceScore.InnerHtml.Contains("spilled"))
-                movie.AudienceIcon = "<:audiencedisliked:477141676486295562>";
-            else
-            {
-                movie.AudienceIcon = "";
-            }
-
-            // Critic Consensus
-            if (html.Text.Contains("mop-ratings-wrap__text mop-ratings-wrap__text--concensus"))
-                movie.CriticsConsensus = html.DocumentNode.SelectSingleNode("//p[contains(@class, 'mop-ratings-wrap__text mop-ratings-wrap__text--concensus')]").InnerText.Trim();
-            else
-                movie.CriticsConsensus = "No consensus yet.";
-
-            // Poster
-            movie.Poster = html.DocumentNode.SelectSingleNode("//img[contains(@class, 'posterImage js-lazyLoad')]").Attributes["data-src"].Value;
-            //movie.Poster = movie.Poster.Substring(0, movie.Poster.IndexOf(" "));
-
             // Create a pretty embed
             var embed = new EmbedBuilder()
                 .WithTitle($"{movie.Data.Name} ({movie.Data.Year})")
-                .WithColor(Utilities.red)
+                .WithColor(Utilities.Red)
                 .WithThumbnailUrl(movie.Poster)
                 .AddField("Tomatometer", $"{movie.CriticScoreIcon} {movie.CriticScore}")
                 .AddField("Audience Score", $"{movie.AudienceIcon} {movie.AudienceScore}")
@@ -116,6 +68,45 @@ namespace RottenTomatoes.Data
         public MovieData(MovieResult data)
         {
             Data = data;
+
+            string rawHTML = Utilities.DownloadString(Data.Url);
+
+            var html = new HtmlDocument();
+            html.LoadHtml(rawHTML);
+
+            // Critic Score
+            var score = html.DocumentNode.SelectSingleNode("//div[contains(@class, 'col-sm-17 col-xs-24 score-panel-wrap')]");
+            CriticScore = score.SelectSingleNode("//span[contains(@class, 'mop-ratings-wrap__percentage')]").InnerText.Trim();
+
+            // Critic Score Icon
+            if (score.InnerHtml.Contains("certified_fresh"))
+                CriticScoreIcon = "<:certifiedfresh:477137965848723477>";
+            else if (score.InnerHtml.Contains("rotten"))
+                CriticScoreIcon = "<:rotten:477137965672431628>";
+            else if (score.InnerHtml.Contains("fresh"))
+                CriticScoreIcon = "<:tomato:477141676650004481>";
+
+            // Audience Score
+            AudienceScore = Utilities.CutBefore(rawHTML, "mop-ratings-wrap__half audience-score\">");
+            AudienceScore = Utilities.CutBeforeAndAfter(AudienceScore, "mop-ratings-wrap__percentage\">", "<").Replace("\n", "");
+
+            // Audience Score Icon
+            var audienceScoreNode = html.DocumentNode.SelectSingleNode("//div[contains(@class, 'mop-ratings-wrap__half audience-score')]");
+            if (audienceScoreNode.InnerHtml.Contains("upright"))
+                AudienceIcon = "<:audienceliked:477141676478038046>";
+            else if (audienceScoreNode.InnerHtml.Contains("spilled"))
+                AudienceIcon = "<:audiencedisliked:477141676486295562>";
+            else
+                AudienceIcon = "";
+
+            // Critic Consensus
+            if (html.Text.Contains("mop-ratings-wrap__text mop-ratings-wrap__text--concensus"))
+                CriticsConsensus = html.DocumentNode.SelectSingleNode("//p[contains(@class, 'mop-ratings-wrap__text mop-ratings-wrap__text--concensus')]").InnerText.Trim();
+            else
+                CriticsConsensus = "No consensus yet.";
+
+            // Poster
+            Poster = html.DocumentNode.SelectSingleNode("//img[contains(@class, 'posterImage js-lazyLoad')]").Attributes["data-src"].Value;
         }
 
         public bool Equals(MovieData other) => Data == other.Data;

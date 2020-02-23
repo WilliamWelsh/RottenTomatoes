@@ -25,7 +25,7 @@ namespace RottenTomatoes.Data
                 .WithTitle(celeb.Data.Name)
                 .WithDescription("")
                 .WithThumbnailUrl(celeb.Data.Image.ToString())
-                .WithColor(Utilities.red)
+                .WithColor(Utilities.Red)
                 .AddField("Highest Rated Movie", celeb.HighestMovie)
                 .AddField("Lowest Rated Movie", celeb.LowestMovie)
                 .AddField("Movie Stats", movieStats.ToString())

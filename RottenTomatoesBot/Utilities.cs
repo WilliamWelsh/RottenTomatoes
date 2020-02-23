@@ -1,13 +1,10 @@
-﻿using Discord;
+﻿using System;
+using Discord;
 using System.Net;
 using System.Text;
 using Discord.WebSocket;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using HtmlAgilityPack;
-using System;
-using System.Windows.Forms;
-using System.Threading;
 
 namespace RottenTomatoes
 {
@@ -16,12 +13,12 @@ namespace RottenTomatoes
         /// <summary>
         /// The color red (for embeds).
         /// </summary>
-        public static readonly Color red = new Color(250, 50, 10);
+        public static readonly Color Red = new Color(250, 50, 10);
 
         /// <summary>
         /// The Rotten Tomatoes logo.
         /// </summary>
-        private const string logo = "https://cdn.discordapp.com/avatars/477287091798278145/11dac188844056c5dbbdef7015bffc8b.png?size=128";
+        private const string Logo = "https://cdn.discordapp.com/avatars/477287091798278145/11dac188844056c5dbbdef7015bffc8b.png?size=128";
 
         /// <summary>
         /// Print an embed
@@ -30,27 +27,21 @@ namespace RottenTomatoes
         {
             await channel.SendMessageAsync(null, false, new EmbedBuilder()
                 .WithTitle(title)
-                .WithThumbnailUrl(showLogo ? logo : "")
+                .WithThumbnailUrl(showLogo ? Logo : "")
                 .WithDescription(description)
-                .WithColor(red)
+                .WithColor(Red)
                 .WithFooter(footer)
                 .Build());
         }
 
-        /// <summary>
-        /// Download a website's HTML as a string
-        /// </summary>
+        // Download a website's HTML as a string
         public static string DownloadString(string URL)
         {
             using (WebClient client = new WebClient())
                 return client.DownloadString(URL);
         }
 
-        /// <summary>
-        /// Get the (custom) Discord emoji based on the meter class
-        /// </summary>
-        /// <param name="meterClass">The type of score</param>
-        /// <returns></returns>
+        // Get the (custom) Discord emoji based on the meter class
         public static string IconToEmoji(string meterClass)
         {
             meterClass = meterClass.ToLowerInvariant();
@@ -117,8 +108,8 @@ namespace RottenTomatoes
         {
             await Channel.SendMessageAsync(null, false, new EmbedBuilder()
                 .WithTitle("Bot Info")
-                .WithColor(red)
-                .WithThumbnailUrl(logo)
+                .WithColor(Red)
+                .WithThumbnailUrl(Logo)
                 .AddField("Library", "Discord.Net")
                 .AddField("Servers", Client.Guilds.Count)
                 .AddField("Members", TotalMemberCount(Client.Guilds).ToString("#,##0"))
@@ -148,9 +139,25 @@ namespace RottenTomatoes
         // Convert that stuff to actual characters
         public static string DecodeHTMLStuff(string text) => WebUtility.HtmlDecode(text);
 
+        // Print an error
         public static async Task PrintError(ISocketMessageChannel channel, string description)
         {
             await SendEmbed(channel, "Error", description, false);
+        }
+
+        // Cut stuff before in a string
+        public static string CutBefore(string source, string target) =>
+            source.Substring(source.IndexOf(target, StringComparison.Ordinal) + target.Length);
+
+        // Cut stuff after in a string
+        public static string CutAfter(string source, string target) =>
+            source.Substring(0, source.IndexOf(target, StringComparison.Ordinal));
+
+        // Cut stuff before a string and cut stuff after a string
+        public static string CutBeforeAndAfter(string source, string targetOne, string targetTwo)
+        {
+            source = CutBefore(source, targetOne);
+            return CutAfter(source, targetTwo);
         }
     }
 }

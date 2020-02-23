@@ -45,19 +45,10 @@ namespace RottenTomatoes.JSONs
         public string Name { get; set; }
 
         [JsonProperty("year")]
-        public long Year { get; set; }
+        public int Year { get; set; }
 
         [JsonProperty("url")]
         public string Url { get; set; }
-
-        [JsonProperty("image")]
-        public Uri Image { get; set; }
-
-        [JsonProperty("meterClass")]
-        public string MeterClass { get; set; }
-
-        [JsonProperty("meterScore", NullValueHandling = NullValueHandling.Ignore)]
-        public long? MeterScore { get; set; }
     }
 
     public class TVResult

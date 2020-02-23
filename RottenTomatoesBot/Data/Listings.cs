@@ -26,7 +26,7 @@ namespace RottenTomatoes
             StringBuilder results = new StringBuilder();
             for (int i = 0; i < amount; i++)
             {
-                string IconAndScore = Movies[i].TomatoIcon.ToString() == "NA" ? "(No Score Yet)" : $"{Utilities.IconToEmoji(Movies[i].TomatoIcon.ToString())} {Movies[i].TomatoScore}%";
+                string IconAndScore = Movies[i].TomatoIcon.ToString() == "NA" ? "(No CriticScore Yet)" : $"{Utilities.IconToEmoji(Movies[i].TomatoIcon.ToString())} {Movies[i].TomatoScore}%";
                 results.AppendLine($"{IconAndScore} **{Movies[i].Title}** {Movies[i].TheaterReleaseDate}");
             }
 
@@ -49,7 +49,7 @@ namespace RottenTomatoes
             StringBuilder results = new StringBuilder();
             for (int i = 0; i < 10; i++)
             {
-                string IconAndScore = Movies[i].TomatoIcon.ToString() == "Na" ? "(No Score Yet)" : $"{Utilities.IconToEmoji(Movies[i].TomatoIcon.ToString())} {Movies[i].TomatoScore}%";
+                string IconAndScore = Movies[i].TomatoIcon.ToString() == "Na" ? "(No CriticScore Yet)" : $"{Utilities.IconToEmoji(Movies[i].TomatoIcon.ToString())} {Movies[i].TomatoScore}%";
                 results.AppendLine($"{IconAndScore} **{Movies[i].Title}** {Movies[i].TheaterReleaseDate}");
             }
 

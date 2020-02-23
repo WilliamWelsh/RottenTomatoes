@@ -16,6 +16,9 @@ namespace RottenTomatoes.JSONs
 
         [JsonProperty("pushUser")]
         public string PushUser { get; set; }
+
+        [JsonProperty("omdbAPIToken")]
+        public string OMDbAPIToken { get; set; }
     }
 
     public partial class BotResources

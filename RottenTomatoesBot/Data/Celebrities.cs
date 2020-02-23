@@ -18,8 +18,8 @@ namespace RottenTomatoes.Data
                 .AppendLine($"<:tomato:477141676650004481> {celeb.FreshCount}")
                 .AppendLine($"<:rotten:477137965672431628> {celeb.RottenCount}")
                 .AppendLine($"<:certifiedfresh:477137965848723477> {celeb.CertifiedCount}")
-                .AppendLine($"**No Score Yet**: {celeb.NoScoreCount}")
-                .AppendLine($"**Average Score**: {celeb.AverageScore}%");
+                .AppendLine($"**No CriticScore Yet**: {celeb.NoScoreCount}")
+                .AppendLine($"**Average CriticScore**: {celeb.AverageScore}%");
 
             var embed = new EmbedBuilder()
                 .WithTitle(celeb.Data.Name)
@@ -62,7 +62,7 @@ namespace RottenTomatoes.Data
             #endregion
 
             // Set all the class counts and average score
-            #region Total Movies & Average Score
+            #region Total Movies & Average CriticScore
             int moviesWithScore = 0;
             int totalMovieScore = 0;
 

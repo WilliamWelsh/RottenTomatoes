@@ -16,14 +16,14 @@ namespace RottenTomatoes.Data
             var show = ScrapeData(new TVShow(tvResult));
 
             string endYear = show.Data.EndYear == 0 ? "" : show.Data.EndYear.ToString();
-            string score = show.Data.MeterScore == null ? "No Score Yet" : $"{show.Data.MeterScore}%";
+            string score = show.Data.MeterScore == null ? "No CriticScore Yet" : $"{show.Data.MeterScore}%";
 
             var embed = new EmbedBuilder()
                 .WithTitle($"{show.Data.Title} ({show.Data.StartYear} - {endYear})")
                 .WithColor(Utilities.red)
                 .WithThumbnailUrl(show.Data.Image.ToString())
                 .AddField("Average Tomatometer", $"{Utilities.IconToEmoji(show.Data.MeterClass)} {score}")
-                .AddField("Average Audience Score", show.AverageAudienceScore)
+                .AddField("Average Audience CriticScore", show.AverageAudienceScore)
                 .AddField($"Seasons ({show.Seasons.Count})", $"Type `!rt season <number>` to view details on a season.")
                 .AddField("Series Info", show.SeriesInfo)
                 .AddField("Link", $"[View Full Page]({show.URL})");
@@ -51,7 +51,7 @@ namespace RottenTomatoes.Data
             }
             else
             {
-                show.AverageAudienceScore = "No Score Yet";
+                show.AverageAudienceScore = "No CriticScore Yet";
             }
 
             show.SeriesInfo = Utilities.DecodeHTMLStuff(doc.GetElementbyId("movieSynopsis").InnerText);

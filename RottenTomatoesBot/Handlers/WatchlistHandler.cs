@@ -94,7 +94,7 @@ namespace RottenTomatoes.Handlers
         {
             string html = Utilities.DownloadString(URL);
             
-            // Meter Score
+            // Meter CriticScore
             string meterScore = Utilities.ScrapeText(ref html, "\"cag[score]\":\"", 0, "\",");
 
             return !string.IsNullOrEmpty(meterScore);
@@ -103,60 +103,60 @@ namespace RottenTomatoes.Handlers
         // Print a movie
         private async Task PrintMovie(WatchlistMovie WatchlistMovie)
         {
-            string html = Utilities.DownloadString(WatchlistMovie.MovieLink);
+            //string html = Utilities.DownloadString(WatchlistMovie.MovieLink);
 
-            var doc = new HtmlDocument();
-            doc.LoadHtml(html);
+            //var doc = new HtmlDocument();
+            //doc.LoadHtml(html);
 
-            var Movie = new MovieResult();
+            //var Movie = new MovieResult();
 
-            // Name and Year
-            string NameAndYear = doc.DocumentNode.SelectSingleNode("//meta[@property='og:title']").Attributes["content"].Value;
-            Movie.Name = NameAndYear.Substring(0, NameAndYear.Length-7);
-            Movie.Year = long.Parse(NameAndYear.Replace(Movie.Name, "").Replace(" ", "").Replace("(", "").Replace(")", ""));
+            //// Name and Year
+            //string NameAndYear = doc.DocumentNode.SelectSingleNode("//meta[@property='og:title']").Attributes["content"].Value;
+            //Movie.Name = NameAndYear.Substring(0, NameAndYear.Length-7);
+            //Movie.Year = long.Parse(NameAndYear.Replace(Movie.Name, "").Replace(" ", "").Replace("(", "").Replace(")", ""));
 
-            // URL
-            Movie.Url = WatchlistMovie.MovieLink.Replace("https://www.rottentomatoes.com", "");
+            //// URL
+            //Movie.Url = WatchlistMovie.MovieLink.Replace("https://www.rottentomatoes.com", "");
 
-            // Poster
-            Movie.Image = new Uri(doc.DocumentNode.SelectSingleNode("//meta[@property='og:image']").Attributes["content"].Value);
+            //// Poster
+            //Movie.Image = new Uri(doc.DocumentNode.SelectSingleNode("//meta[@property='og:image']").Attributes["content"].Value);
 
-            html = Utilities.ScrapeText(ref html, "window.mpscall = ", 0, ";");
+            //html = Utilities.ScrapeText(ref html, "window.mpscall = ", 0, ";");
 
-            // Meter Score
-            string meterScore = Utilities.ScrapeText(ref html, "\"cag[score]\":\"", 0, "\",");
-            if (string.IsNullOrEmpty(meterScore))
-                Movie.MeterScore = null;
-            else
-                Movie.MeterScore = long.Parse(meterScore);
+            //// Meter CriticScore
+            //string meterScore = Utilities.ScrapeText(ref html, "\"cag[score]\":\"", 0, "\",");
+            //if (string.IsNullOrEmpty(meterScore))
+            //    Movie.MeterScore = null;
+            //else
+            //    Movie.MeterScore = long.Parse(meterScore);
 
-            // Meter Class
-            string isCertified = Utilities.ScrapeText(ref html, "\"cag[certified_fresh]\":\"", 0, "\",");
-            if (isCertified == "1")
-            {
-                Movie.MeterClass = "certified_fresh";
-            }
-            else
-            {
-                Movie.MeterClass = Utilities.ScrapeText(ref html, "\"cag[fresh_rotten]\":\"", 0, "\",");
-                if (Movie.MeterClass == "NA")
-                    Movie.MeterClass = "N/A";
-            }
+            //// Meter Class
+            //string isCertified = Utilities.ScrapeText(ref html, "\"cag[certified_fresh]\":\"", 0, "\",");
+            //if (isCertified == "1")
+            //{
+            //    Movie.MeterClass = "certified_fresh";
+            //}
+            //else
+            //{
+            //    Movie.MeterClass = Utilities.ScrapeText(ref html, "\"cag[fresh_rotten]\":\"", 0, "\",");
+            //    if (Movie.MeterClass == "NA")
+            //        Movie.MeterClass = "N/A";
+            //}
 
-            // Create a notification to be sent to my phone (this is just for me)
-            var parameters = new NameValueCollection {
-                { "token", Config.bot.PushToken },
-                { "user", Config.bot.PushUser },
-                { "url", WatchlistMovie.MovieLink },
-                { "message", $"{Movie.Name}: {Movie.MeterScore}% ({Movie.MeterClass})" }
-            };
-            using (var client = new WebClient())
-            {
-                client.UploadValues("https://api.pushover.net/1/messages.json", parameters);
-            }
+            //// Create a notification to be sent to my phone (this is just for me)
+            //var parameters = new NameValueCollection {
+            //    { "token", Config.bot.PushToken },
+            //    { "user", Config.bot.PushUser },
+            //    { "url", WatchlistMovie.MovieLink },
+            //    { "message", $"{Movie.Name}: {Movie.MeterScore}% ({Movie.MeterClass})" }
+            //};
+            //using (var client = new WebClient())
+            //{
+            //    client.UploadValues("https://api.pushover.net/1/messages.json", parameters);
+            //}
 
-            var Guild = Client.GetGuild(WatchlistMovie.GuildId);
-            await Data.Movies.PrintMovie(Guild.GetTextChannel(WatchlistMovie.ChannelId), Movie);
+            //var Guild = Client.GetGuild(WatchlistMovie.GuildId);
+            //await Data.Movies.PrintMovie(Guild.GetTextChannel(WatchlistMovie.ChannelId), Movie);
         }
     }
 }

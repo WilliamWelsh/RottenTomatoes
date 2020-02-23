@@ -4,6 +4,10 @@ using System.Text;
 using Discord.WebSocket;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using HtmlAgilityPack;
+using System;
+using System.Windows.Forms;
+using System.Threading;
 
 namespace RottenTomatoes
 {
@@ -39,9 +43,7 @@ namespace RottenTomatoes
         public static string DownloadString(string URL)
         {
             using (WebClient client = new WebClient())
-            {
                 return client.DownloadString(URL);
-            }
         }
 
         /// <summary>
@@ -143,11 +145,12 @@ namespace RottenTomatoes
             return text.Substring(0, text.IndexOf(lastTarget));
         }
 
-        /// <summary>
-        /// Convert that stuff to actual characters
-        /// </summary>
-        /// <param name="text">Text containing HTML entities</param>
-        /// <returns></returns>
+        // Convert that stuff to actual characters
         public static string DecodeHTMLStuff(string text) => WebUtility.HtmlDecode(text);
+
+        public static async Task PrintError(ISocketMessageChannel channel, string description)
+        {
+            await SendEmbed(channel, "Error", description, false);
+        }
     }
 }

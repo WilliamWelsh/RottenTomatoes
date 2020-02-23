@@ -4,6 +4,8 @@ using HtmlAgilityPack;
 using Discord.WebSocket;
 using RottenTomatoes.JSONs;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Linq;
 
 namespace RottenTomatoes.Data
 {
@@ -11,60 +13,88 @@ namespace RottenTomatoes.Data
     {
         public static async Task PrintMovie(ISocketMessageChannel channel, MovieResult movieToPrint)
         {
-            var movie = ScrapeSomeData(new MovieData(movieToPrint));
-            
+            movieToPrint.Url = GetRTLink(movieToPrint.Url);
+
+            if (movieToPrint.Url == "N/A")
+            {
+                await Utilities.PrintError(channel,
+                    "The Rotten Tomatoes link for this film wasn't listed in the database. Sorry!");
+                return;
+            }
+
+            var movie = new MovieData(movieToPrint);
+
+            string rawHTML = Utilities.DownloadString(movieToPrint.Url);
+
+            var html = new HtmlDocument();
+            html.LoadHtml(rawHTML);
+
+            // Critic Score
+            var score = html.DocumentNode.SelectSingleNode("//div[contains(@class, 'col-sm-17 col-xs-24 score-panel-wrap')]");
+            movie.CriticScore = score.SelectSingleNode("//span[contains(@class, 'mop-ratings-wrap__percentage')]").InnerText.Trim();
+
+            // Critic Score Icon
+            if (score.InnerHtml.Contains("certified_fresh"))
+                movie.CriticScoreIcon = "<:certifiedfresh:477137965848723477>";
+            else if (score.InnerHtml.Contains("rotten"))
+                movie.CriticScoreIcon = "<:rotten:477137965672431628>";
+            else if (score.InnerHtml.Contains("fresh"))
+                movie.CriticScoreIcon = "<:tomato:477141676650004481>";
+
+            // Audience Score
+            var audienceScore = html.DocumentNode.SelectSingleNode("//div[contains(@class, 'mop-ratings-wrap__half audience-score')]");
+
+            Console.WriteLine("0");
+            movie.AudienceScore = rawHTML.Substring(rawHTML.IndexOf("mop-ratings-wrap__half audience-score\">"));
+            movie.AudienceScore = movie.AudienceScore.Substring(movie.AudienceScore.IndexOf("mop-ratings-wrap__percentage\">") + 30);
+            movie.AudienceScore = movie.AudienceScore.Substring(0, movie.AudienceScore.IndexOf("<"));
+            movie.AudienceScore = movie.AudienceScore.Replace("\n", "");
+
+
+            // Audience Score Icon
+            if (audienceScore.InnerHtml.Contains("upright"))
+                movie.AudienceIcon = "<:audienceliked:477141676478038046>";
+            else if (audienceScore.InnerHtml.Contains("spilled"))
+                movie.AudienceIcon = "<:audiencedisliked:477141676486295562>";
+            else
+            {
+                movie.AudienceIcon = "";
+            }
+
+            // Critic Consensus
+            if (html.Text.Contains("mop-ratings-wrap__text mop-ratings-wrap__text--concensus"))
+                movie.CriticsConsensus = html.DocumentNode.SelectSingleNode("//p[contains(@class, 'mop-ratings-wrap__text mop-ratings-wrap__text--concensus')]").InnerText.Trim();
+            else
+                movie.CriticsConsensus = "No consensus yet.";
+
+            // Poster
+            movie.Poster = html.DocumentNode.SelectSingleNode("//img[contains(@class, 'posterImage js-lazyLoad')]").Attributes["data-src"].Value;
+            //movie.Poster = movie.Poster.Substring(0, movie.Poster.IndexOf(" "));
+
             // Create a pretty embed
             var embed = new EmbedBuilder()
                 .WithTitle($"{movie.Data.Name} ({movie.Data.Year})")
                 .WithColor(Utilities.red)
-                .WithThumbnailUrl(movie.Data.Image.ToString());
-            
-            // If the score is 0 but doesn't have the rotten emoji, it's because it doesn't have a score yet
-            string score = (movie.Data.MeterScore == null && movie.Data.MeterClass == "N/A") ? "No Score Yet" : $"{movie.Data.MeterScore}%";
-            
-            // Add embed fields
-            embed.AddField("Tomatometer", $"{Utilities.IconToEmoji(movie.Data.MeterClass)} {score}")
-                //.AddField("Audience Score", $"{movie.AudienceText}") // TODO: The audience score is loaded with java now, so figure out how to get it
+                .WithThumbnailUrl(movie.Poster)
+                .AddField("Tomatometer", $"{movie.CriticScoreIcon} {movie.CriticScore}")
+                .AddField("Audience Score", $"{movie.AudienceIcon} {movie.AudienceScore}")
                 .AddField("Critics Consensus", movie.CriticsConsensus)
-                .AddField("Link", $"[View full page on Rotten Tomatoes]({movie.Url})")
+                .AddField("Link", $"[View full page on Rotten Tomatoes]({movie.Data.Url})")
                 .WithFooter("Via RottenTomatoes.com");
 
             await channel.SendMessageAsync(null, false, embed.Build());
         }
 
-        // Scrape movie data
-        private static MovieData ScrapeSomeData(MovieData movie)
+        private static string GetRTLink(string letterboxdLink)
         {
-            string html = Utilities.DownloadString(movie.Url);
+            // Get the IMDb ID from the Letterboxd Page 
+            var IMDbID = Utilities.DownloadString(letterboxdLink);
+            IMDbID = IMDbID.Substring(IMDbID.IndexOf("imdb.com/title/") + 15);
+            IMDbID = IMDbID.Substring(0, IMDbID.IndexOf("/"));
 
-            var doc = new HtmlDocument();
-            doc.LoadHtml(html);
-
-            //if (html.Contains("Audience Score <br /> Not Yet Available"))
-            //{
-            //    movie.AudienceText = "No Score Yet";
-            //}
-            //else
-            //{
-            //    // Check to see if it's the score or the "want to see" part and set the suffix
-            //    string audienceSuffix = doc.DocumentNode.SelectNodes("//strong[contains(@class, 'mop-ratings-wrap__text--small')]")[1].InnerText;
-                
-            //    // Set the audience score/want to see percentage
-            //    int audienceScore = int.Parse(doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'mop-ratings-wrap__percentage mop-ratings-wrap__percentage--audience mop-ratings-wrap__percentage--small')]").InnerText.Replace("%", ""));
-                
-            //    // I think they completely remove the "want to see" related stuff
-            //    string audienceEmoji = audienceScore >= 60 ? "<:audienceliked:477141676478038046>" : "<:audiencedisliked:477141676486295562>";
-
-            //    movie.AudienceText = $"{audienceEmoji} {audienceScore}% {audienceSuffix}";
-            //}
-
-            if (html.Contains("No consensus yet."))
-                movie.CriticsConsensus = "No consensus yet.";
-            else
-                movie.CriticsConsensus = doc.DocumentNode.SelectSingleNode("//p[contains(@class, 'mop-ratings-wrap__text mop-ratings-wrap__text--concensus')]").InnerText;
-            movie.CriticsConsensus = Utilities.DecodeHTMLStuff(movie.CriticsConsensus);
-
-            return movie;
+            // Get the Rotten Tomatoes link from the OMDb API
+            dynamic RTLink = JsonConvert.DeserializeObject(Utilities.DownloadString($"https://www.omdbapi.com/?apikey={Config.bot.OMDbAPIToken}&tomatoes=true&i={IMDbID}"));
+            return RTLink.tomatoURL;
         }
     }
 
@@ -73,18 +103,19 @@ namespace RottenTomatoes.Data
     {
         public MovieResult Data { get; }
 
-        public string Score { get; set; }
+        public string CriticScore { get; set; }
+        public string CriticScoreIcon { get; set; }
 
-        public string AudienceText { get; set; }
+        public string AudienceScore { get; set; }
+        public string AudienceIcon { get; set; }
 
         public string CriticsConsensus { get; set; }
 
-        public string Url { get; set; }
+        public string Poster { get; set; }
 
         public MovieData(MovieResult data)
         {
             Data = data;
-            Url = $"https://www.rottentomatoes.com{Data.Url}";
         }
 
         public bool Equals(MovieData other) => Data == other.Data;

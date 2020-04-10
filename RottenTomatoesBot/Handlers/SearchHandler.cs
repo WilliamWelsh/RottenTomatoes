@@ -67,94 +67,82 @@ namespace RottenTomatoes
                 return;
             }
 
-            isSelectionBeingMade = true;
-
-            // Clear the list to rewrite current selection
-            resultItems.Clear();
-            
-            // Get the website html
-            string json = Utilities.DownloadString($"https://letterboxd.com/search/films/{search}");
-
-            //If there's no result, tell the user and then stop.
-            if (json.Contains("There were no matches for your search term."))
+            using (context.Channel.EnterTypingState())
             {
-                await Utilities.SendEmbed(context.Channel, "Rotten Tomatoes Search", $"Sorry, no results were found for \"{search}\"\n\nTry reformatting your search if the title contains colons, hyphens, etc.", false);
-                return;
+                isSelectionBeingMade = true;
+
+                // Clear the list to rewrite current selection
+                resultItems.Clear();
+
+                // Get the website html
+                string json = Utilities.DownloadString($"https://letterboxd.com/search/films/{search}");
+
+                //If there's no result, tell the user and then stop.
+                if (json.Contains("There were no matches for your search term."))
+                {
+                    await Utilities.SendEmbed(context.Channel, "Rotten Tomatoes Search", $"Sorry, no results were found for \"{search}\"\n\nTry reformatting your search if the title contains colons, hyphens, etc.", false);
+                    return;
+                }
+
+                // Get that nice json :)
+                json = Utilities.CutBefore(json, "<ul class=\"results\">");
+                json = Utilities.CutBeforeAndAfter(json, "<li> ", "</ul>");
+
+                HtmlDocument html = new HtmlDocument();
+                html.LoadHtml(json);
+
+                var results = html.DocumentNode.SelectNodes("//span[contains(@class, 'film-title-wrapper')]");
+
+                var embed = new EmbedBuilder()
+                    .WithTitle("Rotten Tomatoes Search")
+                    .WithColor(Utilities.Red)
+                    .WithFooter("Via RottenTomatoes.com");
+
+                foreach (var result in results)
+                {
+                    var movie = new MovieResult();
+
+                    movie.Name = Utilities.DecodeHTMLStuff(result.SelectSingleNode(".//a/text()").InnerText.Trim());
+
+                    if (result.SelectSingleNode(".//small") != null)
+                        movie.Year = int.Parse(result.SelectSingleNode(".//small").FirstChild.InnerHtml.Trim());
+                    else
+                        movie.Year = 0;
+
+                    movie.Url = "https://letterboxd.com" + result.SelectSingleNode(".//a").Attributes["href"].Value;
+
+                    resultItems.Add(new ResultItem(movie));
+                }
+
+                resultItems = resultItems.OrderBy(r => r.Movie.Year).Reverse().ToList();
+
+                var text = new StringBuilder();
+                for (int i = 0; i < resultItems.Count; i++)
+                    text.AppendLine($"`{i + 1}` {resultItems[i].Movie.Name} {(resultItems[i].Movie.Year == 0 ? "" : "`" + resultItems[i].Movie.Year + "`")}");
+
+                embed.AddField("Movies", text.ToString());
+
+                searchMessage = await context.Channel.SendMessageAsync(null, false, embed.Build());
             }
-
-            // Get that nice json :)
-            json = Utilities.CutBefore(json, "<ul class=\"results\">");
-            json = Utilities.CutBeforeAndAfter(json, "<li> ", "</ul>");
-
-            HtmlDocument html = new HtmlDocument();
-            html.LoadHtml(json);
-
-            var results = html.DocumentNode.SelectNodes("//span[contains(@class, 'film-title-wrapper')]");
-
-            var embed = new EmbedBuilder()
-                .WithTitle("Rotten Tomatoes Search")
-                .WithColor(Utilities.Red)
-                .WithFooter("Via RottenTomatoes.com");
-
-            foreach (var result in results)
-            {
-                var movie = new MovieResult();
-
-                movie.Name = Utilities.DecodeHTMLStuff(result.SelectSingleNode(".//a/text()").InnerText.Trim());
-
-                if (result.SelectSingleNode(".//small") != null)
-                    movie.Year = int.Parse(result.SelectSingleNode(".//small").FirstChild.InnerHtml.Trim());
-                else
-                    movie.Year = 0;
-
-                movie.Url = "https://letterboxd.com" + result.SelectSingleNode(".//a").Attributes["href"].Value;
-
-                resultItems.Add(new ResultItem(movie));
-            }
-
-            resultItems = resultItems.OrderBy(r => r.Movie.Year).Reverse().ToList();
-
-            var text = new StringBuilder();
-            for (int i = 0; i < resultItems.Count; i++)
-                text.AppendLine($"`{i+1}` {resultItems[i].Movie.Name} {(resultItems[i].Movie.Year == 0 ? "" : "`" + resultItems[i].Movie.Year + "`")}");
-
-            embed.AddField("Movies", text.ToString());
-
-            searchMessage = await context.Channel.SendMessageAsync(null, false, embed.Build());
         }
 
         // Attempt to select a movie with !rt choose <number>
         public async Task TryToSelect(int selection, ISocketMessageChannel channel)
         {
-            // Check if there is anything to select
-            if (resultItems.Count == 0 || !isSelectionBeingMade)
+            using (channel.EnterTypingState())
             {
-                await Utilities.SendEmbed(channel, "Rotten Tomatoes Search", "There's no active search on this server.\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`", false);
-                return;
-            }
+                // Check if there is anything to select
+                if (resultItems.Count == 0 || !isSelectionBeingMade)
+                {
+                    await Utilities.SendEmbed(channel, "Rotten Tomatoes Search", "There's no active search on this server.\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`", false);
+                    return;
+                }
 
-            // Because lists start at 0
-            await PrintResult(channel, resultItems.ElementAt(selection - 1)).ConfigureAwait(false);
+                // Because lists start at 0
+                await PrintResult(channel, resultItems.ElementAt(selection - 1)).ConfigureAwait(false);
 
-            // Delete the search results message
-            await searchMessage.DeleteAsync();
-        }
-
-        // Watch a score to see if it gets updated, or released
-        public async Task WatchScore(int selection, ISocketMessageChannel channel)
-        {
-            if (resultItems.Count == 0 || !isSelectionBeingMade)
-            {
-                await Utilities.SendEmbed(channel, "Rotten Tomatoes Search", "There's no active search on this server.\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`", false);
-                return;
-            }
-
-            // because lists start at 0
-            var result = resultItems.ElementAt(selection - 1);
-
-            if (result.Movie != null)
-            {
-                await Data.Movies.PrintMovie(channel, result.Movie);
+                // Delete the search results message
+                await searchMessage.DeleteAsync();
             }
         }
 

@@ -8,16 +8,14 @@ namespace RottenTomatoes
 {
     class Program
     {
-        DiscordSocketClient _client;
-
         static void Main() => new Program().StartAsync().GetAwaiter().GetResult();
 
-        private const bool testMode = true;
+        private const bool testMode = false;
 
         public async Task StartAsync()
         {
             if (string.IsNullOrEmpty(Config.bot.BotToken)) return;
-            _client = new DiscordSocketClient(new DiscordSocketConfig { LogLevel = LogSeverity.Verbose });
+            DiscordSocketClient _client = new DiscordSocketClient(new DiscordSocketConfig { LogLevel = LogSeverity.Verbose });
             _client.Log += Log;
 
             // I use test mode so I don't have to connect to all those servers for when I'm developing/fixing/testing/whatever

@@ -8,6 +8,7 @@ using Discord.WebSocket;
 using RottenTomatoes.JSONs;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Discord.Rest;
 
 namespace RottenTomatoes
 {
@@ -35,6 +36,9 @@ namespace RottenTomatoes
         // This is the new list made with searched movies ordered by newest to oldest for ease of selection
         List<ResultItem> resultItems = new List<ResultItem>();
 
+        // The message that contains search results (to be delete)
+        private RestUserMessage searchMessage = null;
+
         // Reset the handler by clearing the movies and saying there is no selection being made
         private void Reset()
         {
@@ -57,7 +61,6 @@ namespace RottenTomatoes
         // Search Rotten Tomatoes for movies and create a selection
         public async Task SearchRottenTomatoes(string search, SocketCommandContext context)
         {
-            Console.WriteLine("hi");
             if (search == "cancel")
             {
                 await RTCancel(context.Channel).ConfigureAwait(false);
@@ -117,7 +120,7 @@ namespace RottenTomatoes
 
             embed.AddField("Movies", text.ToString());
 
-            await context.Channel.SendMessageAsync(null, false, embed.Build());
+            searchMessage = await context.Channel.SendMessageAsync(null, false, embed.Build());
         }
 
         // Attempt to select a movie with !rt choose <number>
@@ -132,6 +135,9 @@ namespace RottenTomatoes
 
             // Because lists start at 0
             await PrintResult(channel, resultItems.ElementAt(selection - 1)).ConfigureAwait(false);
+
+            // Delete the search results message
+            await searchMessage.DeleteAsync();
         }
 
         // Watch a score to see if it gets updated, or released

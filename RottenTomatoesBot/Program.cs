@@ -12,7 +12,7 @@ namespace RottenTomatoes
 
         static void Main() => new Program().StartAsync().GetAwaiter().GetResult();
 
-        private const bool testMode = true;
+        private const bool testMode = false;
 
         public async Task StartAsync()
         {

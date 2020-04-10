@@ -136,7 +136,7 @@ namespace RottenTomatoes
         // Print an error
         public static async Task PrintError(ISocketMessageChannel channel, string description)
         {
-            await SendEmbed(channel, "Error", description, false);
+            await SendEmbed(channel, "Error", description, false).ConfigureAwait(false);
         }
 
         // Cut stuff before in a string

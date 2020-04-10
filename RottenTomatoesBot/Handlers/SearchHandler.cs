@@ -37,7 +37,7 @@ namespace RottenTomatoes
         List<ResultItem> resultItems = new List<ResultItem>();
 
         // The message that contains search results (to be delete)
-        private RestUserMessage searchMessage = null;
+        private RestUserMessage searchMessage;
 
         // Reset the handler by clearing the movies and saying there is no selection being made
         private void Reset()

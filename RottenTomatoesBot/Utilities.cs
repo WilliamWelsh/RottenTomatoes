@@ -73,7 +73,14 @@ namespace RottenTomatoes
                 .AppendLine("*Type `!rt info` or `!rt stats`")
                 .AppendLine()
                 .AppendLine("To view the source code...")
-                .AppendLine("*Type `!rt github`");
+                .AppendLine("*Type `!rt github`")
+                .AppendLine()
+                .AppendLine("To join the support server or speak to the developer...")
+                .AppendLine("*Type `!rt discord`")
+                .AppendLine()
+                .AppendLine("To view privacy statement...")
+                .AppendLine("*Type `!rt privacy`")
+                .AppendLine();
             await SendEmbed(Channel, "Rotten Tomatoes", text.ToString(), false, "Please report issues on my Discord server (!rt discord)").ConfigureAwait(false);
         }
 
@@ -107,7 +114,7 @@ namespace RottenTomatoes
                 .AddField("Library", "Discord.Net")
                 .AddField("Servers", Client.Guilds.Count)
                 .AddField("Members", TotalMemberCount(Client.Guilds).ToString("#,##0"))
-                .AddField("Owner", "Reverse#1193")
+                .AddField("Developer", "Reverse#1193")
                 //.AddField("Total Votes", (await Config.DblAPI.GetMeAsync()).Points)
                 .AddField("Links", "[Invite](https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&permissions=3072) | [Vote](\n\nhttps://discordbots.org/bot/477287091798278145/vote) | [GitHub](https://github.com/WilliamWelsh/RottenTomatoes) | [Support Server](https://discord.gg/XcmVD3x) ")
                 .Build()).ConfigureAwait(false);
@@ -134,10 +141,7 @@ namespace RottenTomatoes
         public static string DecodeHTMLStuff(string text) => WebUtility.HtmlDecode(text);
 
         // Print an error
-        public static async Task PrintError(ISocketMessageChannel channel, string description)
-        {
-            await SendEmbed(channel, "Error", description, false).ConfigureAwait(false);
-        }
+        public static async Task PrintError(ISocketMessageChannel channel, string description) => await SendEmbed(channel, "Error", description, false).ConfigureAwait(false);
 
         // Cut stuff before in a string
         public static string CutBefore(string source, string target) =>

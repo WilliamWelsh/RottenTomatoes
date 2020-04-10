@@ -7,9 +7,7 @@ using DiscordBotsList.Api.Objects;
 
 namespace RottenTomatoes
 {
-    /// <summary>
-    /// Handle commands and guild updates.
-    /// </summary>
+    // Handle commands and guild updates.
     class EventHandler
     {
         private DiscordSocketClient _client;

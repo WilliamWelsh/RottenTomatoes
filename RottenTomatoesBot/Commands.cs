@@ -1,6 +1,5 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace RottenTomatoes
@@ -49,12 +48,6 @@ namespace RottenTomatoes
             Config.Servers.Add(newServer);
         }
 
-        [Command("season")]
-        public async Task ChooseSeason(int selection)
-        {
-            await Utilities.SendEmbed(Context.Channel, "Error", "Sorry, this command is not done being developed. If you need help please [join my server](https://discord.gg/qsc8YMS).", false).ConfigureAwait(false);
-        }
-
         [Command("stats")]
         [Alias("info")]
         public async Task DisplayStats() => await Utilities.PrintBotInfo(Context.Client, Context.Channel);
@@ -63,17 +56,5 @@ namespace RottenTomatoes
         // This is so a user can report something to me, or ask for a new feature
         [Command("discord")]
         public async Task RTDiscord() => await Utilities.SendEmbed(Context.Channel, "Bot Help", "Hello, if you need help with the bot, or need to report a bug, or request a new feature, please join my server and contact me\n(My name is Reverse)\nhttps://discord.gg/qsc8YMS", true);
-
-        //[Command("vote")]
-        //public async Task TryToVote()
-        //{
-        //    if (await Config.DblAPI.HasVoted(Context.User.Id))
-        //        await Utilities.SendEmbed(Context.Channel, "Bot Voting", "You have voted within this 12 hour period. Thank you!\n\nhttps://discordbots.org/bot/477287091798278145/vote", false);
-        //    else
-        //        await Utilities.SendEmbed(Context.Channel, "Bot Voting", "You have not voted within this period. Please vote.\n\nhttps://discordbots.org/bot/477287091798278145/vote", false);
-        //}
-
-        //[Command("watch")]
-        //public async Task WatchScore(string URL) => await Config.WatchListHandler.AddToWatchlist(Context, URL);
     }
 }

@@ -10,19 +10,13 @@ namespace RottenTomatoes
 {
     static class Utilities
     {
-        /// <summary>
-        /// The color red (for embeds).
-        /// </summary>
+        // The color red (for embeds).
         public static readonly Color Red = new Color(250, 50, 10);
 
-        /// <summary>
-        /// The Rotten Tomatoes logo.
-        /// </summary>
+        // The Rotten Tomatoes logo.
         private const string Logo = "https://cdn.discordapp.com/avatars/477287091798278145/11dac188844056c5dbbdef7015bffc8b.png?size=128";
 
-        /// <summary>
-        /// Print an embed
-        /// </summary>
+        // Print an embed
         public static async Task SendEmbed(ISocketMessageChannel channel, string title, string description, bool showLogo, string footer = null)
         {
             await channel.SendMessageAsync(null, false, new EmbedBuilder()

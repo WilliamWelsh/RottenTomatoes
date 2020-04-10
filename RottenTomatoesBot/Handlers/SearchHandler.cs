@@ -2,13 +2,13 @@
 using Discord;
 using System.Text;
 using System.Linq;
+using Discord.Rest;
 using HtmlAgilityPack;
 using Discord.Commands;
 using Discord.WebSocket;
 using RottenTomatoes.JSONs;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Discord.Rest;
 
 namespace RottenTomatoes
 {
@@ -163,10 +163,6 @@ namespace RottenTomatoes
         {
             if (result.Movie != null)
                 await Data.Movies.PrintMovie(channel, result.Movie);
-            //else if (result.TVShow != null)
-            //    await Data.TVShows.PrintTVShow(channel, result.TVShow);
-            //else if (result.Celeb != null)
-            //    await Data.Celebrities.PrintCeleb(channel, result.Celeb);
         }
     }
 }

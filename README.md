@@ -31,15 +31,10 @@ A Discord bot that allows you to search movies and TV shows on Rotten Tomatoes a
 ![Screenshot](https://i.imgur.com/TGwTUP0.png)  
 ![Screenshot](https://i.imgur.com/jN8CK1c.png)  
 ![Screenshot](https://i.imgur.com/ZmG16fb.png)  
-![Celeb Example](https://i.imgur.com/kU2b08b.png)  
-![TV Show Example](https://i.imgur.com/BU5Ogki.png)  
 
 #### Bugs and Issues
 Please report bugs or issues here.  
 [Issues page](https://github.com/WilliamWelsh/RottenTomatoes/issues)
-
-#### To-Do List (?)
-	- Add !rt season <number>
 
 ## License
 [MIT](https://github.com/WilliamWelsh/RottenTomatoes/blob/master/LICENSE)

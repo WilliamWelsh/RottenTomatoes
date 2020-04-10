@@ -25,22 +25,11 @@ namespace RottenTomatoes
 
             await _client.StartAsync();
             await _client.SetGameAsync("!rt help", null, ActivityType.Watching);
-            //_client.Ready += OnReady;
 
             EventHandler _handler = new EventHandler();
             await _handler.InitializeAsync(_client);
 
             await Task.Delay(-1).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Tasks to perform once the bot has logged into all the servers it's on.
-        /// </summary>
-        /// <returns></returns>
-        private async Task OnReady()
-        {
-            // Set up the watchlist handler to start checking for movies
-            await Config.WatchListHandler.SetUp(_client).ConfigureAwait(false);
         }
 
         private static Task Log(LogMessage msg)

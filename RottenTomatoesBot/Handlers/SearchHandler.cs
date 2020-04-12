@@ -120,7 +120,7 @@ namespace RottenTomatoes
                 for (int i = 0; i < resultItems.Count; i++)
                     text.AppendLine($"`{i + 1}` {resultItems[i].Movie.Name} {(resultItems[i].Movie.Year == 0 ? "" : "`" + resultItems[i].Movie.Year + "`")}");
 
-                embed.AddField("Movies", text.ToString());
+                embed.WithDescription(text.ToString());
 
                 searchMessage = await context.Channel.SendMessageAsync(null, false, embed.Build());
             }

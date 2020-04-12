@@ -189,8 +189,6 @@
     <Compile Include="Data\Movies.cs" />
     <Compile Include="Handlers\EventHandler.cs" />
     <Compile Include="JSONs\BotResources.cs" />
-    <Compile Include="Data\Listings.cs" />
-    <Compile Include="Data\TopBoxOffice.cs" />
     <Compile Include="JSONs\Converter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

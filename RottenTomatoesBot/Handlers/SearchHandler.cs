@@ -114,6 +114,15 @@ namespace RottenTomatoes
                     resultItems.Add(new ResultItem(movie));
                 }
 
+                // If there's only one result, cut the crap and just print it
+                // Waste of time doing `!rt choose `
+                if (resultItems.Count == 1)
+                {
+                    await TryToSelect(1, context.Channel).ConfigureAwait(false);
+                    return;
+                }
+
+                // Order the movies by release date
                 resultItems = resultItems.OrderBy(r => r.Movie.Year).Reverse().ToList();
 
                 var text = new StringBuilder();

@@ -16,21 +16,6 @@ namespace RottenTomatoes
         [Command("help")]
         public async Task PrintHelp() => await Utilities.PrintHelp(Context.Channel);
 
-        [Command("box office")]
-        public async Task PrintTopBoxOffice() => await Listings.SendTopBoxOffice(Context.Channel);
-
-        [Command("upcoming")]
-        [Alias("upcoming movies")]
-        public async Task SendUpComingHelp() => await Utilities.SendUpcomingHelp(Context.Channel);
-
-        [Command("comingsoon")]
-        [Alias("coming soon")]
-        public async Task SendUpcomingMovies() => await Listings.SendUpcomingMovies(Context.Channel);
-
-        [Command("opening")]
-        [Alias("opening this week")]
-        public async Task SendUpcomingMoviesThisWeek() => await Listings.SendUpcomingMoviesThisWeek(Context.Channel);
-
         [Command("choose")]
         public async Task SelectRottenTomatoes(int selection)
         {

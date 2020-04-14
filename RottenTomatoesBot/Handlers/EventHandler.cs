@@ -37,44 +37,47 @@ namespace RottenTomatoes
 
             var Context = new SocketCommandContext(_client, msg);
 
-            // If the user just mentions the bot or says !rt, print help, they might need help
-            if (msg.Content == "!rt" || msg.Content.StartsWith("<@477287091798278145>"))
+            using (Context.Channel.EnterTypingState())
             {
-                await Utilities.PrintHelp(Context.Channel);
-                return;
-            }
-
-            if (msg.Content == "!rt info")
-            {
-                await Utilities.PrintBotInfo(_client, msg.Channel);
-                return;
-            }
-
-            int argPos = 0;
-            if (msg.HasStringPrefix("!rt ", ref argPos))
-            {
-                var result = await _service.ExecuteAsync(Context, argPos, null);
-
-                if (msg.Content.StartsWith("!rt"))
-                    Console.WriteLine($"{Context.Guild.Name}: {msg.Author}: {msg.Content}");
-
-                // Search rotten tomatoes
-                // Example: !rt avengers
-                if (result.Error == CommandError.UnknownCommand)
+                // If the user just mentions the bot or says !rt, print help, they might need help
+                if (msg.Content == "!rt" || msg.Content.StartsWith("<@477287091798278145>"))
                 {
-                    string search = msg.Content.Substring(4, msg.Content.Length-4); // Remove "!rt "
-                    foreach (var Server in Config.Servers)
-                    {
-                        if (Server.GuildID == Context.Guild.Id)
-                        {
-                            await Server.SearchHandler.SearchRottenTomatoes(search, Context);
-                            return;
-                        }
-                    }
+                    await Utilities.PrintHelp(Context.Channel);
+                    return;
+                }
 
-                    var newServer = new ServerHandler(Context.Guild.Id, new SearchHandler());
-                    await newServer.SearchHandler.SearchRottenTomatoes(search, Context);
-                    Config.Servers.Add(newServer);
+                if (msg.Content == "!rt info")
+                {
+                    await Utilities.PrintBotInfo(_client, msg.Channel);
+                    return;
+                }
+
+                int argPos = 0;
+                if (msg.HasStringPrefix("!rt ", ref argPos))
+                {
+                    var result = await _service.ExecuteAsync(Context, argPos, null);
+
+                    if (msg.Content.StartsWith("!rt"))
+                        Console.WriteLine($"{Context.Guild.Name}: {msg.Author}: {msg.Content}");
+
+                    // Search rotten tomatoes
+                    // Example: !rt avengers
+                    if (result.Error == CommandError.UnknownCommand)
+                    {
+                        string search = msg.Content.Substring(4, msg.Content.Length - 4); // Remove "!rt "
+                        foreach (var Server in Config.Servers)
+                        {
+                            if (Server.GuildID == Context.Guild.Id)
+                            {
+                                await Server.SearchHandler.SearchRottenTomatoes(search, Context);
+                                return;
+                            }
+                        }
+
+                        var newServer = new ServerHandler(Context.Guild.Id, new SearchHandler());
+                        await newServer.SearchHandler.SearchRottenTomatoes(search, Context);
+                        Config.Servers.Add(newServer);
+                    }
                 }
             }
         }

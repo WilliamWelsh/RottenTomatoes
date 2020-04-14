@@ -37,24 +37,25 @@ namespace RottenTomatoes
 
             var Context = new SocketCommandContext(_client, msg);
 
-            using (Context.Channel.EnterTypingState())
+            // If the user just mentions the bot or says !rt, print help, they might need help
+            if (msg.Content == "!rt" || msg.Content.StartsWith("<@477287091798278145>"))
             {
-                // If the user just mentions the bot or says !rt, print help, they might need help
-                if (msg.Content == "!rt" || msg.Content.StartsWith("<@477287091798278145>"))
-                {
-                    await Utilities.PrintHelp(Context.Channel);
-                    return;
-                }
+                await Utilities.PrintHelp(Context.Channel);
+                return;
+            }
 
-                if (msg.Content == "!rt info")
-                {
-                    await Utilities.PrintBotInfo(_client, msg.Channel);
-                    return;
-                }
+            if (msg.Content == "!rt info")
+            {
+                await Utilities.PrintBotInfo(_client, msg.Channel);
+                return;
+            }
 
-                int argPos = 0;
-                if (msg.HasStringPrefix("!rt ", ref argPos))
+            int argPos = 0;
+            if (msg.HasStringPrefix("!rt ", ref argPos))
+            {
+                using (Context.Channel.EnterTypingState())
                 {
+
                     var result = await _service.ExecuteAsync(Context, argPos, null);
 
                     if (msg.Content.StartsWith("!rt"))

@@ -18,7 +18,7 @@ namespace RottenTomatoes
             DiscordSocketClient _client = new DiscordSocketClient(new DiscordSocketConfig { LogLevel = LogSeverity.Verbose });
             _client.Log += Log;
 
-            // I use test mode so I don't have to connect to all those servers for when I'm developing/fixing/testing/whatever
+            // I use test mode so I don't have to connect 300+ servers for when I'm developing/fixing/testing/whatever
             await _client.LoginAsync(TokenType.Bot, testMode ? File.ReadAllText("C:/Users/willi/Documents/repos/testBotToken.txt") : Config.bot.BotToken);
 
             await _client.StartAsync();

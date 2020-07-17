@@ -94,7 +94,7 @@ namespace RottenTomatoes
             var embed = new EmbedBuilder()
                 .WithTitle("Rotten Tomatoes Search")
                 .WithColor(Utilities.Red)
-                .WithFooter("Via RottenTomatoes.com");
+                .WithFooter("Via RottenTomatoes.com | To choose, do !rt choose <number>");
 
             foreach (var result in results)
             {

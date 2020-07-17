@@ -20,12 +20,11 @@ namespace RottenTomatoes
             await _service.AddModulesAsync(Assembly.GetEntryAssembly(), null);
             _client.MessageReceived += HandleCommandAsync;
 
-            _client.JoinedGuild += UpdateDBlStatsASync;
-            _client.LeftGuild += UpdateDBlStatsASync;
+            _client.Ready += OnReady;
         }
 
         // Update the server list on https://discordbots.org/bot/477287091798278145
-        private async Task UpdateDBlStatsASync(SocketGuild arg)
+        private async Task OnReady()
         {
             IDblSelfBot me = await Config.DblAPI.GetMeAsync();
             await me.UpdateStatsAsync(_client.Guilds.Count);

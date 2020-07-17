@@ -3,6 +3,7 @@ using Discord;
 using System.IO;
 using Discord.WebSocket;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 
 namespace RottenTomatoes
 {
@@ -14,6 +15,10 @@ namespace RottenTomatoes
 
         public async Task StartAsync()
         {
+            // Position the console
+            IntPtr ptr = GetConsoleWindow();
+            MoveWindow(ptr, 2010, 0, 550, 355, true);
+
             if (string.IsNullOrEmpty(Config.bot.BotToken)) return;
             DiscordSocketClient _client = new DiscordSocketClient(new DiscordSocketConfig { LogLevel = LogSeverity.Verbose });
             _client.Log += Log;
@@ -35,5 +40,11 @@ namespace RottenTomatoes
             Console.WriteLine(msg.Message);
             return Task.CompletedTask;
         }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
     }
 }

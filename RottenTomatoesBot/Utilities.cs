@@ -40,11 +40,11 @@ namespace RottenTomatoes
         {
             meterClass = meterClass.ToLowerInvariant();
             if (meterClass == "rotten")
-                return "<:rotten:477137965672431628>";
+                return "<:rotten:737761619299532874>";
             else if (meterClass == "certified_fresh")
-                return "<:certifiedfresh:477137965848723477>";
+                return "<:certified_fresh:737761619375030422>";
             else if (meterClass == "fresh")
-                return "<:tomato:477141676650004481>";
+                return "<:fresh:737761619299270737>";
             return "";
         }
 
@@ -117,7 +117,7 @@ namespace RottenTomatoes
                 .AddField("Developer", "Reverse#1193")
                 .AddField("Color", "Use this suggested color for my role to match the embeds: `#fb3109`")
                 //.AddField("Total Votes", (await Config.DblAPI.GetMeAsync()).Points)
-                .AddField("Links", "[Invite](https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&permissions=3072) | [Vote](\n\nhttps://discordbots.org/bot/477287091798278145/vote) | [GitHub](https://github.com/WilliamWelsh/RottenTomatoes) | [Support Server](https://discord.gg/NJUScEN)")
+                .AddField("Links", "[Invite](https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&permissions=3072) | [Vote](\n\nhttps://discordbots.org/bot/477287091798278145/vote) | [GitHub](https://github.com/WilliamWelsh/RottenTomatoes) | [Support Server](https://discord.gg/ga9V5pa)")
                 .Build()).ConfigureAwait(false);
         }
 

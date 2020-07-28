@@ -80,11 +80,11 @@ namespace RottenTomatoes.Data
 
             // Critic Score Icon
             if (score.InnerHtml.Contains("certified_fresh"))
-                CriticScoreIcon = "<:certifiedfresh:477137965848723477>";
+                CriticScoreIcon = "<:certified_fresh:737761619375030422>";
             else if (score.InnerHtml.Contains("rotten"))
-                CriticScoreIcon = "<:rotten:477137965672431628>";
+                CriticScoreIcon = "<:rotten:737761619299532874>";
             else if (score.InnerHtml.Contains("fresh"))
-                CriticScoreIcon = "<:tomato:477141676650004481>";
+                CriticScoreIcon = "<:fresh:737761619299270737>";
 
             // Audience Score
             AudienceScore = Utilities.CutBefore(rawHTML, "mop-ratings-wrap__half audience-score\">");
@@ -93,9 +93,9 @@ namespace RottenTomatoes.Data
             // Audience Score Icon
             var audienceScoreNode = html.DocumentNode.SelectSingleNode("//div[contains(@class, 'mop-ratings-wrap__half audience-score')]");
             if (audienceScoreNode.InnerHtml.Contains("upright"))
-                AudienceIcon = "<:audienceliked:477141676478038046>";
+                AudienceIcon = "<:audienceliked:737761619328761967>";
             else if (audienceScoreNode.InnerHtml.Contains("spilled"))
-                AudienceIcon = "<:audiencedisliked:477141676486295562>";
+                AudienceIcon = "<:audiencedisliked:737761619416842321>";
             else
                 AudienceIcon = "";
 

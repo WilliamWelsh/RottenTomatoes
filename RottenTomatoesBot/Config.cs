@@ -5,13 +5,15 @@ using System.Collections.Generic;
 
 namespace RottenTomatoes
 {
-    static class Config
+    internal static class Config
     {
         public static readonly List<ServerHandler> Servers = new List<ServerHandler>();
 
         public static readonly BotResources bot;
 
         public static readonly AuthDiscordBotListApi DblAPI;
+
+        public static readonly bool IS_TESTING = false;
 
         static Config()
         {

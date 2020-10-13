@@ -15,7 +15,7 @@ namespace RottenTomatoes
     // A result that may be a movie, show, or person.
     public class ResultItem : IEquatable<ResultItem>
     {
-        public MovieResult Movie { get;}
+        public MovieResult Movie { get; }
 
         public ResultItem(MovieResult Movie)
         {
@@ -23,7 +23,9 @@ namespace RottenTomatoes
         }
 
         public bool Equals(ResultItem other) => Movie == other.Movie;
+
         public override bool Equals(object obj) => Equals(obj as ResultItem);
+
         public override int GetHashCode() => 0; // idk
     }
 
@@ -31,10 +33,10 @@ namespace RottenTomatoes
     public class SearchHandler
     {
         // To see if it's possible to cancel the selection
-        bool isSelectionBeingMade;
+        private bool isSelectionBeingMade;
 
         // This is the new list made with searched movies ordered by newest to oldest for ease of selection
-        List<ResultItem> resultItems = new List<ResultItem>();
+        private List<ResultItem> resultItems = new List<ResultItem>();
 
         // The message that contains search results (to be delete)
         private RestUserMessage searchMessage;
@@ -51,11 +53,11 @@ namespace RottenTomatoes
         {
             if (isSelectionBeingMade)
             {
-                await Utilities.SendEmbed(channel, "Rotten Tomatoes Search", "Selection cancelled.", false);
+                await channel.SendEmbed("Rotten Tomatoes Search", "Selection cancelled.", false);
                 Reset();
             }
             else
-                await Utilities.SendEmbed(channel, "Rotten Tomatoes Search", "There's no active search on this server.\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`", false);
+                await channel.SendEmbed("Rotten Tomatoes Search", "There's no active search on this server.\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`", false);
         }
 
         // Search Rotten Tomatoes for movies and create a selection
@@ -73,12 +75,12 @@ namespace RottenTomatoes
             resultItems.Clear();
 
             // Get the website html
-            string json = Utilities.DownloadString($"https://letterboxd.com/search/films/{search}");
+            var json = Utilities.DownloadString($"https://letterboxd.com/search/films/{search}");
 
             //If there's no result, tell the user and then stop.
             if (json.Contains("There were no matches for your search term."))
             {
-                await Utilities.SendEmbed(context.Channel, "Rotten Tomatoes Search", $"Sorry, no results were found for \"{search}\"\n\nTry reformatting your search if the title contains colons, hyphens, etc.", false);
+                await context.Channel.SendEmbed("Rotten Tomatoes Search", $"Sorry, no results were found for \"{search}\"\n\nTry reformatting your search if the title contains colons, hyphens, etc.", false);
                 return;
             }
 
@@ -86,7 +88,7 @@ namespace RottenTomatoes
             json = Utilities.CutBefore(json, "<ul class=\"results\">");
             json = Utilities.CutBeforeAndAfter(json, "<li> ", "</ul>");
 
-            HtmlDocument html = new HtmlDocument();
+            var html = new HtmlDocument();
             html.LoadHtml(json);
 
             var results = html.DocumentNode.SelectNodes("//span[contains(@class, 'film-title-wrapper')]");
@@ -138,7 +140,7 @@ namespace RottenTomatoes
             // Check if there is anything to select
             if (resultItems.Count == 0 || !isSelectionBeingMade)
             {
-                await Utilities.SendEmbed(channel, "Rotten Tomatoes Search", "There's no active search on this server.\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`", false);
+                await channel.SendEmbed("Rotten Tomatoes Search", "There's no active search on this server.\n\nTo search for a movie...\n*Type `!rt <name of movie>`\n*Choose one of the options with `!rt choose <number>`", false);
                 return;
             }
 

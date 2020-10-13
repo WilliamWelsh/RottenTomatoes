@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RottenTomatoes.Data
 {
-    static class Movies
+    internal static class Movies
     {
         public static async Task PrintMovie(ISocketMessageChannel channel, MovieResult movieToPrint)
         {
@@ -39,7 +39,7 @@ namespace RottenTomatoes.Data
 
         private static string GetRTLink(string letterboxdLink)
         {
-            // Get the IMDb ID from the Letterboxd Page 
+            // Get the IMDb ID from the Letterboxd Page
             var IMDbID = Utilities.DownloadString(letterboxdLink);
             IMDbID = IMDbID.Substring(IMDbID.IndexOf("imdb.com/title/") + 15);
             IMDbID = IMDbID.Substring(0, IMDbID.IndexOf("/"));
@@ -69,7 +69,7 @@ namespace RottenTomatoes.Data
         {
             Data = data;
 
-            string rawHTML = Utilities.DownloadString(Data.Url);
+            var rawHTML = Utilities.DownloadString(Data.Url);
 
             var html = new HtmlDocument();
             html.LoadHtml(rawHTML);
@@ -110,7 +110,9 @@ namespace RottenTomatoes.Data
         }
 
         public bool Equals(MovieData other) => Data == other.Data;
+
         public override bool Equals(object obj) => Equals(obj as MovieData);
+
         public override int GetHashCode() => 0; // idk
     }
 }

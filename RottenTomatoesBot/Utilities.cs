@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace RottenTomatoes
 {
-    static class Utilities
+    internal static class Utilities
     {
         // The color red (for embeds).
         public static readonly Color Red = new Color(250, 50, 10);
@@ -17,7 +17,7 @@ namespace RottenTomatoes
         private const string Logo = "https://cdn.discordapp.com/avatars/477287091798278145/11dac188844056c5dbbdef7015bffc8b.png?size=128";
 
         // Print an embed
-        public static async Task SendEmbed(ISocketMessageChannel channel, string title, string description, bool showLogo, string footer = null)
+        public static async Task SendEmbed(this ISocketMessageChannel channel, string title, string description, bool showLogo, string footer = null)
         {
             await channel.SendMessageAsync(null, false, new EmbedBuilder()
                 .WithTitle(title)
@@ -49,7 +49,7 @@ namespace RottenTomatoes
         }
 
         // Print help (available commands and resources)
-        public static async Task PrintHelp(ISocketMessageChannel Channel)
+        public static async Task PrintHelp(this ISocketMessageChannel Channel)
         {
             StringBuilder text = new StringBuilder()
                 .AppendLine("Here are the available commands:")
@@ -81,7 +81,7 @@ namespace RottenTomatoes
                 .AppendLine("To view privacy statement...")
                 .AppendLine("*Type `!rt privacy`")
                 .AppendLine();
-            await SendEmbed(Channel, "Rotten Tomatoes", text.ToString(), false, "Please report issues on my Discord server (!rt discord)").ConfigureAwait(false);
+            await Channel.SendEmbed("Rotten Tomatoes", text.ToString(), false, "Please report issues on my Discord server (!rt discord)").ConfigureAwait(false);
         }
 
         // Print help for how to use the !rt opening and !rt coming soon commands
@@ -94,18 +94,18 @@ namespace RottenTomatoes
                 .AppendLine()
                 .AppendLine("To view movies **coming soon to theaters**...")
                 .AppendLine("*Type `!rt coming soon`");
-            await SendEmbed(Channel, "Upcoming Movies", text.ToString(), false).ConfigureAwait(false);
+            await Channel.SendEmbed("Upcoming Movies", text.ToString(), false).ConfigureAwait(false);
         }
 
         // DM the invite link to a user
-        public static async Task DMInviteLink(SocketGuildUser user, ISocketMessageChannel Channel)
+        public static async Task DMInviteLink(this ISocketMessageChannel Channel, SocketGuildUser user)
         {
             await user.SendMessageAsync("https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&permissions=3072");
-            await SendEmbed(Channel, "Rotten Tomatoes", $"The invite link has been DMed to you, {user.Mention}!", false).ConfigureAwait(false);
+            await Channel.SendEmbed("Rotten Tomatoes", $"The invite link has been DMed to you, {user.Mention}!", false).ConfigureAwait(false);
         }
 
         // Print bot info
-        public static async Task PrintBotInfo(DiscordSocketClient Client, ISocketMessageChannel Channel)
+        public static async Task PrintBotInfo(this ISocketMessageChannel Channel, DiscordSocketClient Client)
         {
             await Channel.SendMessageAsync(null, false, new EmbedBuilder()
                 .WithTitle("Bot Info")
@@ -124,7 +124,7 @@ namespace RottenTomatoes
         // Get the total number of members on every guild
         private static int TotalMemberCount(IReadOnlyCollection<SocketGuild> Guilds)
         {
-            int total = 0;
+            var total = 0;
             foreach (var Guild in Guilds)
                 total += Guild.MemberCount;
             return total;
@@ -142,7 +142,7 @@ namespace RottenTomatoes
         public static string DecodeHTMLStuff(string text) => WebUtility.HtmlDecode(text);
 
         // Print an error
-        public static async Task PrintError(ISocketMessageChannel channel, string description) => await SendEmbed(channel, "Error", description, false).ConfigureAwait(false);
+        public static async Task PrintError(ISocketMessageChannel channel, string description) => await channel.SendEmbed("Error", description, false).ConfigureAwait(false);
 
         // Cut stuff before in a string
         public static string CutBefore(string source, string target) =>

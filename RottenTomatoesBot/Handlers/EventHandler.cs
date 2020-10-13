@@ -8,7 +8,7 @@ using DiscordBotsList.Api.Objects;
 namespace RottenTomatoes
 {
     // Handle commands and guild updates.
-    class EventHandler
+    internal class EventHandler
     {
         private DiscordSocketClient _client;
         private CommandService _service;
@@ -26,6 +26,7 @@ namespace RottenTomatoes
         // Update the server list on https://discordbots.org/bot/477287091798278145
         private async Task OnReady()
         {
+            if (Config.IS_TESTING) return;
             IDblSelfBot me = await Config.DblAPI.GetMeAsync();
             await me.UpdateStatsAsync(_client.Guilds.Count);
         }
@@ -39,22 +40,21 @@ namespace RottenTomatoes
             // If the user just mentions the bot or says !rt, print help, they might need help
             if (msg.Content == "!rt" || msg.Content.StartsWith("<@477287091798278145>"))
             {
-                await Utilities.PrintHelp(Context.Channel);
+                await Context.Channel.PrintHelp();
                 return;
             }
 
             if (msg.Content == "!rt info")
             {
-                await Utilities.PrintBotInfo(_client, msg.Channel);
+                await msg.Channel.PrintBotInfo(_client);
                 return;
             }
 
-            int argPos = 0;
+            var argPos = 0;
             if (msg.HasStringPrefix("!rt ", ref argPos))
             {
                 using (Context.Channel.EnterTypingState())
                 {
-
                     var result = await _service.ExecuteAsync(Context, argPos, null);
 
                     if (msg.Content.StartsWith("!rt"))
@@ -64,7 +64,7 @@ namespace RottenTomatoes
                     // Example: !rt avengers
                     if (result.Error == CommandError.UnknownCommand)
                     {
-                        string search = msg.Content.Substring(4, msg.Content.Length - 4); // Remove "!rt "
+                        var search = msg.Content.Substring(4, msg.Content.Length - 4); // Remove "!rt "
                         foreach (var Server in Config.Servers)
                         {
                             if (Server.GuildID == Context.Guild.Id)

@@ -5,6 +5,7 @@ using System.Text;
 using Discord.WebSocket;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RottenTomatoes
 {
@@ -33,19 +34,6 @@ namespace RottenTomatoes
         {
             using (WebClient client = new WebClient())
                 return client.DownloadString(URL);
-        }
-
-        // Get the (custom) Discord emoji based on the meter class
-        public static string IconToEmoji(string meterClass)
-        {
-            meterClass = meterClass.ToLowerInvariant();
-            if (meterClass == "rotten")
-                return "<:rotten:737761619299532874>";
-            else if (meterClass == "certified_fresh")
-                return "<:certified_fresh:737761619375030422>";
-            else if (meterClass == "fresh")
-                return "<:fresh:737761619299270737>";
-            return "";
         }
 
         // Print help (available commands and resources)
@@ -122,21 +110,7 @@ namespace RottenTomatoes
         }
 
         // Get the total number of members on every guild
-        private static int TotalMemberCount(IReadOnlyCollection<SocketGuild> Guilds)
-        {
-            var total = 0;
-            foreach (var Guild in Guilds)
-                total += Guild.MemberCount;
-            return total;
-        }
-
-        // Scrape Text from before and after
-        public static string ScrapeText(ref string text, string firstTarget, int firstTargetOffset, string lastTarget)
-        {
-            // The offset integer is for when the first target string has an escape character in it, causing an extra character
-            text = text.Substring(text.IndexOf(firstTarget) + firstTarget.Length + firstTargetOffset);
-            return text.Substring(0, text.IndexOf(lastTarget));
-        }
+        private static int TotalMemberCount(IReadOnlyCollection<SocketGuild> Guilds) => Guilds.Sum(Guild => Guild.MemberCount);
 
         // Convert that stuff to actual characters
         public static string DecodeHTMLStuff(string text) => WebUtility.HtmlDecode(text);

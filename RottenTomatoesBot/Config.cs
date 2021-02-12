@@ -17,7 +17,7 @@ namespace RottenTomatoes
 
         static Config()
         {
-            string json = File.ReadAllText("Resources/resources.json");
+            var json = File.ReadAllText("Resources/resources.json");
             bot = BotResources.FromJson(json);
 
             DblAPI = new AuthDiscordBotListApi(477287091798278145, bot.BotsListToken);

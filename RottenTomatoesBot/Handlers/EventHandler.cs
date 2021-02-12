@@ -3,7 +3,6 @@ using Discord.Commands;
 using Discord.WebSocket;
 using System.Reflection;
 using System.Threading.Tasks;
-using DiscordBotsList.Api.Objects;
 
 namespace RottenTomatoes
 {
@@ -26,8 +25,9 @@ namespace RottenTomatoes
         // Update the server list on https://discordbots.org/bot/477287091798278145
         private async Task OnReady()
         {
+            // Only if we're not testing)
             if (Config.IS_TESTING) return;
-            IDblSelfBot me = await Config.DblAPI.GetMeAsync();
+            var me = await Config.DblAPI.GetMeAsync();
             await me.UpdateStatsAsync(_client.Guilds.Count);
         }
 

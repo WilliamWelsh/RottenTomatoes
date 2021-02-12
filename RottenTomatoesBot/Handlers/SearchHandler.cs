@@ -3,21 +3,21 @@ using Discord;
 using System.Text;
 using System.Linq;
 using Discord.Rest;
-using HtmlAgilityPack;
 using Discord.Commands;
 using Discord.WebSocket;
-using RottenTomatoes.JSONs;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using RottenTomatoes.Data;
 
 namespace RottenTomatoes
 {
     // A result that may be a movie, show, or person.
     public class ResultItem : IEquatable<ResultItem>
     {
-        public MovieResult Movie { get; }
+        public Movie Movie { get; }
 
-        public ResultItem(MovieResult Movie)
+        public ResultItem(Movie Movie)
         {
             this.Movie = Movie;
         }
@@ -75,41 +75,48 @@ namespace RottenTomatoes
             resultItems.Clear();
 
             // Get the website html
-            var json = Utilities.DownloadString($"https://letterboxd.com/search/films/{search}");
+            var json = Utilities.DownloadString($"https://www.rottentomatoes.com/search?search={search}");
 
             //If there's no result, tell the user and then stop.
-            if (json.Contains("There were no matches for your search term."))
+            if (json.Contains("Sorry, no results found for"))
             {
                 await context.Channel.SendEmbed("Rotten Tomatoes Search", $"Sorry, no results were found for \"{search}\"\n\nTry reformatting your search if the title contains colons, hyphens, etc.", false);
                 return;
             }
 
             // Get that nice json :)
-            json = Utilities.CutBefore(json, "<ul class=\"results\">");
-            json = Utilities.CutBeforeAndAfter(json, "<li> ", "</ul>");
-
-            var html = new HtmlDocument();
-            html.LoadHtml(json);
-
-            var results = html.DocumentNode.SelectNodes("//span[contains(@class, 'film-title-wrapper')]");
+            dynamic data = JsonConvert.DeserializeObject(json.CutBeforeAndAfter("<script id=\"movies-json\" type=\"application/json\">", "</script"));
 
             var embed = new EmbedBuilder()
                 .WithTitle("Rotten Tomatoes Search")
                 .WithColor(Utilities.Red)
                 .WithFooter("Via RottenTomatoes.com | To choose, do !rt choose <number>");
 
-            foreach (var result in results)
+            foreach (var result in data.items)
             {
-                var movie = new MovieResult();
+                var movie = new Movie
+                {
+                    Name = result.name,
+                    Year = result.releaseYear,
+                    Url = result.url,
+                    Poster = result.imageUrl
+                };
 
-                movie.Name = Utilities.DecodeHTMLStuff(result.SelectSingleNode(".//a/text()").InnerText.Trim());
+                // Tomatometer Score & Icon
+                if (!result.ToString().Contains("tomatometerScore\": {}"))
+                {
+                    movie.CriticScore = $"{result.tomatometerScore.score}%";
 
-                if (result.SelectSingleNode(".//small") != null)
-                    movie.Year = int.Parse(result.SelectSingleNode(".//small").FirstChild.InnerHtml.Trim());
-                else
-                    movie.Year = 0;
+                    if (result.tomatometerScore.certified == true)
+                        movie.CriticScoreIcon = "<:certified_fresh:737761619375030422>";
 
-                movie.Url = "https://letterboxd.com" + result.SelectSingleNode(".//a").Attributes["href"].Value;
+                    if (result.tomatometerScore.certified == false &&
+                        result.tomatometerScore.scoreSentiment == "POSITIVE")
+                        movie.CriticScoreIcon = "<:fresh:737761619299270737>";
+
+                    if (result.tomatometerScore.scoreSentiment == "NEGATIVE")
+                        movie.CriticScoreIcon = "<:rotten:737761619299532874>";
+                }
 
                 resultItems.Add(new ResultItem(movie));
             }
@@ -122,12 +129,9 @@ namespace RottenTomatoes
                 return;
             }
 
-            // Order the movies by release date
-            resultItems = resultItems.OrderBy(r => r.Movie.Year).Reverse().ToList();
-
             var text = new StringBuilder();
             for (int i = 0; i < resultItems.Count; i++)
-                text.AppendLine($"`{i + 1}` {resultItems[i].Movie.Name} {(resultItems[i].Movie.Year == 0 ? "" : "`" + resultItems[i].Movie.Year + "`")}");
+                text.AppendLine($"`{i + 1}` {resultItems[i].Movie.Name} `{resultItems[i].Movie.Year}` {resultItems[i].Movie.CriticScore} {resultItems[i].Movie.CriticScoreIcon}");
 
             embed.WithDescription(text.ToString());
 
@@ -148,14 +152,15 @@ namespace RottenTomatoes
             await PrintResult(channel, resultItems.ElementAt(selection - 1)).ConfigureAwait(false);
 
             // Delete the search results message
-            await searchMessage.DeleteAsync();
+            if (searchMessage != null)
+                await searchMessage.DeleteAsync();
         }
 
         // Print a result
         public async Task PrintResult(ISocketMessageChannel channel, ResultItem result)
         {
             if (result.Movie != null)
-                await Data.Movies.PrintMovie(channel, result.Movie);
+                await result.Movie.PrintToChannel(channel);
         }
     }
 }

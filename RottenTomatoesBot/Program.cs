@@ -18,11 +18,16 @@ namespace RottenTomatoes
             MoveWindow(ptr, 2010, 0, 550, 355, true);
 
             if (string.IsNullOrEmpty(Config.bot.BotToken)) return;
-            DiscordSocketClient _client = new DiscordSocketClient(new DiscordSocketConfig { LogLevel = LogSeverity.Verbose });
+            var _client = new DiscordSocketClient(new DiscordSocketConfig
+            {
+                LogLevel = LogSeverity.Verbose,
+                GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMessages | GatewayIntents.DirectMessages
+            });
+
             _client.Log += Log;
 
             // I use test mode so I don't have to connect 300+ servers for when I'm developing/fixing/testing/whatever
-            await _client.LoginAsync(TokenType.Bot, Config.IS_TESTING ? File.ReadAllText("C:/Users/willi/Documents/repos/testBotToken.txt") : Config.bot.BotToken);
+            await _client.LoginAsync(TokenType.Bot, Config.IS_TESTING ? File.ReadAllText("C:/Users/William/Documents/Repositories/testBotToken.txt") : Config.bot.BotToken);
 
             await _client.StartAsync();
             await _client.SetGameAsync("!rt help", null, ActivityType.Watching);

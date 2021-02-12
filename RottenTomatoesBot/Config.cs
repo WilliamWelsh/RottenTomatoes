@@ -13,7 +13,7 @@ namespace RottenTomatoes
 
         public static readonly AuthDiscordBotListApi DblAPI;
 
-        public static readonly bool IS_TESTING = false;
+        public static readonly bool IS_TESTING = true;
 
         static Config()
         {

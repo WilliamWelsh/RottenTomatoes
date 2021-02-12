@@ -22,6 +22,12 @@ namespace RottenTomatoes.Data
         public string AudienceScore { get; set; }
         public string AudienceIcon { get; set; }
 
+        public Movie()
+        {
+            CriticScore = "N/A";
+            AudienceScore = "N/A";
+        }
+
         public async Task PrintToChannel(ISocketMessageChannel channel)
         {
             // First, get some missing data
@@ -37,7 +43,7 @@ namespace RottenTomatoes.Data
             dynamic JSON = JsonConvert.DeserializeObject(rawHTML.CutBeforeAndAfter("<script id=\"score-details-json\" type=\"application/json\">", "</script>"));
 
             // Audience Score
-            AudienceScore = $"{JSON.modal.audienceScoreAll.score}%";
+            AudienceScore = JSON.modal.audienceScoreAll.score == null ? "N/A" : $"{JSON.modal.audienceScoreAll.score}%";
 
             // Audience Score Icon
             switch (JSON.modal.audienceScoreAll.audienceClass.ToString())

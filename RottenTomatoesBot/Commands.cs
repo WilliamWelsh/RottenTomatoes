@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace RottenTomatoes
 {
     [RequireContext(ContextType.Guild)]
-    public class CommandDefinitons : ModuleBase<SocketCommandContext>
+    public class Commands : ModuleBase<SocketCommandContext>
     {
         [Command("github")]
         public async Task PrintGitHubLink() => await Context.Channel.SendEmbed("Rotten Tomatoes Source Code", "Here is the source code for this bot:\nhttps://github.com/WilliamWelsh/RottenTomatoes", false);

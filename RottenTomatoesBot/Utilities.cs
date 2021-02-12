@@ -1,11 +1,11 @@
 ﻿using System;
 using Discord;
 using System.Net;
+using System.Linq;
 using System.Text;
 using Discord.WebSocket;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RottenTomatoes
 {
@@ -32,14 +32,14 @@ namespace RottenTomatoes
         // Download a website's HTML as a string
         public static string DownloadString(string URL)
         {
-            using (WebClient client = new WebClient())
+            using (var client = new WebClient())
                 return client.DownloadString(URL);
         }
 
         // Print help (available commands and resources)
         public static async Task PrintHelp(this ISocketMessageChannel Channel)
         {
-            StringBuilder text = new StringBuilder()
+            var text = new StringBuilder()
                 .AppendLine("Here are the available commands:")
                 .AppendLine()
                 .AppendLine("To search for a movie...")

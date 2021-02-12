@@ -49,9 +49,6 @@ namespace RottenTomatoes.Data
                 case "spilled":
                     AudienceIcon = "<:audiencedisliked:737761619416842321>";
                     break;
-
-                default:
-                    break;
             }
 
             // Critic Consensus

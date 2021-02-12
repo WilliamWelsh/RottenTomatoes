@@ -210,7 +210,7 @@
   <ItemGroup>
     <Compile Include="Commands.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="Data\Movies.cs" />
+    <Compile Include="Data\Movie.cs" />
     <Compile Include="Handlers\EventHandler.cs" />
     <Compile Include="JSONs\BotResources.cs" />
     <Compile Include="JSONs\Converter.cs" />

@@ -133,9 +133,9 @@ namespace RottenTomatoes
             for (int i = 0; i < resultItems.Count; i++)
                 text.AppendLine($"`{i + 1}` {resultItems[i].Movie.Name} `{resultItems[i].Movie.Year}` {resultItems[i].Movie.CriticScore} {resultItems[i].Movie.CriticScoreIcon}");
 
-            embed.WithDescription(text.ToString());
-
-            searchMessage = await context.Channel.SendMessageAsync(null, false, embed.Build());
+            searchMessage = await context.Channel.SendMessageAsync(null, false, embed
+                .WithDescription(text.ToString())
+                .Build());
         }
 
         // Attempt to select a movie with !rt choose <number>

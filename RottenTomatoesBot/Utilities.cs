@@ -145,15 +145,15 @@ namespace RottenTomatoes
         public static async Task PrintError(ISocketMessageChannel channel, string description) => await channel.SendEmbed("Error", description, false).ConfigureAwait(false);
 
         // Cut stuff before in a string
-        public static string CutBefore(string source, string target) =>
+        public static string CutBefore(this string source, string target) =>
             source.Substring(source.IndexOf(target, StringComparison.Ordinal) + target.Length);
 
         // Cut stuff after in a string
-        public static string CutAfter(string source, string target) =>
+        public static string CutAfter(this string source, string target) =>
             source.Substring(0, source.IndexOf(target, StringComparison.Ordinal));
 
         // Cut stuff before a string and cut stuff after a string
-        public static string CutBeforeAndAfter(string source, string targetOne, string targetTwo)
+        public static string CutBeforeAndAfter(this string source, string targetOne, string targetTwo)
         {
             source = CutBefore(source, targetOne);
             return CutAfter(source, targetTwo);

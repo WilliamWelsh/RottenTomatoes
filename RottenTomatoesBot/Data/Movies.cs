@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Discord;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
@@ -74,36 +75,53 @@ namespace RottenTomatoes.Data
             var html = new HtmlDocument();
             html.LoadHtml(rawHTML);
 
+            // Get the JSON from the HTML
+            dynamic JSON = JsonConvert.DeserializeObject(rawHTML.CutBeforeAndAfter("<script id=\"score-details-json\" type=\"application/json\">", "</script>"));
+
             // Critic Score
-            var score = html.DocumentNode.SelectSingleNode("//div[contains(@class, 'col-sm-17 col-xs-24 score-panel-wrap')]");
-            CriticScore = score.SelectSingleNode("//span[contains(@class, 'mop-ratings-wrap__percentage')]").InnerText.Trim();
+            CriticScore = $"{JSON.scoreboard.tomatometerScore}%";
 
             // Critic Score Icon
-            if (score.InnerHtml.Contains("certified_fresh"))
-                CriticScoreIcon = "<:certified_fresh:737761619375030422>";
-            else if (score.InnerHtml.Contains("rotten"))
-                CriticScoreIcon = "<:rotten:737761619299532874>";
-            else if (score.InnerHtml.Contains("fresh"))
-                CriticScoreIcon = "<:fresh:737761619299270737>";
+            switch (JSON.scoreboard.tomatometerState.ToString())
+            {
+                case "certified-fresh":
+                    CriticScoreIcon = "<:certified_fresh:737761619375030422>";
+                    break;
+
+                case "rotten":
+                    CriticScoreIcon = "<:rotten:737761619299532874>";
+                    break;
+
+                case "fresh":
+                    CriticScoreIcon = "<:fresh:737761619299270737>";
+                    break;
+
+                default:
+                    break;
+            }
 
             // Audience Score
-            AudienceScore = Utilities.CutBefore(rawHTML, "mop-ratings-wrap__half audience-score\">");
-            AudienceScore = Utilities.CutBeforeAndAfter(AudienceScore, "mop-ratings-wrap__percentage\">", "<").Replace("\n", "");
+            AudienceScore = $"{JSON.modal.audienceScoreAll.score}%";
 
             // Audience Score Icon
-            var audienceScoreNode = html.DocumentNode.SelectSingleNode("//div[contains(@class, 'mop-ratings-wrap__half audience-score')]");
-            if (audienceScoreNode.InnerHtml.Contains("upright"))
-                AudienceIcon = "<:audienceliked:737761619328761967>";
-            else if (audienceScoreNode.InnerHtml.Contains("spilled"))
-                AudienceIcon = "<:audiencedisliked:737761619416842321>";
-            else
-                AudienceIcon = "";
+            switch (JSON.modal.audienceScoreAll.audienceClass.ToString())
+            {
+                case "upright":
+                    AudienceIcon = "<:audienceliked:737761619328761967>";
+                    break;
+
+                case "spilled":
+                    AudienceIcon = "<:audiencedisliked:737761619416842321>";
+                    break;
+
+                default:
+                    break;
+            }
 
             // Critic Consensus
-            if (html.Text.Contains("mop-ratings-wrap__text mop-ratings-wrap__text--concensus"))
-                CriticsConsensus = html.DocumentNode.SelectSingleNode("//p[contains(@class, 'mop-ratings-wrap__text mop-ratings-wrap__text--concensus')]").InnerText.Trim();
-            else
-                CriticsConsensus = "No consensus yet.";
+            CriticsConsensus = html.Text.Contains("<span data-qa=\"critics-consensus\">") ?
+                html.DocumentNode.SelectSingleNode("//p[contains(@class, 'what-to-know__section-body')]").InnerText.Trim().Replace("Read critic reviews", "") :
+                "No consensus yet.";
 
             // Poster
             Poster = html.DocumentNode.SelectSingleNode("//img[contains(@class, 'posterImage js-lazyLoad')]").Attributes["data-src"].Value;

@@ -1,14 +1,13 @@
-﻿using System;
+﻿using System.Net.Http;
+using System.Threading.Tasks;
 using Discord;
+using Discord.WebSocket;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
-using Discord.WebSocket;
-using System.Threading.Tasks;
 
-namespace RottenTomatoes.Data
+namespace RottenTomatoes
 {
-    // Movie data
-    public class Movie : IEquatable<Movie>
+    public class Movie
     {
         public string Name { get; set; }
         public string Year { get; set; }
@@ -28,13 +27,13 @@ namespace RottenTomatoes.Data
             AudienceScore = "N/A";
         }
 
-        public async Task PrintToChannel(ISocketMessageChannel channel)
+        public async Task PrintToChannel(ISocketMessageChannel channel, HttpClient http)
         {
             // First, get some missing data
             // We need the critic consensus (review), and the audience score and icon
 
             // Get the HTML & JSON from the RT page
-            var rawHTML = Utilities.DownloadString(Url);
+            var rawHTML = await http.DownloadString(Url);
 
             var html = new HtmlDocument();
             html.LoadHtml(rawHTML);
@@ -65,7 +64,7 @@ namespace RottenTomatoes.Data
             // Create a pretty embed & send it
             await channel.SendMessageAsync(null, false, new EmbedBuilder()
                 .WithTitle($"{Name} ({Year})")
-                .WithColor(Utilities.Red)
+                .WithColor(EmbedUtils.Red)
                 .WithThumbnailUrl(Poster)
                 .AddField("Tomatometer", $"{CriticScoreIcon} {CriticScore}")
                 .AddField("Audience Score", $"{AudienceIcon} {AudienceScore}")
@@ -74,11 +73,5 @@ namespace RottenTomatoes.Data
                 .WithFooter("Via RottenTomatoes.com")
                 .Build());
         }
-
-        public bool Equals(Movie other) => Url == other.Url;
-
-        public override bool Equals(object obj) => Equals(obj as Movie);
-
-        public override int GetHashCode() => 0; // idk
     }
 }

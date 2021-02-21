@@ -1,45 +1,32 @@
 ﻿using System;
-using Discord;
-using System.Text;
-using System.Linq;
-using Discord.Rest;
-using Discord.Commands;
-using Discord.WebSocket;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using Discord;
+using Discord.Commands;
+using Discord.Rest;
+using Discord.WebSocket;
 using Newtonsoft.Json;
-using RottenTomatoes.Data;
 
 namespace RottenTomatoes
 {
-    // A result that may be a movie, show, or person.
-    public class ResultItem : IEquatable<ResultItem>
-    {
-        public Movie Movie { get; }
-
-        public ResultItem(Movie Movie)
-        {
-            this.Movie = Movie;
-        }
-
-        public bool Equals(ResultItem other) => Movie == other.Movie;
-
-        public override bool Equals(object obj) => Equals(obj as ResultItem);
-
-        public override int GetHashCode() => 0; // idk
-    }
-
-    // Handle searching Rotten Tomatoes.
     public class SearchHandler
     {
         // To see if it's possible to cancel the selection
         private bool isSelectionBeingMade;
 
         // This is the new list made with searched movies ordered by newest to oldest for ease of selection
-        private List<ResultItem> resultItems = new List<ResultItem>();
+        private List<SearchResultItem> resultItems = new List<SearchResultItem>();
 
         // The message that contains search results (to be delete)
         private RestUserMessage searchMessage;
+
+        // HttpClient
+        private HttpClient _http;
+
+        public SearchHandler(HttpClient http) => _http = http;
 
         // Reset the handler by clearing the movies and saying there is no selection being made
         private void Reset()
@@ -75,7 +62,7 @@ namespace RottenTomatoes
             resultItems.Clear();
 
             // Get the website html
-            var json = Utilities.DownloadString($"https://www.rottentomatoes.com/search?search={search}");
+            var json = await _http.DownloadString($"https://www.rottentomatoes.com/search?search={search}");
 
             //If there's no result, tell the user and then stop.
             if (json.Contains("Sorry, no results found for"))
@@ -89,7 +76,7 @@ namespace RottenTomatoes
 
             var embed = new EmbedBuilder()
                 .WithTitle("Rotten Tomatoes Search")
-                .WithColor(Utilities.Red)
+                .WithColor(EmbedUtils.Red)
                 .WithFooter("Via RottenTomatoes.com | To choose, do !rt choose <number>");
 
             foreach (var result in data.items)
@@ -118,7 +105,7 @@ namespace RottenTomatoes
                         movie.CriticScoreIcon = "<:rotten:737761619299532874>";
                 }
 
-                resultItems.Add(new ResultItem(movie));
+                resultItems.Add(new SearchResultItem(movie));
             }
 
             // If there's only one result, cut the crap and just print it
@@ -157,10 +144,10 @@ namespace RottenTomatoes
         }
 
         // Print a result
-        public async Task PrintResult(ISocketMessageChannel channel, ResultItem result)
+        public async Task PrintResult(ISocketMessageChannel channel, SearchResultItem result)
         {
             if (result.Movie != null)
-                await result.Movie.PrintToChannel(channel);
+                await result.Movie.PrintToChannel(channel, _http);
         }
     }
 }

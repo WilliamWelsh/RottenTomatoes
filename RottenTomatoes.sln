@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2042
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RottenTomatoes", "RottenTomatoesBot\RottenTomatoes.csproj", "{9193AF95-6311-4C06-A3DC-2CF4C8B4E9FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RottenTomatoes", "RottenTomatoes.csproj", "{15EE602D-2767-4E48-A6E8-880E19319940}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9193AF95-6311-4C06-A3DC-2CF4C8B4E9FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9193AF95-6311-4C06-A3DC-2CF4C8B4E9FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9193AF95-6311-4C06-A3DC-2CF4C8B4E9FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9193AF95-6311-4C06-A3DC-2CF4C8B4E9FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15EE602D-2767-4E48-A6E8-880E19319940}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15EE602D-2767-4E48-A6E8-880E19319940}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15EE602D-2767-4E48-A6E8-880E19319940}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15EE602D-2767-4E48-A6E8-880E19319940}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {1D1BCE25-FAD0-4BC7-8841-CB03E905C8D7}
+		SolutionGuid = {18D88B3C-55FE-4547-ACF2-89D4FF3C9C4F}
 	EndGlobalSection
 EndGlobal

@@ -1,6 +1,6 @@
 <h1 align="center">
 
-<img src="https://cdn.discordapp.com/avatars/477287091798278145/11dac188844056c5dbbdef7015bffc8b.png?size=1512" alt="Rotten Tomatoes Logo" width="256"/>
+<img src="https://cdn.discordapp.com/avatars/477287091798278145/11dac188844056c5dbbdef7015bffc8b.png?size=512" alt="Rotten Tomatoes Logo" width="256"/>
 <br/>
 Rotten Tomatoes Discord Bot
 </h1>

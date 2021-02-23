@@ -12,6 +12,8 @@ Rotten Tomatoes Discord Bot
 [<img src="https://discordapp.com/api/guilds/735263201612005472/widget.png?style=shield">](https://discord.gg/ga9V5pa)
 <img src="https://img.shields.io/badge/discord-csharp-blue.svg">
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ad7ae4f9435b492db63c5f79be8cafa6)](https://www.codacy.com/app/WilliamWelsh/RottenTomatoes?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=WilliamWelsh/RottenTomatoes&amp;utm_campaign=Badge_Grade)
+[![Discord Bots](https://top.gg/api/widget/servers/477287091798278145.svg)](https://top.gg/bot/477287091798278145)
+[![Discord Bots](https://top.gg/api/widget/status/477287091798278145.svg)](https://top.gg/bot/477287091798278145)
 
 </div>
 

@@ -27,12 +27,6 @@ This Discord bot that allows you to search movies and TV shows on Rotten Tomatoe
 `!rt (result number)` Choose a movie from the search results to view stats of that movie.  
 `!rt choose (result number)` Choose a movie from the search results to view stats of that movie.  
 `!rt cancel` Cancel the current search.  
-`!rt box office` View the current top box office.  
-
-### Broken Commands (Result of RT website update, working to fix these whenever possible)
-`!rt upcoming` View upcoming movies.  
-`!rt opening` or `!rt opening this week` View movies opening this week.  
-`!rt coming soon` View movies coming soon to theaters.  
 
 ### Misc Commands
 `!rt info` or `!rt stats` View various stats.  

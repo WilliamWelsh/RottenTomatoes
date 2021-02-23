@@ -50,7 +50,9 @@ namespace RottenTomatoes
 
             var context = new SocketCommandContext(_discord, message);
 
-            Console.WriteLine($"{context.User}: {context.Message}");
+            if (message.Content.StartsWith("!rt"))
+                Console.WriteLine($"{context.User}: {context.Message}");
+
             await _commands.ExecuteAsync(context, argPos, _services);
         }
 

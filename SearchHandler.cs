@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -62,51 +63,33 @@ namespace RottenTomatoes
             resultItems.Clear();
 
             // Get the website html
-            var json = await _http.DownloadString($"https://www.rottentomatoes.com/search?search={search}");
+            var data = await _http.DownloadString($"https://www.rottentomatoes.com/search?search={search}");
 
             //If there's no result, tell the user and then stop.
-            if (json.Contains("Sorry, no results found for"))
+            if (data.Contains("Sorry, no results found for"))
             {
                 await context.Channel.SendEmbed("Rotten Tomatoes Search", $"Sorry, no results were found for \"{search}\"\n\nTry reformatting your search if the title contains colons, hyphens, etc.", false);
                 return;
             }
 
-            // Get that nice json :)
-            dynamic data = JsonConvert.DeserializeObject(json.CutBeforeAndAfter("<script id=\"movies-json\" type=\"application/json\">", "</script"));
+            // Slim down the data
+            data = data
+                .CutBefore(
+                    "<search-page-result slot=\"movie\" skeleton=\"panel\" type=\"movie\" data-qa=\"search-result\">")
+                .CutBeforeAndAfter("<ul slot=\"list\">", "</ul>");
 
             var embed = new EmbedBuilder()
                 .WithTitle("Rotten Tomatoes Search")
                 .WithColor(EmbedUtils.Red)
                 .WithFooter("Via RottenTomatoes.com | To choose, do !rt choose <number>");
 
-            foreach (var result in data.items)
+            do
             {
-                var movie = new Movie
-                {
-                    Name = result.name,
-                    Year = result.releaseYear,
-                    Url = result.url,
-                    Poster = result.imageUrl
-                };
+                var temp = data.CutAfter("</search-page-media-row>");
+                resultItems.Add(new SearchResultItem(new Movie(temp)));
 
-                // Tomatometer Score & Icon
-                if (!result.ToString().Contains("tomatometerScore\": {}"))
-                {
-                    movie.CriticScore = $"{result.tomatometerScore.score}%";
-
-                    if (result.tomatometerScore.certified == true)
-                        movie.CriticScoreIcon = "<:certified_fresh:737761619375030422>";
-
-                    if (result.tomatometerScore.certified == false &&
-                        result.tomatometerScore.scoreSentiment == "POSITIVE")
-                        movie.CriticScoreIcon = "<:fresh:737761619299270737>";
-
-                    if (result.tomatometerScore.scoreSentiment == "NEGATIVE")
-                        movie.CriticScoreIcon = "<:rotten:737761619299532874>";
-                }
-
-                resultItems.Add(new SearchResultItem(movie));
-            }
+                data = data.CutBefore("</search-page-media-row>");
+            } while (data.Contains("search-page-media-row"));
 
             // If there's only one result, cut the crap and just print it
             // Waste of time doing `!rt choose `

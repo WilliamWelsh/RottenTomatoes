@@ -27,6 +27,41 @@ namespace RottenTomatoes
             AudienceScore = "N/A";
         }
 
+        public Movie(string searchData)
+        {
+            CriticScore = "N/A";
+            AudienceScore = "N/A";
+
+            Name = searchData.CutBeforeAndAfter("<img alt=\"", "\"");
+            Year = searchData.CutBeforeAndAfter("releaseyear=\"", "\"");
+            Url = searchData.CutBeforeAndAfter("<a href=\"", "\"");
+            Poster = searchData.CutBefore("<img alt=")
+                .CutBeforeAndAfter("src=\"", "\"");
+
+            CriticScore = $"{searchData.CutBeforeAndAfter("tomatometerscore=\"", "\"")}%";
+            if (CriticScore == "%")
+                CriticScore = "N/A";
+
+            switch (searchData.CutBeforeAndAfter("tomatometerstate=\"", "\""))
+            {
+                case "certified-fresh":
+                    CriticScoreIcon = "<:certified_fresh:737761619375030422>";
+                    break;
+
+                case "fresh":
+                    CriticScoreIcon = "<:fresh:737761619299270737>";
+                    break;
+
+                case "rotten":
+                    CriticScoreIcon = "<:rotten:737761619299532874>";
+                    break;
+
+                default:
+                    CriticScoreIcon = "";
+                    break;
+            }
+        }
+
         public async Task PrintToChannel(ISocketMessageChannel channel, HttpClient http)
         {
             // First, get some missing data

@@ -16,7 +16,7 @@ namespace RottenTomatoes
         static ActiveServerHandlers() => Servers = new List<ServerHandler>();
 
         // Get a server's server handler
-        public static ServerHandler GetServerHandler(ulong guildID, HttpClient http)
+        public static ServerHandler GetServerHandler(ulong guildID)
         {
             // Search our list for the server we want
             var result = from server in Servers
@@ -32,7 +32,7 @@ namespace RottenTomatoes
             serverHandler = new ServerHandler
             {
                 GuildID = guildID,
-                SearchHandler = new SearchHandler(http)
+                SearchHandler = new SearchHandler()
             };
             Servers.Add(serverHandler);
 

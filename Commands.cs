@@ -8,9 +8,6 @@ namespace RottenTomatoes
     [RequireContext(ContextType.Guild)]
     public class Commands : ModuleBase<SocketCommandContext>
     {
-        // Dependency Injection will fill this value in for us
-        public HttpClient Http { get; set; }
-
         [Command("ping")]
         [Alias("rt ping")]
         public Task PingAsync() => ReplyAsync("pong!");
@@ -20,7 +17,7 @@ namespace RottenTomatoes
         {
             using (Context.Channel.EnterTypingState())
             {
-                await ActiveServerHandlers.GetServerHandler(Context.Guild.Id, Http).SearchHandler
+                await ActiveServerHandlers.GetServerHandler(Context.Guild.Id).SearchHandler
                     .TryToSelect(selection, Context.Channel);
             }
         }
@@ -30,7 +27,7 @@ namespace RottenTomatoes
         {
             using (Context.Channel.EnterTypingState())
             {
-                await ActiveServerHandlers.GetServerHandler(Context.Guild.Id, Http).SearchHandler
+                await ActiveServerHandlers.GetServerHandler(Context.Guild.Id).SearchHandler
                     .TryToSelect(selection, Context.Channel);
             }
         }
@@ -79,9 +76,14 @@ namespace RottenTomatoes
                         await Context.Channel.SendEmbed("Privacy", $"The only data this bot stores is the server ID (`{Context.Guild.Id}`) of this server. This is temporary, and all data is deleted everytime the bot restarts or goes offline. Your server ID is used to create a server handler to handle your search request. This way, multiple searches may be done at the same time in separate servers. The bot requires this system to work effectively. If you wish to not participate, please remove the bot from your server. Your server ID is not used for anything else.\n\nIf you wish to speak to the developer (`Reverse#0069`) please type `!rt discord` and join the support server, or just add me.", true);
                         break;
 
+                    // !rt box office
+                    case "box office":
+                        await BoxOffice.Print(Context.Channel);
+                        break;
+
                     // They must be wanting to search on RT
                     default:
-                        await ActiveServerHandlers.GetServerHandler(Context.Guild.Id, Http).SearchHandler
+                        await ActiveServerHandlers.GetServerHandler(Context.Guild.Id).SearchHandler
                             .SearchRottenTomatoes(search, Context);
                         break;
                 }

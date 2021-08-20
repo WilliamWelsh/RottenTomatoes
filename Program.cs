@@ -36,6 +36,9 @@ namespace RottenTomatoes
                 var discordBotList = new AuthDiscordBotListApi(477287091798278145, Environment.GetEnvironmentVariable("rtBotListToken"));
                 _dblApi = await discordBotList.GetMeAsync();
 
+                // Initialize HttpClient
+                WebUtils.http = new HttpClient();
+
                 // These events will update the current amount of guilds the bot is in on Top.gg (_dblApi)
                 _client.Ready += OnReady;
                 _client.JoinedGuild += OnGuildJoined;

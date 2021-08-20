@@ -24,11 +24,6 @@ namespace RottenTomatoes
         // The message that contains search results (to be delete)
         private RestUserMessage searchMessage;
 
-        // HttpClient
-        private HttpClient _http;
-
-        public SearchHandler(HttpClient http) => _http = http;
-
         // Reset the handler by clearing the movies and saying there is no selection being made
         private void Reset()
         {
@@ -63,7 +58,7 @@ namespace RottenTomatoes
             resultItems.Clear();
 
             // Get the website html
-            var data = await _http.DownloadString($"https://www.rottentomatoes.com/search?search={search}");
+            var data = await WebUtils.DownloadString($"https://www.rottentomatoes.com/search?search={search}");
 
             //If there's no result, tell the user and then stop.
             if (data.Contains("Sorry, no results found for"))
@@ -130,7 +125,7 @@ namespace RottenTomatoes
         public async Task PrintResult(ISocketMessageChannel channel, SearchResultItem result)
         {
             if (result.Movie != null)
-                await result.Movie.PrintToChannel(channel, _http);
+                await result.Movie.PrintToChannel(channel);
         }
     }
 }

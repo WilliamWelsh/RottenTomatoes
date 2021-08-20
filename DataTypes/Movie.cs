@@ -62,13 +62,13 @@ namespace RottenTomatoes
             }
         }
 
-        public async Task PrintToChannel(ISocketMessageChannel channel, HttpClient http)
+        public async Task PrintToChannel(ISocketMessageChannel channel)
         {
             // First, get some missing data
             // We need the critic consensus (review), and the audience score and icon
 
             // Get the HTML & JSON from the RT page
-            var rawHTML = await http.DownloadString(Url);
+            var rawHTML = await WebUtils.DownloadString(Url);
 
             var html = new HtmlDocument();
             html.LoadHtml(rawHTML);

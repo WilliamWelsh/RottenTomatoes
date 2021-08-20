@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -45,7 +46,7 @@ namespace RottenTomatoes
                         break;
                 }
 
-                result.AppendLine($"`{i + 1}` {resultItems[i].title} `{resultItems[i].theaterReleaseDate}` {resultItems[i].tomatoScore}% {icon}");
+                result.AppendLine($"`{i + 1}` {resultItems[i].title} `{resultItems[i].theaterReleaseDate}` {(resultItems[i].tomatoScore == null ? "N/A" : resultItems[i].tomatoScore + "%")} {icon}");
             }
 
             await channel.SendMessageAsync(null, false, new EmbedBuilder()

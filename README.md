@@ -20,25 +20,14 @@ Rotten Tomatoes Discord Bot
 This Discord bot that allows you to search movies and TV shows on Rotten Tomatoes and view the critic score, audience score, and consensus. If you search for a celebrity, you will see how many certified fresh, fresh, rotten, and unscored movies they have, as well as their average score. You can also view the current top box office, movies opening this week, and movies coming soon to theaters. If you search a movie, and it's the only result, it will automatically display that movie.  
 
 ### Inviting to Your Server
-[Click me to invite the bot to your server.](https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&permissions=3072)
+[Click me to invite the bot to your server.](https://discord.com/api/oauth2/authorize?client_id=477287091798278145&permissions=67584&scope=bot%20applications.commands)
 
 ### Commands
-`!rt help` View available commands.  
-`!rt (text)` Search for a movie.  
-`!rt (result number)` Choose a movie from the search results to view stats of that movie.  
-`!rt choose (result number)` Choose a movie from the search results to view stats of that movie.  
-`!rt cancel` Cancel the current search.  
+`/rt` View available commands.  
+`/rt (text)` Search for a movie.  
 
-### Misc Commands
-`!rt info` or `!rt stats` View various stats.  
-`!rt invite`  Get the invite link to add the bot to your server.  
-`!rt github` View the source code for this bot.  
-`!rt discord` Invite link to my server if you have a feature request, bug issue, or something else.  
-`!rt privacy` View privacy information about this bot.
-
-### Image Examples
-![Screenshot](https://i.imgur.com/1vJGnG1.png)  
-![Screenshot](https://i.imgur.com/9Lmz1V3.png)  
+### Example
+![Screenshot](https://i.imgur.com/WYIWuAz.gif)  
 
 ### Bugs and Issues
 Please report bugs or issues here on Github or on the Discord support server.  

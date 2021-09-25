@@ -1,5 +1,4 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using HtmlAgilityPack;
@@ -34,7 +33,7 @@ namespace RottenTomatoes
 
             Name = searchData.CutBeforeAndAfter("<img alt=\"", "\"");
             Year = searchData.CutBeforeAndAfter("releaseyear=\"", "\"");
-            Url = searchData.CutBeforeAndAfter("<a href=\"", "\"");
+            Url = searchData.CutBeforeAndAfter("<a href=\"", "\"").Replace("rotten", "www.rotten");
             Poster = searchData.CutBefore("<img alt=")
                 .CutBeforeAndAfter("src=\"", "\"");
 

@@ -56,7 +56,7 @@ namespace RottenTomatoes
                     break;
 
                 default:
-                    CriticScoreIcon = "";
+                    CriticScoreIcon = "<:notomatometer:891357892417028127>";
                     break;
             }
         }
@@ -87,6 +87,10 @@ namespace RottenTomatoes
 
                 case "spilled":
                     AudienceIcon = "<:audiencedisliked:737761619416842321>";
+                    break;
+
+                default:
+                    AudienceIcon = "<:noaudiencescore:891357892442198047>";
                     break;
             }
 

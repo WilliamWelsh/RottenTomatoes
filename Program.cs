@@ -29,7 +29,7 @@ namespace RottenTomatoes
 
                 // Login
                 await _client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("rtBotToken"));
-                await _client.SetGameAsync("!rt help", null, ActivityType.Watching);
+                await _client.SetGameAsync("/rt", null, ActivityType.Watching);
                 await _client.StartAsync();
 
                 // Crate Discord Bot List client (Top.gg)

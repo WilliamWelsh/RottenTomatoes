@@ -9,7 +9,7 @@ namespace RottenTomatoes
     public static class EmbedUtils
     {
         // The Rotten Tomatoes logo (bot's profile picture)
-        private const string Logo = "https://cdn.discordapp.com/avatars/477287091798278145/11dac188844056c5dbbdef7015bffc8b.png?size=128";
+        public const string Logo = "https://cdn.discordapp.com/avatars/477287091798278145/11dac188844056c5dbbdef7015bffc8b.png?size=128";
 
         // The color red (for embeds).
         public static readonly Color Red = new Color(250, 50, 10);
@@ -78,7 +78,7 @@ namespace RottenTomatoes
         // DM the invite link to a user
         public static async Task DMInviteLink(this ISocketMessageChannel Channel, SocketGuildUser user)
         {
-            await user.SendMessageAsync("https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&permissions=3072");
+            await user.SendMessageAsync("https://discord.com/api/oauth2/authorize?client_id=477287091798278145&permissions=67584&scope=bot%20applications.commands");
             await Channel.SendEmbed("Rotten Tomatoes", $"The invite link has been DMed to you, {user.Mention}!", false).ConfigureAwait(false);
         }
 
@@ -95,7 +95,7 @@ namespace RottenTomatoes
                 .AddField("Developer", "Reverse#0069")
                 .AddField("Color", "Use this suggested color for my role to match the embeds: `#fb3109`")
                 //.AddField("Total Votes", (await Config.DblAPI.GetMeAsync()).Points)
-                .AddField("Links", "[Invite](https://discordapp.com/oauth2/authorize?client_id=477287091798278145&scope=bot&permissions=3072) | [Vote](\n\nhttps://discordbots.org/bot/477287091798278145/vote) | [GitHub](https://github.com/WilliamWelsh/RottenTomatoes) | [Support Server](https://discord.gg/ga9V5pa)")
+                .AddField("Links", "[Invite](https://discord.com/api/oauth2/authorize?client_id=477287091798278145&permissions=67584&scope=bot%20applications.commands) | [Vote](\n\nhttps://discordbots.org/bot/477287091798278145/vote) | [GitHub](https://github.com/WilliamWelsh/RottenTomatoes) | [Support Server](https://discord.gg/ga9V5pa)")
                 .Build()).ConfigureAwait(false);
         }
     }

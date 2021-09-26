@@ -62,19 +62,6 @@ namespace RottenTomatoes
             await Channel.SendEmbed("Rotten Tomatoes", text.ToString(), false, "Please report issues on my Discord server (!rt discord)").ConfigureAwait(false);
         }
 
-        // Print help for how to use the !rt opening and !rt coming soon commands
-        public static async Task SendUpcomingHelp(ISocketMessageChannel Channel)
-        {
-            StringBuilder text = new StringBuilder()
-                .AppendLine("To view movies opening **this week**...")
-                .AppendLine("*Type `!rt opening`")
-                .AppendLine("*Or `!rt opening this week`")
-                .AppendLine()
-                .AppendLine("To view movies **coming soon to theaters**...")
-                .AppendLine("*Type `!rt coming soon`");
-            await Channel.SendEmbed("Upcoming Movies", text.ToString(), false).ConfigureAwait(false);
-        }
-
         // DM the invite link to a user
         public static async Task DMInviteLink(this ISocketMessageChannel Channel, SocketGuildUser user)
         {

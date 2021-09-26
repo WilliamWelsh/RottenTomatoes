@@ -20,8 +20,6 @@ namespace RottenTomatoes
             _discord = services.GetRequiredService<DiscordSocketClient>();
             _services = services;
 
-            _commands.CommandExecuted += ExecuteCommandAsync;
-
             _discord.MessageReceived += MessageReceivedAsync;
 
             _discord.InteractionCreated += OnInteractionAsync;
@@ -112,19 +110,6 @@ namespace RottenTomatoes
                     .WithThumbnailUrl(EmbedUtils.Logo)
                     .Build());
             }
-
-            //await _commands.ExecuteAsync(context, argPos, _services);
-        }
-
-        private async Task ExecuteCommandAsync(Optional<CommandInfo> command, ICommandContext context, IResult result)
-        {
-            if (!command.IsSpecified)
-                return;
-
-            if (result.IsSuccess)
-                return;
-
-            Console.WriteLine($"ERROR: {result}");
         }
     }
 }

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using Discord;
-using Discord.Rest;
 using Discord.WebSocket;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
@@ -54,7 +50,24 @@ namespace RottenTomatoes
 
             var buttons = new ComponentBuilder();
             for (int i = 0; i < (resultItems.Count <= 5 ? resultItems.Count : 5); i++)
-                buttons.WithButton($"{resultItems[i].Movie.CriticScore} {resultItems[i].Movie.Name} ({resultItems[i].Movie.Year})", customId: resultItems[i].Movie.Url, ButtonStyle.Danger, row: i, emote: Emote.Parse(resultItems[i].Movie.CriticScoreIcon));
+            {
+                var text = $"{resultItems[i].Movie.CriticScore} {resultItems[i].Movie.Name} ({resultItems[i].Movie.Year})";
+
+                // Decode the HTML
+                text = HttpUtility.HtmlDecode(text);
+
+                // Button Labels can only be 80 characters
+                if (text.Length > 80)
+                    text = $"{text.Substring(0, 77)}...";
+
+                var customId = resultItems[i].Movie.Url.CutBefore("/m/");
+
+                // Custom IDs can only be 100 characters (skip it otherwise)
+                if (customId.Length > 100)
+                    continue;
+
+                buttons.WithButton(text, customId: customId, ButtonStyle.Danger, row: i, emote: Emote.Parse(resultItems[i].Movie.CriticScoreIcon));
+            }
 
             await command.FollowupAsync("Please select a result or search again.", component: buttons.Build());
         }
@@ -62,8 +75,7 @@ namespace RottenTomatoes
         // Print a movie to an interaction
         public static async Task PrintToInteraction(SocketMessageComponent interaction)
         {
-            var movie = new Movie();
-            movie.Url = interaction.Data.CustomId;
+            var movie = new Movie { Url = $"https://www.rottentomatoes.com/m/{interaction.Data.CustomId}" };
 
             // Get the HTML & JSON from the RT page
             var rawHTML = await WebUtils.DownloadString(movie.Url);
@@ -75,7 +87,7 @@ namespace RottenTomatoes
             dynamic JSON = JsonConvert.DeserializeObject(rawHTML.CutBeforeAndAfter("<script id=\"score-details-json\" type=\"application/json\">", "</script>"));
 
             // Title
-            movie.Name = JSON.scoreboard.title.ToString();
+            movie.Name = HttpUtility.HtmlDecode(JSON.scoreboard.title.ToString());
 
             // Tomatometer
             movie.CriticScore = JSON.scoreboard.tomatometerScore == null ? "N/A" : $"{JSON.scoreboard.tomatometerScore}%";

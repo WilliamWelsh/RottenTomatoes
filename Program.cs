@@ -29,7 +29,7 @@ namespace RottenTomatoes
 
                 // Login
                 await _client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("rtBotToken"));
-                await _client.SetGameAsync("/rt", null, ActivityType.Watching);
+                await _client.SetGameAsync("/rt", type: ActivityType.Watching);
                 await _client.StartAsync();
 
                 // Crate Discord Bot List client (Top.gg)
@@ -52,11 +52,21 @@ namespace RottenTomatoes
             }
         }
 
-        private async Task OnReady() => await _dblApi.UpdateStatsAsync(_client.Guilds.Count);
+        // Update the server count
+        private async Task UpdateServerCount()
+        {
+            // Update on the bot's status
+            await _client.SetGameAsync($"/rt | {_client.Guilds.Count} servers", type: ActivityType.Watching);
 
-        private async Task OnGuildLeft(SocketGuild arg) => await _dblApi.UpdateStatsAsync(_client.Guilds.Count);
+            // Update on top.gg
+            await _dblApi.UpdateStatsAsync(_client.Guilds.Count);
+        }
 
-        private async Task OnGuildJoined(SocketGuild arg) => await _dblApi.UpdateStatsAsync(_client.Guilds.Count);
+        private async Task OnReady() => await UpdateServerCount();
+
+        private async Task OnGuildLeft(SocketGuild arg) => await UpdateServerCount();
+
+        private async Task OnGuildJoined(SocketGuild arg) => await UpdateServerCount();
 
         // Log
         private Task LogAsync(LogMessage log)

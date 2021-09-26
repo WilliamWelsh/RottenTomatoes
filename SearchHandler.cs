@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace RottenTomatoes
 {
-    public static class InteractionSearchHandler
+    public static class SearchHandler
     {
         // Search Rotten Tomatoes for movies and create a selection
         public static async Task SearchRottenTomatoes(SocketSlashCommand command)

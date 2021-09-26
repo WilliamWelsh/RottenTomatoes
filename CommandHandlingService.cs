@@ -50,7 +50,7 @@ namespace RottenTomatoes
                         else
                         {
                             await commandInteraction.DeferAsync();
-                            await InteractionSearchHandler.SearchRottenTomatoes(commandInteraction);
+                            await SearchHandler.SearchRottenTomatoes(commandInteraction);
                         }
                     }
 
@@ -64,7 +64,7 @@ namespace RottenTomatoes
 
                 // Button Click
                 case SocketMessageComponent componentInteraction:
-                    await InteractionSearchHandler.PrintToInteraction(componentInteraction);
+                    await SearchHandler.PrintToInteraction(componentInteraction);
                     break;
 
                 default:

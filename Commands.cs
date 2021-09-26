@@ -76,9 +76,9 @@ namespace RottenTomatoes
                         break;
 
                     // !rt box office
-                    case "box office":
-                        await BoxOffice.Print(Context.Channel);
-                        break;
+                    //case "box office":
+                    //    await BoxOffice.Print(Context.Channel);
+                    //    break;
 
                     // They must be wanting to search on RT
                     default:

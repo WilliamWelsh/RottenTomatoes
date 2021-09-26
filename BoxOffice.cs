@@ -8,7 +8,7 @@ namespace RottenTomatoes
 {
     public static class BoxOffice
     {
-        public static async Task Print(ISocketMessageChannel channel)
+        public static async Task Print(SocketSlashCommand command)
         {
             var data = await WebUtils.DownloadString("https://www.rottentomatoes.com/browse/in-theaters?minTomato=0&maxTomato=100&genres=1;2;4;5;6;8;9;10;11;13;18;14&sortBy=popularity");
 
@@ -48,7 +48,7 @@ namespace RottenTomatoes
                 result.AppendLine($"`{i + 1}` {resultItems[i].title} `{resultItems[i].theaterReleaseDate}` {(resultItems[i].tomatoScore == null ? "N/A" : resultItems[i].tomatoScore + "%")} {icon}");
             }
 
-            await channel.SendMessageAsync(null, false, new EmbedBuilder()
+            await command.FollowupAsync(null, embed: new EmbedBuilder()
                 .WithTitle("Top Box Office")
                 .WithColor(EmbedUtils.Red)
                 .WithFooter("Via RottenTomatoes.com")

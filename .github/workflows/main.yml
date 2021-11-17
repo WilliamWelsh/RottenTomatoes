@@ -1,0 +1,18 @@
+name: Discord
+on: [push]
+jobs:
+  Post-To-Discord:
+    name: Discord Notification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Commit Message
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        with:
+          severity: info
+          username: Rotten Tomatoes
+          color: "#FA320A"
+          avatarUrl: https://cdn.discordapp.com/avatars/477287091798278145/11dac188844056c5dbbdef7015bffc8b.png?size=512
+          description: ${{ github.event.head_commit.message }}
+          details: "[View online](${{ github.event.head_commit.url }})"
+          footer: "GitHub"
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}

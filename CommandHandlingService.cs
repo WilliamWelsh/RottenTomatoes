@@ -43,7 +43,7 @@ namespace RottenTomatoes
                                     .WithThumbnailUrl(EmbedUtils.Logo)
                                     .Build(),
                                 component: new ComponentBuilder()
-                                    .WithButton("Support Server", style: ButtonStyle.Link, url: "https://discord.gg/ga9V5pa")
+                                    .WithButton("Support Server", style: ButtonStyle.Link, url: "https://discord.gg/AM2SvZKZgR")
                                     .WithButton("Bot Invite Link", style: ButtonStyle.Link, url: "https://discord.com/api/oauth2/authorize?client_id=477287091798278145&permissions=67584&scope=bot%20applications.commands")
                                     .WithButton("GitHub", style: ButtonStyle.Link, url: "https://github.com/WilliamWelsh/RottenTomatoes")
                                     .Build());
@@ -99,7 +99,7 @@ namespace RottenTomatoes
                     .WithImageUrl(
                         "https://cdn.discordapp.com/attachments/735282082963652749/891459194820100116/ezgif.com-gif-maker.gif")
                     .WithDescription(
-                        "Please ask your server owner to re-invite the bot using the link below, then you will be able to use SLASH commands (`/rt`).\n\nUse this link to re-invite the bot: https://discord.com/api/oauth2/authorize?client_id=477287091798278145&permissions=67584&scope=bot%20applications.commands\n\nIf you need help, you can join the support server here: https://discord.gg/ga9V5pa")
+                        "Please ask your server owner to re-invite the bot using the link below, then you will be able to use SLASH commands (`/rt`).\n\nUse this link to re-invite the bot: https://discord.com/api/oauth2/authorize?client_id=477287091798278145&permissions=67584&scope=bot%20applications.commands\n\nIf you need help, you can join the support server here: https://discord.gg/AM2SvZKZgR")
                     .WithThumbnailUrl(EmbedUtils.Logo)
                     .Build());
             }
